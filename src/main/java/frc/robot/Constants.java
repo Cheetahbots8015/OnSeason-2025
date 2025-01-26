@@ -34,4 +34,6 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static double loopPeriodSecs = 0.02;
 }
