@@ -36,5 +36,5 @@ public final class Constants {
   }
 
   public static double loopPeriodSecs = 0.02;
-public static boolean tuningMode = false;
+  public static boolean tuningMode = false;
 }
