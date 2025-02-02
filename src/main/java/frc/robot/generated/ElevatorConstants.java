@@ -7,8 +7,8 @@ public class ElevatorConstants {
     public static final int ELEVATOR_HIGH_LIMITSWITCH_ID = 1;
 
     public static final boolean ELEVATOR_LEFT_INVERSION = false;
-    public static final boolean ELEVATOR_LEFT_Brake = true;
-    public static final boolean ELEVATOR_RIGHT_Brake = true;
+    public static final boolean ELEVATOR_LEFT_BRAKE = true;
+    public static final boolean ELEVATOR_RIGHT_BRAKE = true;
     public static final boolean OPPOSE_MASTER = false;
 
     public static final boolean ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE = true;
