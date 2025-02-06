@@ -12,6 +12,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 import java.lang.ref.Reference;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -37,9 +38,12 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.LEDReader;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.subsystems.rollers.RollerSystemIO.RollerSystemIOInputs;
 import frc.robot.util.LoggedTunableNumber;
+
 
 /**
  * Generic roller IO implementation for a roller or series of rollers using a
@@ -116,13 +120,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     leaderMotorConfigs.Inverted = ElevatorConstants.ELEVATOR_LEFT_INVERSION ? InvertedValue.Clockwise_Positive
         : InvertedValue.CounterClockwise_Positive;
     leaderMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
-    leaderMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
+    leaderMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
     leaderMotorConfigs.NeutralMode = ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake
         : NeutralModeValue.Coast;
 
     followerMotorConfigs = new MotorOutputConfigs();
     followerMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
-    followerMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
+    followerMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
     followerMotorConfigs.NeutralMode = ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake
         : NeutralModeValue.Coast;
 
@@ -244,14 +248,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
       slot0Configs.kP = kP.get();
       slot0Configs.kI = kI.get();
       slot0Configs.kD = kD.get();
-
       motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
       motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
 
-      leaderConfigurator.apply(slot0Configs);
-      followerConfigurator.apply(slot0Configs);
-      leaderConfigurator.apply(motionMagicConfigs);
-      followerConfigurator.apply(motionMagicConfigs);
+      tryUntilOk(5, () -> leaderConfigurator.apply(slot0Configs));
+      tryUntilOk(5, () -> followerConfigurator.apply(slot0Configs));
+      tryUntilOk(5, () -> leaderConfigurator.apply(motionMagicConfigs));
+      tryUntilOk(5, () -> followerConfigurator.apply(motionMagicConfigs));
     }
   }
 

@@ -12,11 +12,16 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.util.NarcissusUtil;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.SignalLogger;
 
 public class ElevatorSystem extends SubsystemBase {
   private final String name;
@@ -53,10 +58,28 @@ public class ElevatorSystem extends SubsystemBase {
     MANUAL
   }
 
+  private final SysIdRoutine m_SysIdRoutineElevator;
+
+  private final SysIdRoutine routineToApply;
+
   public ElevatorSystem(String name, ElevatorSystemIO io) {
     this.name = name;
     this.io = io;
     disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
+    m_SysIdRoutineElevator = new SysIdRoutine(
+        new SysIdRoutine.Config(
+            null,
+            Volts.of(2.4),
+            Seconds.of(3),
+            (state) -> SignalLogger.writeString("state", state.toString())),
+        new SysIdRoutine.Mechanism(
+            (volts) -> {
+              io.setVolts(volts.magnitude());
+            },
+            null,
+            this));
+
+    routineToApply = m_SysIdRoutineElevator;
   }
 
   @Override
@@ -66,6 +89,7 @@ public class ElevatorSystem extends SubsystemBase {
     Logger.processInputs(name, inputs);
     Logger.recordOutput(name, this.getSystemState());
     disconnected.set(!inputs.connected);
+    updateStateMachine();
   }
 
   @AutoLogOutput
@@ -83,7 +107,7 @@ public class ElevatorSystem extends SubsystemBase {
     if (requestManual) {
       systemState = ElevatorState.MANUAL;
       homed = false;
-      setVoltage(manualVoltage);
+      this.setVoltage(manualVoltage);
       return;
     }
 
@@ -109,7 +133,7 @@ public class ElevatorSystem extends SubsystemBase {
       switch (positionString) {
         case "L1":
           target = ElevatorConstants.ELEVATOR_L1_POSITION_RADS;
-          set2Position(target);
+          this.set2Position(target);
           if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
               ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
             hold();
@@ -183,7 +207,7 @@ public class ElevatorSystem extends SubsystemBase {
             systemState = ElevatorState.STATION;
           }
           break;
-        
+
         case "Low_algae":
           target = ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS;
           set2Position(target);
@@ -194,7 +218,7 @@ public class ElevatorSystem extends SubsystemBase {
             systemState = ElevatorState.LOW_ALGAE;
           }
           break;
-        
+
         case "High_algae":
           target = ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS;
           set2Position(target);
@@ -246,27 +270,35 @@ public class ElevatorSystem extends SubsystemBase {
     }
   }
 
-  private void setVoltage(double voltage){
+  private void setVoltage(double voltage) {
     io.setVolts(voltage);
   }
 
-  public void setRequestHome(boolean set){
+  public void setRequestHome(boolean set) {
     requestHome = set;
   }
 
-  public void setRequestManual(boolean set){
+  public void setRequestManual(boolean set) {
     requestManual = set;
   }
 
-  public void setRequestPosition(boolean set){
+  public void setRequestPosition(boolean set) {
     requestPosition = set;
   }
 
-  public void setManualVoltage(double value){
+  public void setManualVoltage(double value) {
     manualVoltage = value;
   }
 
-  public void setPositionString(String value){
+  public void setPositionString(String value) {
     positionString = value;
+  }
+
+  public Command ElevatorTestDynamic(SysIdRoutine.Direction direction) {
+    return routineToApply.dynamic(direction);
+  }
+
+  public Command ElevatorTestQuasistatic(SysIdRoutine.Direction direction) {
+    return routineToApply.quasistatic(direction);
   }
 }
