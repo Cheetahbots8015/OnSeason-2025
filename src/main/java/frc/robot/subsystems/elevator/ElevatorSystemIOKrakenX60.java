@@ -121,14 +121,14 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
             : InvertedValue.CounterClockwise_Positive;
     leaderMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
     leaderMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
-    leaderMotorConfigs.NeutralMode =
-        ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    leaderMotorConfigs.NeutralMode = ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake
+        : NeutralModeValue.Coast;
 
     followerMotorConfigs = new MotorOutputConfigs();
     followerMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
     followerMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
-    followerMotorConfigs.NeutralMode =
-        ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    followerMotorConfigs.NeutralMode = ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake
+        : NeutralModeValue.Coast;
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kA = kA.get();
