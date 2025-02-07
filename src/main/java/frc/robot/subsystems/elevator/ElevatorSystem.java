@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.util.NarcissusUtil;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -23,8 +22,10 @@ public class ElevatorSystem extends SubsystemBase {
   private final ElevatorSystemIO io;
   protected final ElevatorSystemIOInputsAutoLogged inputs = new ElevatorSystemIOInputsAutoLogged();
   private final Alert disconnected;
-  private final DigitalInput lowLimitSwitch = new DigitalInput(ElevatorConstants.ELEVATOR_LOW_LIMITSWITCH_ID);
-  private final DigitalInput highLimitSwitch = new DigitalInput(ElevatorConstants.ELEVATOR_HIGH_LIMITSWITCH_ID);
+  private final DigitalInput lowLimitSwitch =
+      new DigitalInput(ElevatorConstants.ELEVATOR_LOW_LIMITSWITCH_ID);
+  private final DigitalInput highLimitSwitch =
+      new DigitalInput(ElevatorConstants.ELEVATOR_HIGH_LIMITSWITCH_ID);
 
   private ElevatorState systemState = ElevatorState.INITIALIZE;
 
@@ -94,8 +95,10 @@ public class ElevatorSystem extends SubsystemBase {
     if (requestHome) {
       this.home();
       if (lowLimitSwitch.get()
-          && NarcissusUtil.deadband(io.getEncoderPositionRads() - 0.0,
-              ElevatorConstants.ELEVATOR_HOME_POSITION_TOLERANCE_RADS) == 0.0) {
+          && NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - 0.0,
+                  ElevatorConstants.ELEVATOR_HOME_POSITION_TOLERANCE_RADS)
+              == 0.0) {
         homed = true;
         systemState = ElevatorState.HOME;
         requestHome = false;
@@ -110,8 +113,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "L1":
           target = ElevatorConstants.ELEVATOR_L1_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.L1;
@@ -121,8 +126,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "L2":
           target = ElevatorConstants.ELEVATOR_L2_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.L2;
@@ -132,8 +139,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "L3":
           target = ElevatorConstants.ELEVATOR_L3_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.L3;
@@ -143,8 +152,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "L4":
           target = ElevatorConstants.ELEVATOR_L4_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.L4;
@@ -154,8 +165,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "Barger":
           target = ElevatorConstants.ELEVATOR_BARGE_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.BARGE;
@@ -165,8 +178,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "Processor":
           target = ElevatorConstants.ELEVATOR_PROCESSOR_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.PROCESSOR;
@@ -176,30 +191,36 @@ public class ElevatorSystem extends SubsystemBase {
         case "Station":
           target = ElevatorConstants.ELEVATOR_STATION_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.STATION;
           }
           break;
-        
+
         case "Low_algae":
           target = ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.LOW_ALGAE;
           }
           break;
-        
+
         case "High_algae":
           target = ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.HIGH_ALGAE;
@@ -208,11 +229,8 @@ public class ElevatorSystem extends SubsystemBase {
 
         default:
           break;
-
       }
-
     }
-
   }
 
   private void home() {
@@ -240,33 +258,35 @@ public class ElevatorSystem extends SubsystemBase {
 
   private void set2Position(double target) {
     io.setHeightRads(target);
-    if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-        ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+    if (NarcissusUtil.deadband(
+            io.getEncoderPositionRads() - target,
+            ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+        == 0) {
       io.stop();
     }
   }
 
-  private void setVoltage(double voltage){
+  private void setVoltage(double voltage) {
     io.setVolts(voltage);
   }
 
-  public void setRequestHome(boolean set){
+  public void setRequestHome(boolean set) {
     requestHome = set;
   }
 
-  public void setRequestManual(boolean set){
+  public void setRequestManual(boolean set) {
     requestManual = set;
   }
 
-  public void setRequestPosition(boolean set){
+  public void setRequestPosition(boolean set) {
     requestPosition = set;
   }
 
-  public void setManualVoltage(double value){
+  public void setManualVoltage(double value) {
     manualVoltage = value;
   }
 
-  public void setPositionString(String value){
+  public void setPositionString(String value) {
     positionString = value;
   }
 }
