@@ -43,7 +43,7 @@ public class ElevatorSystem extends SubsystemBase {
   private double homeTimer = -1.0;
 
   /* System States */
-  public enum ElevatorState {
+  private enum ElevatorState {
     INITIALIZE,
     HOME,
     L1,
@@ -175,7 +175,7 @@ public class ElevatorSystem extends SubsystemBase {
           }
           break;
 
-        case "Barger":
+        case "Barge":
           target = ElevatorConstants.ELEVATOR_BARGE_POSITION_RADS;
           set2Position(target);
           if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
