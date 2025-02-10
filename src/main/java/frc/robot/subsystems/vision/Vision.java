@@ -35,9 +35,17 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private final String name;
 
-  public Vision(VisionConsumer consumer, VisionIO... io) {
+  private VisionState systemState = VisionState.INITIALIZE;
+
+  private boolean requestTracking = false;
+  private boolean isTracking = false;
+  private boolean isReached = false;
+
+  public Vision(VisionConsumer consumer, String name, VisionIO... io) {
     this.consumer = consumer;
+    this.name = name;
     this.io = io;
 
     // Initialize inputs
@@ -62,6 +70,14 @@ public class Vision extends SubsystemBase {
    */
   public Rotation2d getTargetX(int cameraIndex) {
     return inputs[cameraIndex].latestTargetObservation.tx();
+  }
+
+  /* System States */
+  private enum VisionState {
+    INITIALIZE,
+    AIMED,
+    TRACKING,
+    REACHED
   }
 
   @Override
@@ -163,6 +179,8 @@ public class Vision extends SubsystemBase {
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
       allRobotPosesRejected.addAll(robotPosesRejected);
+
+
     }
 
     // Log summary data
@@ -176,6 +194,41 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+    Logger.recordOutput(name, this.getSystemState());
+
+  }
+
+  public void updateStateMachine() {
+    if (hasTarget()) {
+      systemState = VisionState.AIMED;
+    }
+    else{
+      systemState = VisionState.INITIALIZE;
+    }
+
+    if(requestTracking&&getDistance2Target()<999){
+      systemState = VisionState.TRACKING;
+    }
+
+    if(systemState == VisionState.TRACKING){
+      isTracking = true;
+    }
+
+    if(systemState == VisionState.TRACKING && getDistance2Target()<888){
+      systemState = VisionState.REACHED;
+      isReached = true;
+    }
+
+  }
+
+  
+
+  private boolean hasTarget(){
+    return false;
+  }
+
+  private double getDistance2Target(){
+    return 0.0;
   }
 
   @FunctionalInterface
@@ -184,5 +237,43 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+  }
+
+  /* Returns the current system state of the vision */
+  public VisionState getSystemState() {
+    return systemState;
+  }
+
+  public void setRequestTracking(boolean set) {
+    this.requestTracking = set;
+  }
+
+  public boolean getIsTracking() {
+    return isTracking;
+  }
+
+  public boolean getIsReached() {
+    return isReached;
+  }
+
+  public double getChassisX(){
+    if (isTracking) {
+      return 666.0;
+    }
+    return 0.0;
+  }
+
+  public double getChassisY(){
+    if (isTracking) {
+      return 666.0;
+    }
+    return 0.0;
+  }
+
+  public double getChassisR(){
+    if (isTracking) {
+      return 666.0;
+    }
+    return 0.0;
   }
 }
