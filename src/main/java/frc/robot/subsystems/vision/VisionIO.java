@@ -24,7 +24,9 @@ public interface VisionIO {
     public TargetObservation latestTargetObservation =
         new TargetObservation(new Rotation2d(), new Rotation2d());
     public PoseObservation[] poseObservations = new PoseObservation[0];
+      public CommandedVelocity latestCommandedVelocity = new CommandedVelocity(0.0, 0.0, 0.0);
     public int[] tagIds = new int[0];
+      public double distance2target = 0.0;
   }
 
   /** Represents the angle to a simple target, not used for pose estimation. */
@@ -38,6 +40,13 @@ public interface VisionIO {
       int tagCount,
       double averageTagDistance,
       PoseObservationType type) {}
+
+    // Represents the commanded velocity to the robot chassis
+    public static record CommandedVelocity(
+            double tx,
+            double ty,
+            double tr) {
+    }
 
   public static enum PoseObservationType {
     MEGATAG_1,
