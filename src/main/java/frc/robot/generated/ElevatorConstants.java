@@ -52,5 +52,4 @@ public class ElevatorConstants {
     public static final double ELEVATOR_STATION_POSITION_RADS = 0.0;
     public static final double ELEVATOR_LOW_ALGAE_POSITION_RADS = 0.0;
     public static final double ELEVATOR_HIGH_ALGAE_POSITION_RADS = 0.0;
-
 }
