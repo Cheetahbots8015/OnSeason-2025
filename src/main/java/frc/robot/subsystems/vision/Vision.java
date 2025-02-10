@@ -29,7 +29,6 @@ import frc.robot.generated.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -236,7 +235,7 @@ public class Vision extends SubsystemBase {
     return isReached;
   }
 
-  private double[] calculateChassisInput(int cameraIndex, boolean isLeft) {
+  public double[] calculateChassisInput(int cameraIndex, boolean isLeft) {
     double[] input = new double[3];
     if (isTracking) {
       if (cameraIndex == 0) {
