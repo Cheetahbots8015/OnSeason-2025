@@ -68,6 +68,7 @@ public class VisionConstants {
   public static double reachedDistance2Station = 1.0;
 
   // parameter of the camera on the robot
+  // looking down means negative tilt
   public static double reefCamHeight = 1.0;
   public static double reefHeight = 0.3;
   public static double reefCamTilt = 0.5;
