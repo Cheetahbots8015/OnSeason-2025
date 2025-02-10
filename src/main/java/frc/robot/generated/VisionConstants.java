@@ -25,7 +25,9 @@ public class VisionConstants {
 
   // Camera names, must match names configured on coprocessor
   public static String cameraReefName = "camera_Reef";
+    public static int cameraReefIndex = 0;
   public static String cameraStationName = "camera_Station";
+    public static int cameraStationIndex = 1;
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -80,8 +82,4 @@ public class VisionConstants {
   public static double reefCamYShift = 0.15;
 
   public static double reefTagShift = 0.5;
-
-
-
-
 }
