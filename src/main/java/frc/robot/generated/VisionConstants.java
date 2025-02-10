@@ -69,6 +69,18 @@ public class VisionConstants {
 
   // parameter of the camera on the robot
   public static double reefCamHeight = 1.0;
-  public static double reefCamTilt = 1.0;
+  public static double reefHeight = 0.3;
+  public static double reefCamTilt = 0.5;
   public static double stationCamHeight = 1.0;
+  public static double stationHeight = 1.3;
+  public static double stationCamTilt = 0.3;
+
+  public static double reefCamXShift = 0.2;
+  public static double reefCamYShift = 0.15;
+
+  public static double reefTagShift = 0.5;
+
+
+
+
 }
