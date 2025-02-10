@@ -74,6 +74,7 @@ public class VisionIOLimelight implements VisionIO {
     NetworkTableInstance.getDefault()
         .flush(); // Increases network traffic but recommended by Limelight
 
+
     // Read new pose observations from NetworkTables
     Set<Integer> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
@@ -153,4 +154,6 @@ public class VisionIOLimelight implements VisionIO {
             Units.degreesToRadians(rawLLArray[4]),
             Units.degreesToRadians(rawLLArray[5])));
   }
+
+
 }

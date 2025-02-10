@@ -64,8 +64,8 @@ public class VisionConstants {
   // threshold distance (in meter) for tracking and reached
   public static double trackingDistance2Reef = 1.0; // meter
   public static double trackingDistance2Station = 1.0;
-  public static double ReachedDistance2Reef = 1.0;
-  public static double ReachedDistance2Station = 1.0;
+  public static double reachedDistance2Reef = 1.0;
+  public static double reachedDistance2Station = 1.0;
 
   // parameter of the camera on the robot
   public static double reefCamHeight = 1.0;
