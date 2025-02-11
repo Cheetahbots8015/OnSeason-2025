@@ -7,6 +7,8 @@ import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANdi;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -15,16 +17,16 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.commons.AveragingFilter;
-import frc.robot.commons.LoggedTunableNumber;
+import frc.robot.util.AveragingFilter;
+import frc.robot.util.LoggedTunableNumber;
 
-import static frc.robot.constants.Constants.Pivot.*;
+import static frc.robot.generated.PivotConstants.*;
 
 public class PivotIOKrakenX60 implements PivotIO {
 
   /* Hardware */
   private final TalonFX pivot = new TalonFX(PIVOT_ID);
-  private final CANcoder azimuth = new CANcoder(PIVOT_AZIMUTH_ID);
+  private final CANdi candi = new CANdi(CANDI_ID);
 
   /* Configurators */
   private TalonFXConfigurator pivotConfigurator;
@@ -161,7 +163,7 @@ public class PivotIOKrakenX60 implements PivotIO {
     inputs.appliedVoltage = appliedVoltage.getValue();
     // inputs.tempCelcius = pivot.getDeviceTemp().getValue();
     inputs.tempCelcius = position.getValue();
-    inputs.motionMagicPositionTargetDeg =
+    inputs.motionMagicPositionTargetDeg =z
         Units.rotationsToDegrees(motionMagicPositionTarget.getValue());
     inputs.motionMagicVelocityTargetDeg =
         Units.rotationsToDegrees(motionMagicVelocityTarget.getValue());
@@ -173,41 +175,6 @@ public class PivotIOKrakenX60 implements PivotIO {
     deltaErrorFilter.addSample(err - prevError);
     inputs.deltaError = deltaErrorFilter.getAverage();
     prevError = err;
-  }
-
-  @Override
-  public void setVoltage(double voltage) {
-    pivot.setControl(new VoltageOut(voltage));
-  }
-
-  @Override
-  public void setAngle(Rotation2d angle, double elevatorAcceleration) {
-    // Elevator acceleration kick
-    double elevatorKick = kE.get() * elevatorAcceleration;
-
-    setpointDeg = angle.getDegrees();
-    double setpoint =
-        MathUtil.clamp(
-            angle.getRotations(), PIVOT_MIN_ANGLE.getRotations(), PIVOT_MAX_ANGLE.getRotations());
-    pivot.setControl(new MotionMagicVoltage(setpoint).withFeedForward(elevatorKick));
-  }
-
-  @Override
-  public void setCurrentLimit(
-      double currentLimit, double supplyCurrentThreshold, double supplyTimeThreshold) {
-    currentLimitConfigs.StatorCurrentLimitEnable = true;
-    currentLimitConfigs.StatorCurrentLimit = currentLimit;
-    currentLimitConfigs.SupplyCurrentThreshold = supplyCurrentThreshold;
-    currentLimitConfigs.SupplyTimeThreshold = supplyTimeThreshold;
-
-    pivotConfigurator.apply(currentLimitConfigs);
-  }
-
-  @Override
-  public void enableBrakeMode(boolean enable) {
-    motorOutputConfigs.NeutralMode = enable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-
-    pivotConfigurator.apply(motorOutputConfigs);
   }
 
   @Override
