@@ -7,18 +7,15 @@ import org.littletonrobotics.junction.AutoLog;
 public interface PivotIO {
   @AutoLog
   public static class PivotIOInputs {
+    public boolean connected = false;
     public double angleDegrees = 0.0;
     public double angleRads = 0.0;
     public double velDegreesPerSecond = 0.0;
-    public double currentAmps = 0.0;
     public double appliedVoltage = 0.0;
     public double tempCelcius = 0.0;
-    public double shaftVelocityRPM = 0.0;
     public double motionMagicPositionTargetDeg = 0.0;
     public double motionMagicVelocityTargetDeg = 0.0;
     public double setpointDeg = 0.0;
-    public double shaftPosition = 0.0;
-    public double deltaError = 0.0;
   }
 
   /** Updates the set of loggable inputs */
