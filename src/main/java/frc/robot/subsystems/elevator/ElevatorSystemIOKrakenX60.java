@@ -44,7 +44,6 @@ import frc.robot.generated.ElevatorConstants;
 import frc.robot.subsystems.rollers.RollerSystemIO.RollerSystemIOInputs;
 import frc.robot.util.LoggedTunableNumber;
 
-
 /**
  * Generic roller IO implementation for a roller or series of rollers using a
  * Kraken.
@@ -92,8 +91,10 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private final StatusSignal<Double> rightReference;
 
   // Single shot for voltage mode, robot loop will call continuously
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
-  private final MotionMagicTorqueCurrentFOC motionMagicOut = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
+  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true)
+      .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
+  private final MotionMagicTorqueCurrentFOC motionMagicOut = new MotionMagicTorqueCurrentFOC(0.0)
+      .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
   private final NeutralOut neutralOut = new NeutralOut();
 
   public ElevatorSystemIOKrakenX60() {
@@ -225,10 +226,14 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.accelerationRadsPerSec2 = Units.rotationsToRadians(acceleration.getValueAsDouble());
-    inputs.appliedVoltage = new double[] { leftAppliedVoltage.getValueAsDouble(), rightAppliedVoltage.getValueAsDouble() };
-    inputs.motionMagicPositionTarget = new double[] { leftReference.getValueAsDouble(), rightReference.getValueAsDouble() };
-    inputs.supplyCurrentAmps = new double[] { leftSupplyCurrent.getValueAsDouble(), rightSupplyCurrent.getValueAsDouble() };
-    inputs.torqueCurrentAmps = new double[] { leftTorqueCurrent.getValueAsDouble(), rightTorqueCurrent.getValueAsDouble() };
+    inputs.appliedVoltage = new double[] { leftAppliedVoltage.getValueAsDouble(),
+        rightAppliedVoltage.getValueAsDouble() };
+    inputs.motionMagicPositionTarget = new double[] { leftReference.getValueAsDouble(),
+        rightReference.getValueAsDouble() };
+    inputs.supplyCurrentAmps = new double[] { leftSupplyCurrent.getValueAsDouble(),
+        rightSupplyCurrent.getValueAsDouble() };
+    inputs.torqueCurrentAmps = new double[] { leftTorqueCurrent.getValueAsDouble(),
+        rightTorqueCurrent.getValueAsDouble() };
     inputs.tempCelcius = new double[] { leftTempCelsius.getValueAsDouble(), rightTempCelsius.getValueAsDouble() };
   }
 
@@ -241,7 +246,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         || kI.hasChanged(0)
         || kD.hasChanged(0)
         || motionAcceleration.hasChanged(0)
-        || motionCruiseVelocity.hasChanged(0)) {
+        || motionCruiseVelocity.hasChanged(0)
+        || motionJerk.hasChanged(0)) {
       slot0Configs.kA = kA.get();
       slot0Configs.kS = kS.get();
       slot0Configs.kV = kV.get();
@@ -250,6 +256,7 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
       slot0Configs.kD = kD.get();
       motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
       motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+      motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
       tryUntilOk(5, () -> leaderConfigurator.apply(slot0Configs));
       tryUntilOk(5, () -> followerConfigurator.apply(slot0Configs));
@@ -274,13 +281,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   }
 
   @Override
-  public void setEncoder2Zero(){
+  public void setEncoder2Zero() {
     leader.setPosition(0.0);
     follower.setPosition(0.0);
   }
 
   @Override
-  public double getEncoderPositionRads(){
+  public double getEncoderPositionRads() {
     return Units.rotationsToRadians(position.getValueAsDouble());
   }
 }
