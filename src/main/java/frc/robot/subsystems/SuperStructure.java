@@ -35,8 +35,9 @@ public class SuperStructure extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateStateMachine();
         periodicalUpdate();
+        updateStateMachine();
+        resetRequest();
     }
 
     public void updateStateMachine() {
@@ -55,6 +56,10 @@ public class SuperStructure extends SubsystemBase {
                 requestHome = false;
                 systemState = SuperStructureState.HOME;
             }
+        }
+
+        if (requestPosition != null && !loaded && requestLoad && atSetPoint) {
+            load("Station");
         }
 
         if (requestPosition != null && homed && !atSetPoint) {
@@ -88,6 +93,16 @@ public class SuperStructure extends SubsystemBase {
             }
         }
 
+        if (requestPosition != null && !loaded && requestAlgae != null && atSetPoint) {
+            switch (systemState) {
+                case HIGH_ALGAE -> getAlgae("HIGH");
+                case LOW_ALGAE -> getAlgae("LOW");
+                default -> {
+                    break;
+                }
+            }
+        }
+
         if (requestPosition != null && loaded && requestShoot && atSetPoint) {
             switch (systemState) {
                 case L1:
@@ -103,22 +118,8 @@ public class SuperStructure extends SubsystemBase {
             }
         }
 
-        if (requestPosition != null && !loaded && requestLoad && atSetPoint) {
-            load("Station");
-        }
-
         if (requestPosition != null && requestProcessor && atSetPoint) {
             shootProcessor();
-        }
-
-        if (requestPosition != null && !loaded && requestAlgae != null && atSetPoint) {
-            switch (systemState) {
-                case HIGH_ALGAE -> getAlgae("HIGH");
-                case LOW_ALGAE -> getAlgae("LOW");
-                default -> {
-                    break;
-                }
-            }
         }
     }
 
@@ -135,15 +136,15 @@ public class SuperStructure extends SubsystemBase {
     private void load(String pos) {
     }
 
+    private void getAlgae(String pos) {
+    }
+
     private void shootProcessor() {
     }
 
-    private void getAlgae(String pos) {
-
-    }
 
     /* get state from other subsystems */
-    private void gethomed() {
+    private void getHomed() {
         this.homed = true;
     }
 
@@ -156,7 +157,7 @@ public class SuperStructure extends SubsystemBase {
     }
 
     private void periodicalUpdate() {
-        gethomed();
+        getHomed();
         getSetPoint();
         getLoaded();
     }
@@ -192,16 +193,6 @@ public class SuperStructure extends SubsystemBase {
     }
 
     private enum SuperStructureState {
-        INITIALIZE,
-        HOME,
-        L1,
-        L2,
-        L3,
-        L4,
-        LOW_ALGAE,
-        HIGH_ALGAE,
-        PROCESSOR,
-        STATION,
-        MANUAL
+        INITIALIZE, HOME, L1, L2, L3, L4, LOW_ALGAE, HIGH_ALGAE, PROCESSOR, STATION, MANUAL
     }
 }
