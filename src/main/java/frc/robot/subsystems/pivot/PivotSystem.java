@@ -30,12 +30,11 @@ public class PivotSystem extends SubsystemBase {
     this.io = pivotIO;
   }
 
-  private void home(){
-
-  }
+    private void home() {
+    }
 
   @Override
-  public void periodic(){
+  public void periodic() {
     io.updateInputs(inputs);
     io.updateTunableNumbers();
     updateStateMachine();
@@ -46,19 +45,19 @@ public class PivotSystem extends SubsystemBase {
   }
 
   public void updateStateMachine() {
-    if (systemState == PivotState.INITIALIZED){
+      if (systemState == PivotState.INITIALIZED) {
       requestHome = true;
     }
 
-    if (requestHome){
+      if (requestHome) {
       home();
       systemState = PivotState.HOME;
       homed = true;
       requestHome = false;
     }
 
-    if (requestPosition && homed){
-      switch (positionString){
+      if (requestPosition && homed) {
+          switch (positionString) {
         case "L1":
           systemState = PivotState.L1;
           break;
@@ -94,8 +93,6 @@ public class PivotSystem extends SubsystemBase {
         default:
           break;
       }
-
     }
   }
-
 }
