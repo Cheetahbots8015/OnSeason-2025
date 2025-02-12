@@ -62,8 +62,9 @@ public interface ElevatorSystemIO {
 
   default void setSoftLimits(boolean enableForward, boolean enableReverse){}
 
-  default double getEncoderPositionRads(){
-      return -1.0;}
+  default double getEncoderPositionRads() {
+    return -1.0;
+  }
 
   /* Stop elevator */
   default void stop() {}

@@ -206,6 +206,7 @@ public class ElevatorSystem extends SubsystemBase {
           }
           break;
 
+
         case "Low_algae":
           target = ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS;
           io.set2Position(target);
@@ -215,6 +216,7 @@ public class ElevatorSystem extends SubsystemBase {
             systemState = ElevatorState.LOW_ALGAE;
           }
           break;
+
 
         case "High_algae":
           target = ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS;
@@ -239,9 +241,7 @@ public class ElevatorSystem extends SubsystemBase {
           requestPosition = false;
           break;
       }
-
     }
-
   }
 
   private void home() {
@@ -268,6 +268,7 @@ public class ElevatorSystem extends SubsystemBase {
   }
 
   public void setRequestManual(boolean set) {
+  public void setRequestManual(boolean set) {
     requestManual = set;
   }
 
@@ -280,9 +281,11 @@ public class ElevatorSystem extends SubsystemBase {
   }
 
   public void setManualVoltage(double value) {
+  public void setManualVoltage(double value) {
     manualVoltage = value;
   }
 
+  public void setPositionString(String value) {
   public void setPositionString(String value) {
     positionString = value;
   }

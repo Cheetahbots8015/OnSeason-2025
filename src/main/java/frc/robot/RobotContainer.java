@@ -13,7 +13,7 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
+import static frc.robot.generated.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -84,8 +84,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation),
-                new VisionIOLimelight(camera1Name, drive::getRotation));
+                    new VisionIOLimelight(cameraReefName, drive::getRotation),
+                    new VisionIOLimelight(cameraStationName, drive::getRotation));
         break;
 
       case SIM:
@@ -100,8 +100,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+                    new VisionIOPhotonVisionSim(cameraReefName, robotToCameraReef, drive::getPose),
+                    new VisionIOPhotonVisionSim(
+                            cameraStationName, robotToCameraStation, drive::getPose));
         break;
 
       default:
