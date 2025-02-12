@@ -9,9 +9,6 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
 public interface ElevatorSystemIO {
   @AutoLog
   static class ElevatorSystemIOInputs {
@@ -37,10 +34,11 @@ public interface ElevatorSystemIO {
   /* Run elevator at motionmagic foc */
   default void setHeightRads(double height) {}
 
-  default void setEncoder2Zero(){}
+  default void setEncoder2Zero() {}
 
-  default double getEncoderPositionRads(){
-      return -1.0;}
+  default double getEncoderPositionRads() {
+    return -1.0;
+  }
 
   /* Stop elevator */
   default void stop() {}
