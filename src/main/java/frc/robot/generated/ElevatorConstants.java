@@ -3,13 +3,21 @@ package frc.robot.generated;
 public class ElevatorConstants {
     public static final int ELEVATOR_LEFT_ID = 10;
     public static final int ELEVATOR_RIGHT_ID = 11;
-    public static final int ELEVATOR_LOW_LIMITSWITCH_ID = 0;
-    public static final int ELEVATOR_HIGH_LIMITSWITCH_ID = 1;
+    public static final int ELEVATOR_HALL_SENSOR_ID = 0;
 
     public static final boolean ELEVATOR_LEFT_INVERSION = false;
     public static final boolean ELEVATOR_LEFT_BRAKE = true;
     public static final boolean ELEVATOR_RIGHT_BRAKE = true;
-    public static final boolean OPPOSE_MASTER = false;
+    public static final boolean OPPOSE_MASTER = true;
+
+    public static final boolean ELEVATOR_LEADER_FORWARD_SOFT_LIMIT_ENABLE = false;
+    public static final boolean ELEVATOR_LEADER_REVERSE_SOFT_LIMIT_ENABLE = false;
+    public static final boolean ELEVATOR_FOLLOWER_FORWARD_SOFT_LIMIT_ENABLE = false;
+    public static final boolean ELEVATOR_FOLLOWER_REVERSE_SOFT_LIMIT_ENABLE = false;
+    public static final double ELEVATOR_LEADER_SOFT_LIMIT_FORWARD = 0.0;
+    public static final double ELEVATOR_LEADER_SOFT_LIMIT_REVERSE = 0.0;
+    public static final double ELEVATOR_FOLLOWER_SOFT_LIMIT_FORWARD = 0.0;
+    public static final double ELEVATOR_FOLLOWER_SOFT_LIMIT_REVERSE = 0.0;
 
     public static final boolean ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE = true;
     public static final boolean ELEVATOR_SUPPLY_CURRENT_LIMIT_ENABLE = true;
