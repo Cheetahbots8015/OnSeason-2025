@@ -37,12 +37,14 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.subsystems.rollers.RollerSystemIO.RollerSystemIOInputs;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.NarcissusUtil;
 
 /**
  * Generic roller IO implementation for a roller or series of rollers using a
@@ -60,6 +62,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private final MotorOutputConfigs followerMotorConfigs;
   private final Slot0Configs slot0Configs;
   private final MotionMagicConfigs motionMagicConfigs;
+  private final TalonFXConfiguration leaderConfigs;
+  private final TalonFXConfiguration followerConfigs;
+
+  private double manualVoltageValue;
+  private double positionTargetValue;
+
+  private final DigitalInput hallSensor = new DigitalInput(ElevatorConstants.ELEVATOR_HALL_SENSOR_ID);
 
   /* Gains */
   LoggedTunableNumber kA = new LoggedTunableNumber("Elevator/kA", ElevatorConstants.ELEVATOR_KA);
@@ -75,6 +84,9 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
       ElevatorConstants.ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY);
   LoggedTunableNumber motionJerk = new LoggedTunableNumber("Elevator/MotionJerk",
       ElevatorConstants.ELEVATOR_MOTION_MAGIC_JERK);
+  
+  LoggedTunableNumber manualVoltage = new LoggedTunableNumber("Elevator/manualVoltage", 0.0);
+  LoggedTunableNumber positionTarget = new LoggedTunableNumber("Elevator/positionTarget", 0.0);
 
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
@@ -106,7 +118,20 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     this.leaderConfigurator = leader.getConfigurator();
     this.followerConfigurator = follower.getConfigurator();
 
+    
     /* Create configs */
+    leaderConfigs = new TalonFXConfiguration();
+    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = ElevatorConstants.ELEVATOR_LEADER_FORWARD_SOFT_LIMIT_ENABLE;
+    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.ELEVATOR_LEADER_SOFT_LIMIT_FORWARD;
+    leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = ElevatorConstants.ELEVATOR_LEADER_REVERSE_SOFT_LIMIT_ENABLE;
+    leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.ELEVATOR_LEADER_SOFT_LIMIT_REVERSE;
+    followerConfigs = new TalonFXConfiguration();
+    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = ElevatorConstants.ELEVATOR_FOLLOWER_FORWARD_SOFT_LIMIT_ENABLE;
+    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.ELEVATOR_FOLLOWER_SOFT_LIMIT_FORWARD;
+    followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = ElevatorConstants.ELEVATOR_FOLLOWER_REVERSE_SOFT_LIMIT_ENABLE;
+    followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.ELEVATOR_FOLLOWER_SOFT_LIMIT_REVERSE;
+
+
     currentLimitsConfigs = new CurrentLimitsConfigs();
     currentLimitsConfigs.StatorCurrentLimitEnable = ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE;
     currentLimitsConfigs.SupplyCurrentLimitEnable = ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_ENABLE;
@@ -161,6 +186,7 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     tryUntilOk(5, () -> leaderConfigurator.apply(motionMagicConfigs));
     tryUntilOk(5, () -> leaderConfigurator.apply(openLoopRampsConfigs));
     tryUntilOk(5, () -> leaderConfigurator.apply(closedLoopRampsConfigs));
+    tryUntilOk(5, () -> leaderConfigurator.apply(leaderConfigs));
 
     tryUntilOk(5, () -> followerConfigurator.apply(currentLimitsConfigs));
     tryUntilOk(5, () -> followerConfigurator.apply(followerMotorConfigs));
@@ -168,6 +194,7 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     tryUntilOk(5, () -> followerConfigurator.apply(motionMagicConfigs));
     tryUntilOk(5, () -> followerConfigurator.apply(openLoopRampsConfigs));
     tryUntilOk(5, () -> followerConfigurator.apply(closedLoopRampsConfigs));
+    tryUntilOk(5, () -> followerConfigurator.apply(followerConfigs));
 
     follower.setControl(new Follower(ElevatorConstants.ELEVATOR_LEFT_ID, ElevatorConstants.OPPOSE_MASTER));
 
@@ -184,6 +211,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     rightTempCelsius = follower.getDeviceTemp();
     leftReference = leader.getClosedLoopReference();
     rightReference = follower.getClosedLoopReference();
+
+    manualVoltageValue = manualVoltage.get();
 
     tryUntilOk(
         5,
@@ -223,6 +252,7 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         leftReference,
         rightReference)
         .isOK();
+    inputs.hallSensorActive = hallSensor.get();
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.accelerationRadsPerSec2 = Units.rotationsToRadians(acceleration.getValueAsDouble());
@@ -263,11 +293,25 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
       tryUntilOk(5, () -> leaderConfigurator.apply(motionMagicConfigs));
       tryUntilOk(5, () -> followerConfigurator.apply(motionMagicConfigs));
     }
+
+    if(manualVoltage.hasChanged(0)){
+      manualVoltageValue = manualVoltage.get();
+    }
+
+    if(positionTarget.hasChanged(0)){
+      positionTargetValue = positionTarget.get();
+    }
+
   }
 
   @Override
   public void setVolts(double volts) {
     leader.setControl(voltageOut.withOutput(volts));
+  }
+
+  @Override
+  public void setVolts() {
+    leader.setControl(voltageOut.withOutput(manualVoltageValue));
   }
 
   @Override
@@ -289,5 +333,55 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   @Override
   public double getEncoderPositionRads() {
     return Units.rotationsToRadians(position.getValueAsDouble());
+  }
+
+  @Override
+  public void set2Position(double target) {
+    setHeightRads(target);
+    if (NarcissusUtil.deadband(getEncoderPositionRads() - target,
+        ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+      stop();
+    }
+  }
+
+  @Override
+  public void set2Position() {
+    setHeightRads(positionTargetValue);
+    if (NarcissusUtil.deadband(getEncoderPositionRads() - positionTargetValue,
+        ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+      stop();
+    }
+  }
+
+  @Override
+  public boolean isAtPosition(double target){
+    return NarcissusUtil.deadband(getEncoderPositionRads() - target,
+    ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0;
+  }
+
+  @Override
+  public boolean isAtPosition(){
+    return NarcissusUtil.deadband(getEncoderPositionRads() - positionTargetValue,
+    ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0;
+  }
+
+  @Override
+  public void hold(){
+    setHeightRads(getEncoderPositionRads());
+  }
+
+  @Override
+  public boolean isHallSensorActive(){
+    return hallSensor.get();
+  }
+
+  @Override
+  public void setSoftLimits(boolean enableForward, boolean enableReverse){
+    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
+    leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
+    tryUntilOk(5, () -> leaderConfigurator.apply(leaderConfigs));
+    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
+    followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
+    tryUntilOk(5, () -> followerConfigurator.apply(followerConfigs));
   }
 }
