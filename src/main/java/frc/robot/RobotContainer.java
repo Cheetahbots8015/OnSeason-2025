@@ -35,7 +35,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.ElevatorSystem;
-import frc.robot.subsystems.elevator.ElevatorSystemIO;
 import frc.robot.subsystems.elevator.ElevatorSystemIOKrakenX60;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
@@ -63,10 +62,10 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  //commands
+  // commands
   private final Command elevatorManualCommand;
 
-  //triggers
+  // triggers
   private final Trigger elevatorManualTrigger;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -84,8 +83,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                    new VisionIOLimelight(cameraReefName, drive::getRotation),
-                    new VisionIOLimelight(cameraStationName, drive::getRotation));
+                new VisionIOLimelight(cameraReefName, drive::getRotation),
+                new VisionIOLimelight(cameraStationName, drive::getRotation));
         break;
 
       case SIM:
@@ -100,9 +99,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                    new VisionIOPhotonVisionSim(cameraReefName, robotToCameraReef, drive::getPose),
-                    new VisionIOPhotonVisionSim(
-                            cameraStationName, robotToCameraStation, drive::getPose));
+                new VisionIOPhotonVisionSim(cameraReefName, robotToCameraReef, drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    cameraStationName, robotToCameraStation, drive::getPose));
         break;
 
       default:
@@ -137,7 +136,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    
     elevatorIO = new ElevatorSystemIOKrakenX60();
     elevator = new ElevatorSystem("elevator", elevatorIO);
 
@@ -186,7 +184,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    
+
     elevatorManualTrigger.whileTrue(elevatorManualCommand);
   }
 

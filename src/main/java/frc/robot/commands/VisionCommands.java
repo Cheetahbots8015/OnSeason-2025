@@ -8,42 +8,41 @@ import frc.robot.subsystems.vision.Vision;
 
 public class VisionCommands {
 
-    public VisionCommands() {
-    }
+  public VisionCommands() {}
 
-    public static Command aimAtLeftReef(Drive drive, Vision vision) {
-        double[] speed = vision.calculateChassisInput(0, true);
-        return Commands.run(
-                () -> {
-                    drive.runVelocity(
-                            ChassisSpeeds.fromRobotRelativeSpeeds(
-                                    speed[0], speed[1], speed[2], drive.getRotation()));
-                },
-                drive,
-                vision);
-    }
+  public static Command aimAtLeftReef(Drive drive, Vision vision) {
+    double[] speed = vision.calculateChassisInput(0, true);
+    return Commands.run(
+        () -> {
+          drive.runVelocity(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
+                  speed[0], speed[1], speed[2], drive.getRotation()));
+        },
+        drive,
+        vision);
+  }
 
-    public static Command aimAtRightReef(Drive drive, Vision vision) {
-        double[] speed = vision.calculateChassisInput(0, false);
-        return Commands.run(
-                () -> {
-                    drive.runVelocity(
-                            ChassisSpeeds.fromRobotRelativeSpeeds(
-                                    speed[0], speed[1], speed[2], drive.getRotation()));
-                },
-                drive,
-                vision);
-    }
+  public static Command aimAtRightReef(Drive drive, Vision vision) {
+    double[] speed = vision.calculateChassisInput(0, false);
+    return Commands.run(
+        () -> {
+          drive.runVelocity(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
+                  speed[0], speed[1], speed[2], drive.getRotation()));
+        },
+        drive,
+        vision);
+  }
 
-    public static Command aimAtStation(Drive drive, Vision vision) {
-        double[] speed = vision.calculateChassisInput(1, true);
-        return Commands.run(
-                () -> {
-                    drive.runVelocity(
-                            ChassisSpeeds.fromRobotRelativeSpeeds(
-                                    speed[0], speed[1], speed[2], drive.getRotation()));
-                },
-                drive,
-                vision);
-    }
+  public static Command aimAtStation(Drive drive, Vision vision) {
+    double[] speed = vision.calculateChassisInput(1, true);
+    return Commands.run(
+        () -> {
+          drive.runVelocity(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
+                  speed[0], speed[1], speed[2], drive.getRotation()));
+        },
+        drive,
+        vision);
+  }
 }

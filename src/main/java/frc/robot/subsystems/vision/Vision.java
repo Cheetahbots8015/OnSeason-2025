@@ -57,8 +57,8 @@ public class Vision extends SubsystemBase {
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < inputs.length; i++) {
       disconnectedAlerts[i] =
-              new Alert(
-                      "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
+          new Alert(
+              "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
     }
   }
 
@@ -108,17 +108,17 @@ public class Vision extends SubsystemBase {
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
         boolean rejectPose =
-                observation.tagCount() == 0 // Must have at least one tag
-                        || (observation.tagCount() == 1
-                        && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
-                        || Math.abs(observation.pose().getZ())
-                        > maxZError // Must have realistic Z coordinate
+            observation.tagCount() == 0 // Must have at least one tag
+                || (observation.tagCount() == 1
+                    && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
+                || Math.abs(observation.pose().getZ())
+                    > maxZError // Must have realistic Z coordinate
 
-                        // Must be within the field boundaries
-                        || observation.pose().getX() < 0.0
-                        || observation.pose().getX() > aprilTagLayout.getFieldLength()
-                        || observation.pose().getY() < 0.0
-                        || observation.pose().getY() > aprilTagLayout.getFieldWidth();
+                // Must be within the field boundaries
+                || observation.pose().getX() < 0.0
+                || observation.pose().getX() > aprilTagLayout.getFieldLength()
+                || observation.pose().getY() < 0.0
+                || observation.pose().getY() > aprilTagLayout.getFieldWidth();
 
         // Add pose to log
         robotPoses.add(observation.pose());
@@ -135,7 +135,7 @@ public class Vision extends SubsystemBase {
 
         // Calculate standard deviations
         double stdDevFactor =
-                Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
         double linearStdDev = linearStdDevBaseline * stdDevFactor;
         double angularStdDev = angularStdDevBaseline * stdDevFactor;
         if (observation.type() == PoseObservationType.MEGATAG_2) {
@@ -149,27 +149,27 @@ public class Vision extends SubsystemBase {
 
         // Send vision observation
         consumer.accept(
-                observation.pose().toPose2d(),
-                observation.timestamp(),
-                VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+            observation.pose().toPose2d(),
+            observation.timestamp(),
+            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       }
 
       // Log camera datadata
       Logger.recordOutput(
-              "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
-              tagPoses.toArray(new Pose3d[tagPoses.size()]));
+          "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
+          tagPoses.toArray(new Pose3d[tagPoses.size()]));
       Logger.recordOutput(
-              "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
-              robotPoses.toArray(new Pose3d[robotPoses.size()]));
+          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+          robotPoses.toArray(new Pose3d[robotPoses.size()]));
       Logger.recordOutput(
-              "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
-              robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
+          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
+          robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
       Logger.recordOutput(
-              "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
-              robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
+          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+          robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
       Logger.recordOutput(
-              "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
-              this.getSystemState());
+          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+          this.getSystemState());
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
@@ -178,15 +178,15 @@ public class Vision extends SubsystemBase {
 
     // Log summary data
     Logger.recordOutput(
-            "Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+        "Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
     Logger.recordOutput(
-            "Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
+        "Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
     Logger.recordOutput(
-            "Vision/Summary/RobotPosesAccepted",
-            allRobotPosesAccepted.toArray(new Pose3d[allRobotPosesAccepted.size()]));
+        "Vision/Summary/RobotPosesAccepted",
+        allRobotPosesAccepted.toArray(new Pose3d[allRobotPosesAccepted.size()]));
     Logger.recordOutput(
-            "Vision/Summary/RobotPosesRejected",
-            allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+        "Vision/Summary/RobotPosesRejected",
+        allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
   }
 
   public void updateStateMachine() {
@@ -244,39 +244,39 @@ public class Vision extends SubsystemBase {
           shift = -shift;
         }
         double targety =
-                inputs[cameraIndex].distance2target
-                        * Math.cos(
-                        inputs[cameraIndex].lastestAprilTagObservation
-                                .tx()); // TODO: this should be calculateDistance2Tar4Reef
+            inputs[cameraIndex].distance2target
+                * Math.cos(
+                    inputs[cameraIndex].lastestAprilTagObservation
+                        .tx()); // TODO: this should be calculateDistance2Tar4Reef
         double targetx =
-                inputs[cameraIndex].distance2target
-                        * Math.sin(inputs[cameraIndex].lastestAprilTagObservation.tx())
-                        + shift;
+            inputs[cameraIndex].distance2target
+                    * Math.sin(inputs[cameraIndex].lastestAprilTagObservation.tx())
+                + shift;
         double D =
-                Math.sqrt(
-                        (targety + VisionConstants.reefCamYShift)
-                                * (targety + VisionConstants.reefCamYShift)
-                                + (targetx - VisionConstants.reefCamXShift)
-                                * (targetx - VisionConstants.reefCamXShift));
+            Math.sqrt(
+                (targety + VisionConstants.reefCamYShift)
+                        * (targety + VisionConstants.reefCamYShift)
+                    + (targetx - VisionConstants.reefCamXShift)
+                        * (targetx - VisionConstants.reefCamXShift));
         double angle =
-                Math.atan(
-                        (targetx - VisionConstants.reefCamXShift)
-                                / (targety + VisionConstants.reefCamYShift));
+            Math.atan(
+                (targetx - VisionConstants.reefCamXShift)
+                    / (targety + VisionConstants.reefCamYShift));
         input[0] = VisionConstants.kPVerticalAim * D * Math.cos(angle);
         input[1] = VisionConstants.kPHorizontalAim * D * Math.sin(angle);
         input[2] =
-                VisionConstants.kPRotationalAim * inputs[cameraIndex].lastestAprilTagObservation.tx();
+            VisionConstants.kPRotationalAim * inputs[cameraIndex].lastestAprilTagObservation.tx();
       } else if (cameraIndex == 1) {
         input[0] =
-                VisionConstants.kPVerticalAim
-                        * inputs[cameraIndex].distance2target
-                        * Math.cos(inputs[cameraIndex].lastestAprilTagObservation.tx());
+            VisionConstants.kPVerticalAim
+                * inputs[cameraIndex].distance2target
+                * Math.cos(inputs[cameraIndex].lastestAprilTagObservation.tx());
         input[1] =
-                VisionConstants.kPHorizontalAim
-                        * inputs[cameraIndex].distance2target
-                        * Math.sin(inputs[cameraIndex].lastestAprilTagObservation.tx());
+            VisionConstants.kPHorizontalAim
+                * inputs[cameraIndex].distance2target
+                * Math.sin(inputs[cameraIndex].lastestAprilTagObservation.tx());
         input[2] =
-                VisionConstants.kPRotationalAim * inputs[cameraIndex].lastestAprilTagObservation.tx();
+            VisionConstants.kPRotationalAim * inputs[cameraIndex].lastestAprilTagObservation.tx();
       }
     }
     return input;
@@ -293,8 +293,8 @@ public class Vision extends SubsystemBase {
   @FunctionalInterface
   public static interface VisionConsumer {
     public void accept(
-            Pose2d visionRobotPoseMeters,
-            double timestampSeconds,
-            Matrix<N3, N1> visionMeasurementStdDevs);
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs);
   }
 }

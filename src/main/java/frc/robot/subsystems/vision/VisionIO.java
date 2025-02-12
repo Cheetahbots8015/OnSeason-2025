@@ -42,8 +42,7 @@ public interface VisionIO {
       double averageTagDistance,
       PoseObservationType type) {}
 
-  public static record AprilTagObservation(double tx, double ty) {
-  }
+  public static record AprilTagObservation(double tx, double ty) {}
 
   public static enum PoseObservationType {
     MEGATAG_1,

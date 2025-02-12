@@ -9,9 +9,6 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
 public interface ElevatorSystemIO {
   @AutoLog
   static class ElevatorSystemIOInputs {
@@ -40,27 +37,27 @@ public interface ElevatorSystemIO {
   /* Run elevator at motionmagic foc */
   default void setHeightRads(double height) {}
 
-  default void set2Position(double target){}
+  default void set2Position(double target) {}
 
-  default void set2Position(){}
+  default void set2Position() {}
 
-  default void hold(){}
+  default void hold() {}
 
-  default boolean isAtPosition(double target){
+  default boolean isAtPosition(double target) {
     return false;
   }
 
-  default boolean isAtPosition(){
+  default boolean isAtPosition() {
     return false;
   }
 
-  default boolean isHallSensorActive(){
+  default boolean isHallSensorActive() {
     return false;
   }
 
-  default void setEncoder2Zero(){}
+  default void setEncoder2Zero() {}
 
-  default void setSoftLimits(boolean enableForward, boolean enableReverse){}
+  default void setSoftLimits(boolean enableForward, boolean enableReverse) {}
 
   default double getEncoderPositionRads() {
     return -1.0;

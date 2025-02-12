@@ -7,21 +7,18 @@
 
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
-import frc.robot.util.NarcissusUtil;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.SignalLogger;
 
 public class ElevatorSystem extends SubsystemBase {
   private final String name;
@@ -65,18 +62,19 @@ public class ElevatorSystem extends SubsystemBase {
     this.name = name;
     this.io = io;
     disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
-    m_SysIdRoutineElevator = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,
-            Volts.of(2.4),
-            Seconds.of(3),
-            (state) -> SignalLogger.writeString("state", state.toString())),
-        new SysIdRoutine.Mechanism(
-            (volts) -> {
-              io.setVolts(volts.magnitude());
-            },
-            null,
-            this));
+    m_SysIdRoutineElevator =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                Volts.of(2.4),
+                Seconds.of(3),
+                (state) -> SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (volts) -> {
+                  io.setVolts(volts.magnitude());
+                },
+                null,
+                this));
 
     routineToApply = m_SysIdRoutineElevator;
   }
@@ -206,7 +204,6 @@ public class ElevatorSystem extends SubsystemBase {
           }
           break;
 
-
         case "Low_algae":
           target = ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS;
           io.set2Position(target);
@@ -216,7 +213,6 @@ public class ElevatorSystem extends SubsystemBase {
             systemState = ElevatorState.LOW_ALGAE;
           }
           break;
-
 
         case "High_algae":
           target = ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS;
@@ -268,7 +264,6 @@ public class ElevatorSystem extends SubsystemBase {
   }
 
   public void setRequestManual(boolean set) {
-  public void setRequestManual(boolean set) {
     requestManual = set;
   }
 
@@ -281,11 +276,9 @@ public class ElevatorSystem extends SubsystemBase {
   }
 
   public void setManualVoltage(double value) {
-  public void setManualVoltage(double value) {
     manualVoltage = value;
   }
 
-  public void setPositionString(String value) {
   public void setPositionString(String value) {
     positionString = value;
   }

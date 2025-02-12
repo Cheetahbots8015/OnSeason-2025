@@ -9,19 +9,15 @@ package frc.robot.subsystems.rollers;
 
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
-import java.io.ObjectInputFilter.Status;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -47,7 +43,7 @@ public class RollerSystemIOKrakenX60 implements RollerSystemIO {
   private final CurrentLimitsConfigs currentLimitsConfigs;
   private final MotorOutputConfigs MotorConfigs;
   private final Slot0Configs slot0Configs;
-/* Gains */
+  /* Gains */
   LoggedTunableNumber kA = new LoggedTunableNumber("Roller/kA", RollerConstants.ROLLER_KA);
   LoggedTunableNumber kS = new LoggedTunableNumber("Roller/kS", RollerConstants.ROLLER_KS);
   LoggedTunableNumber kV = new LoggedTunableNumber("Roller/kV", RollerConstants.ROLLER_KV);
@@ -66,33 +62,39 @@ public class RollerSystemIOKrakenX60 implements RollerSystemIO {
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
-  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0.0).withUpdateFreqHz(0);
+  private final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC =
+      new VelocityTorqueCurrentFOC(0.0).withUpdateFreqHz(0);
 
   public RollerSystemIOKrakenX60() {
 
-     /* Instantiate motors and configurators */
+    /* Instantiate motors and configurators */
     this.talon = new TalonFX(RollerConstants.ROLLER_ID, "dabus");
 
     this.Configurator = talon.getConfigurator();
 
     /* Create configs */
     currentLimitsConfigs = new CurrentLimitsConfigs();
-    currentLimitsConfigs.StatorCurrentLimitEnable = RollerConstants.ROLLER_STATOR_CURRENT_LIMIT_ENABLE;
-    currentLimitsConfigs.SupplyCurrentLimitEnable = RollerConstants.ROLLER_SUPPLY_CURRENT_LIMIT_ENABLE;
+    currentLimitsConfigs.StatorCurrentLimitEnable =
+        RollerConstants.ROLLER_STATOR_CURRENT_LIMIT_ENABLE;
+    currentLimitsConfigs.SupplyCurrentLimitEnable =
+        RollerConstants.ROLLER_SUPPLY_CURRENT_LIMIT_ENABLE;
     currentLimitsConfigs.StatorCurrentLimit = RollerConstants.ROLLER_STATOR_CURRENT_LIMIT_AMPS;
     currentLimitsConfigs.SupplyCurrentLimit = RollerConstants.ROLLER_SUPPLY_CURRENT_LIMIT_AMPS;
-    currentLimitsConfigs.SupplyCurrentLowerLimit = RollerConstants.ROLLER_SUPPLY_CURRENT_LOWER_LIMIT_AMPS;
+    currentLimitsConfigs.SupplyCurrentLowerLimit =
+        RollerConstants.ROLLER_SUPPLY_CURRENT_LOWER_LIMIT_AMPS;
     // if supply current limit is active for longer than this period, the supply
     // current will be adjusted to supply current lower limit
     currentLimitsConfigs.SupplyCurrentLowerTime = RollerConstants.ROLLER_SUPPLY_CURRENT_LOWER_TIME;
 
     MotorConfigs = new MotorOutputConfigs();
-    MotorConfigs.Inverted = RollerConstants.ROLLER_INVERSION ? InvertedValue.Clockwise_Positive
-        : InvertedValue.CounterClockwise_Positive;
+    MotorConfigs.Inverted =
+        RollerConstants.ROLLER_INVERSION
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
     MotorConfigs.PeakForwardDutyCycle = RollerConstants.ROLLER_PEAK_FORWARD_DUTY_CYCLE;
     MotorConfigs.PeakReverseDutyCycle = RollerConstants.ROLLER_PEAK_REVERSE_DUTY_CYCLE;
-    MotorConfigs.NeutralMode = RollerConstants.ROLLER_BRAKE ? NeutralModeValue.Brake
-        : NeutralModeValue.Coast;
+    MotorConfigs.NeutralMode =
+        RollerConstants.ROLLER_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kA = kA.get();
@@ -103,14 +105,20 @@ public class RollerSystemIOKrakenX60 implements RollerSystemIO {
     slot0Configs.kV = kV.get();
 
     OpenLoopRampsConfigs openLoopRampsConfigs = new OpenLoopRampsConfigs();
-    openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod = RollerConstants.ROLLER_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
-    openLoopRampsConfigs.TorqueOpenLoopRampPeriod = RollerConstants.ROLLER_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
-    openLoopRampsConfigs.VoltageOpenLoopRampPeriod = RollerConstants.ROLLER_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod =
+        RollerConstants.ROLLER_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.TorqueOpenLoopRampPeriod =
+        RollerConstants.ROLLER_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.VoltageOpenLoopRampPeriod =
+        RollerConstants.ROLLER_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
 
     ClosedLoopRampsConfigs closedLoopRampsConfigs = new ClosedLoopRampsConfigs();
-    closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod = RollerConstants.ROLLER_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
-    closedLoopRampsConfigs.TorqueClosedLoopRampPeriod = RollerConstants.ROLLER_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
-    closedLoopRampsConfigs.VoltageClosedLoopRampPeriod = RollerConstants.ROLLER_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod =
+        RollerConstants.ROLLER_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.TorqueClosedLoopRampPeriod =
+        RollerConstants.ROLLER_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.VoltageClosedLoopRampPeriod =
+        RollerConstants.ROLLER_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
 
     /* Apply configs */
     tryUntilOk(5, () -> Configurator.apply(currentLimitsConfigs));
@@ -118,7 +126,6 @@ public class RollerSystemIOKrakenX60 implements RollerSystemIO {
     tryUntilOk(5, () -> Configurator.apply(slot0Configs));
     tryUntilOk(5, () -> Configurator.apply(openLoopRampsConfigs));
     tryUntilOk(5, () -> Configurator.apply(closedLoopRampsConfigs));
-    
 
     position = talon.getPosition();
     velocity = talon.getVelocity();
@@ -147,7 +154,13 @@ public class RollerSystemIOKrakenX60 implements RollerSystemIO {
   public void updateInputs(RollerSystemIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
-                position, velocity, acceleration, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)
+                position,
+                velocity,
+                acceleration,
+                appliedVoltage,
+                supplyCurrent,
+                torqueCurrent,
+                tempCelsius)
             .isOK();
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());

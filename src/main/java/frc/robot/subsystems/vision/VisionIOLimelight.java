@@ -58,21 +58,19 @@ public class VisionIOLimelight implements VisionIO {
     tySubscriber = table.getDoubleTopic("ty").subscribe(0.0);
     megatag1Subscriber = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[] {});
     megatag2Subscriber =
-            table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[]{});
+        table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
   }
 
-  /**
-   * Parses the 3D pose from a Limelight botpose array.
-   */
+  /** Parses the 3D pose from a Limelight botpose array. */
   private static Pose3d parsePose(double[] rawLLArray) {
     return new Pose3d(
-            rawLLArray[0],
-            rawLLArray[1],
-            rawLLArray[2],
-            new Rotation3d(
-                    Units.degreesToRadians(rawLLArray[3]),
-                    Units.degreesToRadians(rawLLArray[4]),
-                    Units.degreesToRadians(rawLLArray[5])));
+        rawLLArray[0],
+        rawLLArray[1],
+        rawLLArray[2],
+        new Rotation3d(
+            Units.degreesToRadians(rawLLArray[3]),
+            Units.degreesToRadians(rawLLArray[4]),
+            Units.degreesToRadians(rawLLArray[5])));
   }
 
   @Override
@@ -80,21 +78,21 @@ public class VisionIOLimelight implements VisionIO {
     // Update connection status based on whether an update has been seen in the last
     // 250ms
     inputs.connected =
-            ((RobotController.getFPGATime() - latencySubscriber.getLastChange()) / 1000) < 250;
+        ((RobotController.getFPGATime() - latencySubscriber.getLastChange()) / 1000) < 250;
 
     // Update target observation
     inputs.latestTargetObservation =
-            new TargetObservation(
-                    Rotation2d.fromDegrees(txSubscriber.get()), Rotation2d.fromDegrees(tySubscriber.get()));
+        new TargetObservation(
+            Rotation2d.fromDegrees(txSubscriber.get()), Rotation2d.fromDegrees(tySubscriber.get()));
 
     // Update target distance
     inputs.distance2target = calculateDistance2Tag(tySubscriber.get());
     inputs.lastestAprilTagObservation =
-            new AprilTagObservation(txSubscriber.get(), tySubscriber.get());
+        new AprilTagObservation(txSubscriber.get(), tySubscriber.get());
 
     // Update orientation for MegaTag 2
     orientationPublisher.accept(
-            new double[]{rotationSupplier.get().getDegrees(), 0.0, 0.0, 0.0, 0.0, 0.0});
+        new double[] {rotationSupplier.get().getDegrees(), 0.0, 0.0, 0.0, 0.0, 0.0});
     NetworkTableInstance.getDefault()
         .flush(); // Increases network traffic but recommended by Limelight
 
@@ -191,10 +189,10 @@ public class VisionIOLimelight implements VisionIO {
     double targety = calculateDistance2Tag(ty) * Math.cos(tx);
     double targetx = calculateDistance2Tag(ty) * Math.sin(tx) + shift;
     double D =
-            Math.sqrt(
-                    (targety + VisionConstants.reefCamYShift) * (targety + VisionConstants.reefCamYShift)
-                            + (targetx - VisionConstants.reefCamXShift)
-                            * (targetx - VisionConstants.reefCamXShift));
+        Math.sqrt(
+            (targety + VisionConstants.reefCamYShift) * (targety + VisionConstants.reefCamYShift)
+                + (targetx - VisionConstants.reefCamXShift)
+                    * (targetx - VisionConstants.reefCamXShift));
     return D;
   }
 
