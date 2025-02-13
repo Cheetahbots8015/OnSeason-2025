@@ -13,8 +13,9 @@ public class ElevatorManualCommand extends Command {
 
   @Override
   public void execute() {
+    m_elevator.setSoftLimitEnable(false, false);
     m_elevator.setRequestManual(true);
-    m_elevator.setManualVoltage(0.0);
+    m_elevator.setManualVoltage(1.0);
     m_elevator.setUseManualDynamic(false);
   }
 
@@ -25,6 +26,7 @@ public class ElevatorManualCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    m_elevator.setSoftLimitEnable(true, true);
     m_elevator.setRequestManual(false);
     m_elevator.setManualVoltage(0.0);
     m_elevator.setUseManualDynamic(false);

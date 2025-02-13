@@ -1,8 +1,8 @@
 package frc.robot.generated;
 
 public class ElevatorConstants {
-  public static final int ELEVATOR_LEFT_ID = 10;
-  public static final int ELEVATOR_RIGHT_ID = 11;
+  public static final int ELEVATOR_LEFT_ID = 52;
+  public static final int ELEVATOR_RIGHT_ID = 51;
   public static final int ELEVATOR_HALL_SENSOR_ID = 0;
 
   public static final boolean ELEVATOR_LEFT_INVERSION = false;
@@ -24,10 +24,10 @@ public class ElevatorConstants {
   public static final double ELEVATOR_STATOR_CURRENT_LIMIT_AMPS = 100.0;
   public static final double ELEVATOR_SUPPLY_CURRENT_LIMIT_AMPS = 70.0;
   public static final double ELEVATOR_SUPPLY_CURRENT_LOWER_LIMIT_AMPS = 40.0;
-
   public static final double ELEVATOR_SUPPLY_CURRENT_LOWER_TIME = 1.0;
-  public static final double ELEVATOR_PEAK_FORWARD_DUTY_CYCLE = 1.0;
-  public static final double ELEVATOR_PEAK_REVERSE_DUTY_CYCLE = -1.0;
+
+  public static final double ELEVATOR_PEAK_FORWARD_DUTY_CYCLE = 0.05;
+  public static final double ELEVATOR_PEAK_REVERSE_DUTY_CYCLE = -0.05;
 
   public static final double ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD = 0.02;
   public static final double ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD = 0.02;
@@ -47,7 +47,7 @@ public class ElevatorConstants {
   public static final double CONTROL_UPDATE_FREQUENCY_HZ = 0.0;
 
   public static final double ELEVATOR_HOME_UP_TIME = 1.0;
-  public static final double ELEVATOR_HOME_UP_VOLTAGE = 6.0;
+  public static final double ELEVATOR_HOME_UP_VOLTAGE = 3.0;
   public static final double ELEVATOR_HOME_DOWN_VOLTAGE = -ELEVATOR_HOME_UP_VOLTAGE;
   public static final double ELEVATOR_HOME_POSITION_TOLERANCE_RADS = 0.5;
   public static final double ELEVATOR_SET_POSITION_TOLERANCE_RADS = 1.0;

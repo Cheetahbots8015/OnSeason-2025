@@ -108,8 +108,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   public ElevatorSystemIOKrakenX60() {
 
     /* Instantiate motors and configurators */
-    this.leader = new TalonFX(ElevatorConstants.ELEVATOR_LEFT_ID, "dabus");
-    this.follower = new TalonFX(ElevatorConstants.ELEVATOR_RIGHT_ID, "dabus");
+    this.leader = new TalonFX(ElevatorConstants.ELEVATOR_LEFT_ID, "rio");
+    this.follower = new TalonFX(ElevatorConstants.ELEVATOR_RIGHT_ID, "rio");
 
     this.leaderConfigurator = leader.getConfigurator();
     this.followerConfigurator = follower.getConfigurator();

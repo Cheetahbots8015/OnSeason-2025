@@ -12,12 +12,12 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSystem extends SubsystemBase {
@@ -87,11 +87,9 @@ public class ElevatorSystem extends SubsystemBase {
     Logger.recordOutput(name, this.getSystemState());
     disconnected.set(!inputs.connected);
     updateStateMachine();
-  }
-
-  @AutoLogOutput
-  public Command runRoller(double inputVolts) {
-    return startEnd(() -> io.setVolts(inputVolts), () -> io.stop());
+    if (DriverStation.isDisabled()) {
+      io.stop();
+    }
   }
 
   /* Returns the current system state of the elevator/pivot */
@@ -103,7 +101,6 @@ public class ElevatorSystem extends SubsystemBase {
 
     if (requestManual) {
       systemState = ElevatorState.MANUAL;
-      io.setSoftLimits(false, false);
       homed = false;
       if (useManualDynamic) {
         io.setVolts();
@@ -113,11 +110,12 @@ public class ElevatorSystem extends SubsystemBase {
       return;
     } else {
       io.stop();
-      io.setSoftLimits(true, true);
+      // io.setSoftLimits(true, true);
+      systemState = ElevatorState.INITIALIZE;
     }
 
     if (systemState == ElevatorState.INITIALIZE) {
-      requestHome = true;
+      // requestHome = true;
     }
 
     if (requestHome) {
@@ -289,5 +287,9 @@ public class ElevatorSystem extends SubsystemBase {
 
   public Command ElevatorTestQuasistatic(SysIdRoutine.Direction direction) {
     return routineToApply.quasistatic(direction);
+  }
+
+  public void setSoftLimitEnable(boolean enableForward, boolean enableReverse) {
+    io.setSoftLimits(enableForward, enableReverse);
   }
 }
