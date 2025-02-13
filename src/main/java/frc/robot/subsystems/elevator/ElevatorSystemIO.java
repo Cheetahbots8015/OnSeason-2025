@@ -13,6 +13,7 @@ public interface ElevatorSystemIO {
   @AutoLog
   static class ElevatorSystemIOInputs {
     public boolean connected = false;
+    public boolean hallSensorActive = false;
     public double positionRads = 0.0;
     public double velocityRadsPerSec = 0.0;
     public double accelerationRadsPerSec2 = 0.0;
@@ -21,6 +22,7 @@ public interface ElevatorSystemIO {
     public double[] supplyCurrentAmps = new double[] {}; // {leader, follower}
     public double[] torqueCurrentAmps = new double[] {}; // {leader, follower}
     public double[] tempCelcius = new double[] {}; // {leader, follower}
+    public double[] encoderOffset = new double[] {}; // {leader, follower}
   }
 
   default void updateInputs(ElevatorSystemIOInputs inputs) {}
@@ -34,11 +36,19 @@ public interface ElevatorSystemIO {
   /* Run elevator at motionmagic foc */
   default void setHeightRads(double height) {}
 
+  default boolean isHallSensorActive() {
+    return false;
+  }
+
   default void setEncoder2Zero() {}
+
+  default void setSoftLimits(boolean enableForward, boolean enableReverse) {}
 
   default double getEncoderPositionRads() {
     return -1.0;
   }
+
+  default void setEncoderOffset(double leaderPosition, double followerPosition) {}
 
   /* Stop elevator */
   default void stop() {}
