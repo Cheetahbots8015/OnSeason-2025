@@ -10,7 +10,6 @@ package frc.robot.subsystems.elevator;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -33,9 +32,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.LEDReader;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.util.LoggedTunableNumber;
 
@@ -85,10 +81,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private final StatusSignal<Double> rightReference;
 
   // Single shot for voltage mode, robot loop will call continuously
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true)
-      .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
-  private final MotionMagicTorqueCurrentFOC motionMagicOut = new MotionMagicTorqueCurrentFOC(0.0)
-      .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
+  private final VoltageOut voltageOut =
+      new VoltageOut(0.0)
+          .withEnableFOC(true)
+          .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
+  private final MotionMagicTorqueCurrentFOC motionMagicOut =
+      new MotionMagicTorqueCurrentFOC(0.0)
+          .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
   private final NeutralOut neutralOut = new NeutralOut();
 
   public ElevatorSystemIOKrakenX60() {
@@ -122,14 +121,14 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
             : InvertedValue.CounterClockwise_Positive;
     leaderMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
     leaderMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
-    leaderMotorConfigs.NeutralMode = ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake
-        : NeutralModeValue.Coast;
+    leaderMotorConfigs.NeutralMode =
+        ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
     followerMotorConfigs = new MotorOutputConfigs();
     followerMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
     followerMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
-    followerMotorConfigs.NeutralMode = ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake
-        : NeutralModeValue.Coast;
+    followerMotorConfigs.NeutralMode =
+        ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kA = kA.get();
@@ -235,15 +234,18 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.accelerationRadsPerSec2 = Units.rotationsToRadians(acceleration.getValueAsDouble());
-    inputs.appliedVoltage = new double[] { leftAppliedVoltage.getValueAsDouble(),
-        rightAppliedVoltage.getValueAsDouble() };
-    inputs.motionMagicPositionTarget = new double[] { leftReference.getValueAsDouble(),
-        rightReference.getValueAsDouble() };
-    inputs.supplyCurrentAmps = new double[] { leftSupplyCurrent.getValueAsDouble(),
-        rightSupplyCurrent.getValueAsDouble() };
-    inputs.torqueCurrentAmps = new double[] { leftTorqueCurrent.getValueAsDouble(),
-        rightTorqueCurrent.getValueAsDouble() };
-    inputs.tempCelcius = new double[] { leftTempCelsius.getValueAsDouble(), rightTempCelsius.getValueAsDouble() };
+    inputs.appliedVoltage =
+        new double[] {
+          leftAppliedVoltage.getValueAsDouble(), rightAppliedVoltage.getValueAsDouble()
+        };
+    inputs.motionMagicPositionTarget =
+        new double[] {leftReference.getValueAsDouble(), rightReference.getValueAsDouble()};
+    inputs.supplyCurrentAmps =
+        new double[] {leftSupplyCurrent.getValueAsDouble(), rightSupplyCurrent.getValueAsDouble()};
+    inputs.torqueCurrentAmps =
+        new double[] {leftTorqueCurrent.getValueAsDouble(), rightTorqueCurrent.getValueAsDouble()};
+    inputs.tempCelcius =
+        new double[] {leftTempCelsius.getValueAsDouble(), rightTempCelsius.getValueAsDouble()};
   }
 
   @Override
@@ -291,13 +293,11 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void setEncoder2Zero() {
-  public void setEncoder2Zero() {
     leader.setPosition(0.0);
     follower.setPosition(0.0);
   }
 
   @Override
-  public double getEncoderPositionRads() {
   public double getEncoderPositionRads() {
     return Units.rotationsToRadians(position.getValueAsDouble());
   }

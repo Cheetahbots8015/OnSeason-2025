@@ -7,6 +7,10 @@
 
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -15,13 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.util.NarcissusUtil;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.SignalLogger;
 
 public class ElevatorSystem extends SubsystemBase {
   private final String name;
@@ -68,18 +67,19 @@ public class ElevatorSystem extends SubsystemBase {
     this.name = name;
     this.io = io;
     disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
-    m_SysIdRoutineElevator = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,
-            Volts.of(2.4),
-            Seconds.of(3),
-            (state) -> SignalLogger.writeString("state", state.toString())),
-        new SysIdRoutine.Mechanism(
-            (volts) -> {
-              io.setVolts(volts.magnitude());
-            },
-            null,
-            this));
+    m_SysIdRoutineElevator =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                Volts.of(2.4),
+                Seconds.of(3),
+                (state) -> SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (volts) -> {
+                  io.setVolts(volts.magnitude());
+                },
+                null,
+                this));
 
     routineToApply = m_SysIdRoutineElevator;
   }
@@ -138,8 +138,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "L1":
           target = ElevatorConstants.ELEVATOR_L1_POSITION_RADS;
           this.set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.L1;
