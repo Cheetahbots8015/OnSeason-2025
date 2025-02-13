@@ -5,10 +5,10 @@ import frc.robot.subsystems.elevator.*;
 import frc.robot.subsystems.elevator.ElevatorSystem.ElevatorPositionTarget;
 import frc.robot.subsystems.elevator.ElevatorSystem.ElevatorRequest;
 
-public class ElevatorPositionCommand extends Command {
+public class ElevatorL3Command extends Command {
   private ElevatorSystem m_elevator;
 
-  public ElevatorPositionCommand(ElevatorSystem elevator) {
+  public ElevatorL3Command(ElevatorSystem elevator) {
     m_elevator = elevator;
     addRequirements(m_elevator);
   }
@@ -17,7 +17,7 @@ public class ElevatorPositionCommand extends Command {
   public void execute() {
     m_elevator.setRequest(ElevatorRequest.POSITION);
     m_elevator.setUsePositionDynamic(false);
-    m_elevator.setPositionTarget(ElevatorPositionTarget.L2);
+    m_elevator.setPositionTarget(ElevatorPositionTarget.L3);
   }
 
   @Override

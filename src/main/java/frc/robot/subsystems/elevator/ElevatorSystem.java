@@ -188,7 +188,8 @@ public class ElevatorSystem extends SubsystemBase {
 
           case L3:
             if (isAtPosition(ElevatorConstants.ELEVATOR_L3_POSITION_RADS)) {
-              hold();
+              io.stop();
+              // hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_L3_POSITION_RADS);
             }
@@ -373,6 +374,6 @@ public class ElevatorSystem extends SubsystemBase {
   }
 
   private void hold() {
-    io.setHeightRads(getEncoderPositionRads());
+    // io.setHeightRads(getEncoderPositionRads());
   }
 }
