@@ -28,8 +28,10 @@ public class ElevatorSystem extends SubsystemBase {
   private final ElevatorSystemIO io;
   protected final ElevatorSystemIOInputsAutoLogged inputs = new ElevatorSystemIOInputsAutoLogged();
   private final Alert disconnected;
-  private final DigitalInput lowLimitSwitch = new DigitalInput(ElevatorConstants.ELEVATOR_LOW_LIMITSWITCH_ID);
-  private final DigitalInput highLimitSwitch = new DigitalInput(ElevatorConstants.ELEVATOR_HIGH_LIMITSWITCH_ID);
+  private final DigitalInput lowLimitSwitch =
+      new DigitalInput(ElevatorConstants.ELEVATOR_LOW_LIMITSWITCH_ID);
+  private final DigitalInput highLimitSwitch =
+      new DigitalInput(ElevatorConstants.ELEVATOR_HIGH_LIMITSWITCH_ID);
 
   private ElevatorState systemState = ElevatorState.INITIALIZE;
 
@@ -118,8 +120,10 @@ public class ElevatorSystem extends SubsystemBase {
     if (requestHome) {
       this.home();
       if (lowLimitSwitch.get()
-          && NarcissusUtil.deadband(io.getEncoderPositionRads() - 0.0,
-              ElevatorConstants.ELEVATOR_HOME_POSITION_TOLERANCE_RADS) == 0.0) {
+          && NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - 0.0,
+                  ElevatorConstants.ELEVATOR_HOME_POSITION_TOLERANCE_RADS)
+              == 0.0) {
         homed = true;
         systemState = ElevatorState.HOME;
         requestHome = false;
@@ -145,8 +149,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "L2":
           target = ElevatorConstants.ELEVATOR_L2_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.L2;
@@ -156,8 +162,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "L3":
           target = ElevatorConstants.ELEVATOR_L3_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.L3;
@@ -167,8 +175,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "L4":
           target = ElevatorConstants.ELEVATOR_L4_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.L4;
@@ -178,8 +188,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "Barge":
           target = ElevatorConstants.ELEVATOR_BARGE_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.BARGE;
@@ -189,8 +201,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "Processor":
           target = ElevatorConstants.ELEVATOR_PROCESSOR_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.PROCESSOR;
@@ -200,8 +214,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "Station":
           target = ElevatorConstants.ELEVATOR_STATION_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.STATION;
@@ -211,8 +227,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "Low_algae":
           target = ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.LOW_ALGAE;
@@ -222,8 +240,10 @@ public class ElevatorSystem extends SubsystemBase {
         case "High_algae":
           target = ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS;
           set2Position(target);
-          if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-              ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+          if (NarcissusUtil.deadband(
+                  io.getEncoderPositionRads() - target,
+                  ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+              == 0) {
             hold();
             requestPosition = false;
             systemState = ElevatorState.HIGH_ALGAE;
@@ -232,11 +252,8 @@ public class ElevatorSystem extends SubsystemBase {
 
         default:
           break;
-
       }
-
     }
-
   }
 
   private void home() {
@@ -264,8 +281,10 @@ public class ElevatorSystem extends SubsystemBase {
 
   private void set2Position(double target) {
     io.setHeightRads(target);
-    if (NarcissusUtil.deadband(io.getEncoderPositionRads() - target,
-        ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS) == 0) {
+    if (NarcissusUtil.deadband(
+            io.getEncoderPositionRads() - target,
+            ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+        == 0) {
       io.stop();
     }
   }

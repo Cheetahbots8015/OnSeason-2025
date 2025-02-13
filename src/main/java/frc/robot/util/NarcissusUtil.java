@@ -69,7 +69,7 @@ public class NarcissusUtil {
 
     return value;
 
-    //return Math.copySign(value, (value - tolerance) / (1.0 - tolerance));
+    // return Math.copySign(value, (value - tolerance) / (1.0 - tolerance));
   }
 
   // Maps one numerical range to another

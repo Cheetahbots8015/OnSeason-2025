@@ -37,10 +37,11 @@ public interface ElevatorSystemIO {
   /* Run elevator at motionmagic foc */
   default void setHeightRads(double height) {}
 
-  default void setEncoder2Zero(){}
+  default void setEncoder2Zero() {}
 
-  default double getEncoderPositionRads(){
-      return -1.0;}
+  default double getEncoderPositionRads() {
+    return -1.0;
+  }
 
   /* Stop elevator */
   default void stop() {}

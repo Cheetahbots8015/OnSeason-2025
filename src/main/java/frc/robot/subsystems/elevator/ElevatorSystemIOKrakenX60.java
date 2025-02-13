@@ -9,8 +9,6 @@ package frc.robot.subsystems.elevator;
 
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
-import java.lang.ref.Reference;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
@@ -20,7 +18,6 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
@@ -32,7 +29,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -41,13 +37,9 @@ import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
-import frc.robot.subsystems.rollers.RollerSystemIO.RollerSystemIOInputs;
 import frc.robot.util.LoggedTunableNumber;
 
-/**
- * Generic roller IO implementation for a roller or series of rollers using a
- * Kraken.
- */
+/** Generic roller IO implementation for a roller or series of rollers using a Kraken. */
 public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private final TalonFX leader;
   private final TalonFX follower;
@@ -69,12 +61,14 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   LoggedTunableNumber kI = new LoggedTunableNumber("Elevator/kI", ElevatorConstants.ELEVATOR_KI);
   LoggedTunableNumber kD = new LoggedTunableNumber("Elevator/kD", ElevatorConstants.ELEVATOR_KD);
 
-  LoggedTunableNumber motionAcceleration = new LoggedTunableNumber("Elevator/MotionAcceleration",
-      ElevatorConstants.ELEVATOR_MOTION_MAGIC_ACCELERATION);
-  LoggedTunableNumber motionCruiseVelocity = new LoggedTunableNumber("Elevator/MotionCruiseVelocity",
-      ElevatorConstants.ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY);
-  LoggedTunableNumber motionJerk = new LoggedTunableNumber("Elevator/MotionJerk",
-      ElevatorConstants.ELEVATOR_MOTION_MAGIC_JERK);
+  LoggedTunableNumber motionAcceleration =
+      new LoggedTunableNumber(
+          "Elevator/MotionAcceleration", ElevatorConstants.ELEVATOR_MOTION_MAGIC_ACCELERATION);
+  LoggedTunableNumber motionCruiseVelocity =
+      new LoggedTunableNumber(
+          "Elevator/MotionCruiseVelocity", ElevatorConstants.ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY);
+  LoggedTunableNumber motionJerk =
+      new LoggedTunableNumber("Elevator/MotionJerk", ElevatorConstants.ELEVATOR_MOTION_MAGIC_JERK);
 
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
@@ -108,18 +102,24 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
     /* Create configs */
     currentLimitsConfigs = new CurrentLimitsConfigs();
-    currentLimitsConfigs.StatorCurrentLimitEnable = ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE;
-    currentLimitsConfigs.SupplyCurrentLimitEnable = ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_ENABLE;
+    currentLimitsConfigs.StatorCurrentLimitEnable =
+        ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE;
+    currentLimitsConfigs.SupplyCurrentLimitEnable =
+        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_ENABLE;
     currentLimitsConfigs.StatorCurrentLimit = ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_AMPS;
     currentLimitsConfigs.SupplyCurrentLimit = ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_AMPS;
-    currentLimitsConfigs.SupplyCurrentLowerLimit = ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_LIMIT_AMPS;
+    currentLimitsConfigs.SupplyCurrentLowerLimit =
+        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_LIMIT_AMPS;
     // if supply current limit is active for longer than this period, the supply
     // current will be adjusted to supply current lower limit
-    currentLimitsConfigs.SupplyCurrentLowerTime = ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_TIME;
+    currentLimitsConfigs.SupplyCurrentLowerTime =
+        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_TIME;
 
     leaderMotorConfigs = new MotorOutputConfigs();
-    leaderMotorConfigs.Inverted = ElevatorConstants.ELEVATOR_LEFT_INVERSION ? InvertedValue.Clockwise_Positive
-        : InvertedValue.CounterClockwise_Positive;
+    leaderMotorConfigs.Inverted =
+        ElevatorConstants.ELEVATOR_LEFT_INVERSION
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
     leaderMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
     leaderMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
     leaderMotorConfigs.NeutralMode = ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake
@@ -145,14 +145,20 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     OpenLoopRampsConfigs openLoopRampsConfigs = new OpenLoopRampsConfigs();
-    openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod = ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
-    openLoopRampsConfigs.TorqueOpenLoopRampPeriod = ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
-    openLoopRampsConfigs.VoltageOpenLoopRampPeriod = ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.TorqueOpenLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.VoltageOpenLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
 
     ClosedLoopRampsConfigs closedLoopRampsConfigs = new ClosedLoopRampsConfigs();
-    closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod = ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
-    closedLoopRampsConfigs.TorqueClosedLoopRampPeriod = ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
-    closedLoopRampsConfigs.VoltageClosedLoopRampPeriod = ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.TorqueClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.VoltageClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
 
     /* Apply configs */
     tryUntilOk(5, () -> leaderConfigurator.apply(currentLimitsConfigs));
@@ -169,7 +175,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     tryUntilOk(5, () -> followerConfigurator.apply(openLoopRampsConfigs));
     tryUntilOk(5, () -> followerConfigurator.apply(closedLoopRampsConfigs));
 
-    follower.setControl(new Follower(ElevatorConstants.ELEVATOR_LEFT_ID, ElevatorConstants.OPPOSE_MASTER));
+    follower.setControl(
+        new Follower(ElevatorConstants.ELEVATOR_LEFT_ID, ElevatorConstants.OPPOSE_MASTER));
 
     position = leader.getPosition();
     velocity = leader.getVelocity();
@@ -187,42 +194,44 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
     tryUntilOk(
         5,
-        () -> BaseStatusSignal.setUpdateFrequencyForAll(
-            ElevatorConstants.SIGNAL_UPDATE_FREQUENCY_HZ,
-            position,
-            velocity,
-            acceleration,
-            leftAppliedVoltage,
-            leftSupplyCurrent,
-            leftTorqueCurrent,
-            rightAppliedVoltage,
-            rightSupplyCurrent,
-            rightTorqueCurrent,
-            leftTempCelsius,
-            rightTempCelsius,
-            leftReference,
-            rightReference));
+        () ->
+            BaseStatusSignal.setUpdateFrequencyForAll(
+                ElevatorConstants.SIGNAL_UPDATE_FREQUENCY_HZ,
+                position,
+                velocity,
+                acceleration,
+                leftAppliedVoltage,
+                leftSupplyCurrent,
+                leftTorqueCurrent,
+                rightAppliedVoltage,
+                rightSupplyCurrent,
+                rightTorqueCurrent,
+                leftTempCelsius,
+                rightTempCelsius,
+                leftReference,
+                rightReference));
     tryUntilOk(5, () -> leader.optimizeBusUtilization(0, 1.0));
     tryUntilOk(5, () -> follower.optimizeBusUtilization(0, 1.0));
   }
 
   @Override
   public void updateInputs(ElevatorSystemIOInputs inputs) {
-    inputs.connected = BaseStatusSignal.refreshAll(
-        position,
-        velocity,
-        acceleration,
-        leftAppliedVoltage,
-        leftSupplyCurrent,
-        leftTorqueCurrent,
-        rightAppliedVoltage,
-        rightSupplyCurrent,
-        rightTorqueCurrent,
-        leftTempCelsius,
-        rightTempCelsius,
-        leftReference,
-        rightReference)
-        .isOK();
+    inputs.connected =
+        BaseStatusSignal.refreshAll(
+                position,
+                velocity,
+                acceleration,
+                leftAppliedVoltage,
+                leftSupplyCurrent,
+                leftTorqueCurrent,
+                rightAppliedVoltage,
+                rightSupplyCurrent,
+                rightTorqueCurrent,
+                leftTempCelsius,
+                rightTempCelsius,
+                leftReference,
+                rightReference)
+            .isOK();
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.accelerationRadsPerSec2 = Units.rotationsToRadians(acceleration.getValueAsDouble());
@@ -282,11 +291,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void setEncoder2Zero() {
+  public void setEncoder2Zero() {
     leader.setPosition(0.0);
     follower.setPosition(0.0);
   }
 
   @Override
+  public double getEncoderPositionRads() {
   public double getEncoderPositionRads() {
     return Units.rotationsToRadians(position.getValueAsDouble());
   }
