@@ -39,6 +39,7 @@ import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.NarcissusUtil;
 
 /** Generic roller IO implementation for a roller or series of rollers using a Kraken. */
+/** Generic roller IO implementation for a roller or series of rollers using a Kraken. */
 public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private final TalonFX leader;
   private final TalonFX follower;
@@ -138,12 +139,20 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE;
     currentLimitsConfigs.SupplyCurrentLimitEnable =
         ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_ENABLE;
+    currentLimitsConfigs.StatorCurrentLimitEnable =
+        ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE;
+    currentLimitsConfigs.SupplyCurrentLimitEnable =
+        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_ENABLE;
     currentLimitsConfigs.StatorCurrentLimit = ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_AMPS;
     currentLimitsConfigs.SupplyCurrentLimit = ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_AMPS;
     currentLimitsConfigs.SupplyCurrentLowerLimit =
         ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_LIMIT_AMPS;
+    currentLimitsConfigs.SupplyCurrentLowerLimit =
+        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_LIMIT_AMPS;
     // if supply current limit is active for longer than this period, the supply
     // current will be adjusted to supply current lower limit
+    currentLimitsConfigs.SupplyCurrentLowerTime =
+        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_TIME;
     currentLimitsConfigs.SupplyCurrentLowerTime =
         ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_TIME;
 
@@ -152,14 +161,22 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         ElevatorConstants.ELEVATOR_LEFT_INVERSION
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
+    leaderMotorConfigs.Inverted =
+        ElevatorConstants.ELEVATOR_LEFT_INVERSION
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
     leaderMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
     leaderMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
+    leaderMotorConfigs.NeutralMode =
+        ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     leaderMotorConfigs.NeutralMode =
         ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
     followerMotorConfigs = new MotorOutputConfigs();
     followerMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
     followerMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
+    followerMotorConfigs.NeutralMode =
+        ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     followerMotorConfigs.NeutralMode =
         ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
@@ -183,8 +200,20 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
     openLoopRampsConfigs.VoltageOpenLoopRampPeriod =
         ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.TorqueOpenLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
+    openLoopRampsConfigs.VoltageOpenLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
 
     ClosedLoopRampsConfigs closedLoopRampsConfigs = new ClosedLoopRampsConfigs();
+    closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.TorqueClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.VoltageClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
     closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod =
         ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
     closedLoopRampsConfigs.TorqueClosedLoopRampPeriod =
@@ -209,6 +238,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     tryUntilOk(5, () -> followerConfigurator.apply(closedLoopRampsConfigs));
     tryUntilOk(5, () -> followerConfigurator.apply(followerConfigs));
 
+    follower.setControl(
+        new Follower(ElevatorConstants.ELEVATOR_LEFT_ID, ElevatorConstants.OPPOSE_MASTER));
     follower.setControl(
         new Follower(ElevatorConstants.ELEVATOR_LEFT_ID, ElevatorConstants.OPPOSE_MASTER));
 
@@ -272,6 +303,18 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
     inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.accelerationRadsPerSec2 = Units.rotationsToRadians(acceleration.getValueAsDouble());
+    inputs.appliedVoltage =
+        new double[] {
+          leftAppliedVoltage.getValueAsDouble(), rightAppliedVoltage.getValueAsDouble()
+        };
+    inputs.motionMagicPositionTarget =
+        new double[] {leftReference.getValueAsDouble(), rightReference.getValueAsDouble()};
+    inputs.supplyCurrentAmps =
+        new double[] {leftSupplyCurrent.getValueAsDouble(), rightSupplyCurrent.getValueAsDouble()};
+    inputs.torqueCurrentAmps =
+        new double[] {leftTorqueCurrent.getValueAsDouble(), rightTorqueCurrent.getValueAsDouble()};
+    inputs.tempCelcius =
+        new double[] {leftTempCelsius.getValueAsDouble(), rightTempCelsius.getValueAsDouble()};
     inputs.appliedVoltage =
         new double[] {
           leftAppliedVoltage.getValueAsDouble(), rightAppliedVoltage.getValueAsDouble()
