@@ -145,7 +145,7 @@ public class ElevatorSystem extends SubsystemBase {
     switch (systemState) {
       case IDLE:
         if (homed) {
-          hold();
+          io.stop();
         } else {
           io.stop();
         }
