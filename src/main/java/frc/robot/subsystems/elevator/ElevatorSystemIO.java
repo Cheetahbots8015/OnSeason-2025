@@ -22,6 +22,7 @@ public interface ElevatorSystemIO {
     public double[] supplyCurrentAmps = new double[] {}; // {leader, follower}
     public double[] torqueCurrentAmps = new double[] {}; // {leader, follower}
     public double[] tempCelcius = new double[] {}; // {leader, follower}
+    public double[] encoderOffset = new double[] {}; // {leader, follower}
   }
 
   default void updateInputs(ElevatorSystemIOInputs inputs) {}
@@ -32,24 +33,8 @@ public interface ElevatorSystemIO {
   /* Run elevator at volts */
   default void setVolts(double volts) {}
 
-  default void setVolts() {}
-
   /* Run elevator at motionmagic foc */
   default void setHeightRads(double height) {}
-
-  default void set2Position(double target) {}
-
-  default void set2Position() {}
-
-  default void hold() {}
-
-  default boolean isAtPosition(double target) {
-    return false;
-  }
-
-  default boolean isAtPosition() {
-    return false;
-  }
 
   default boolean isHallSensorActive() {
     return false;
@@ -62,6 +47,8 @@ public interface ElevatorSystemIO {
   default double getEncoderPositionRads() {
     return -1.0;
   }
+
+  default void setEncoderOffset(double leaderPosition, double followerPosition) {}
 
   /* Stop elevator */
   default void stop() {}

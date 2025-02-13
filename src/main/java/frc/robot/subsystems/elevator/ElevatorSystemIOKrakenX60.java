@@ -20,8 +20,9 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -34,9 +35,9 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.util.LoggedTunableNumber;
-import frc.robot.util.NarcissusUtil;
 
 /** Generic roller IO implementation for a roller or series of rollers using a Kraken. */
 /** Generic roller IO implementation for a roller or series of rollers using a Kraken. */
@@ -54,9 +55,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private final MotionMagicConfigs motionMagicConfigs;
   private final TalonFXConfiguration leaderConfigs;
   private final TalonFXConfiguration followerConfigs;
-
-  private double manualVoltageValue;
-  private double positionTargetValue;
 
   private final DigitalInput hallSensor =
       new DigitalInput(ElevatorConstants.ELEVATOR_HALL_SENSOR_ID);
@@ -95,15 +93,25 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private final StatusSignal<Double> leftReference;
   private final StatusSignal<Double> rightReference;
 
+  private double[] encoderOffset = new double[] {0.0, 0.0};
+
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut =
       new VoltageOut(0.0)
           .withEnableFOC(true)
           .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
-  private final MotionMagicTorqueCurrentFOC motionMagicOut =
-      new MotionMagicTorqueCurrentFOC(0.0)
+
+  private final MotionMagicVoltage motionMagicOut =
+      new MotionMagicVoltage(0.0)
+          .withEnableFOC(false)
           .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
+
   private final NeutralOut neutralOut = new NeutralOut();
+
+  private final PositionVoltage positionVoltage =
+      new PositionVoltage(0.0)
+          .withEnableFOC(false)
+          .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
 
   public ElevatorSystemIOKrakenX60() {
 
@@ -240,8 +248,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
     follower.setControl(
         new Follower(ElevatorConstants.ELEVATOR_LEFT_ID, ElevatorConstants.OPPOSE_MASTER));
-    follower.setControl(
-        new Follower(ElevatorConstants.ELEVATOR_LEFT_ID, ElevatorConstants.OPPOSE_MASTER));
 
     position = leader.getPosition();
     velocity = leader.getVelocity();
@@ -256,8 +262,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     rightTempCelsius = follower.getDeviceTemp();
     leftReference = leader.getClosedLoopReference();
     rightReference = follower.getClosedLoopReference();
-
-    manualVoltageValue = manualVoltage.get();
 
     tryUntilOk(
         5,
@@ -327,6 +331,7 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         new double[] {leftTorqueCurrent.getValueAsDouble(), rightTorqueCurrent.getValueAsDouble()};
     inputs.tempCelcius =
         new double[] {leftTempCelsius.getValueAsDouble(), rightTempCelsius.getValueAsDouble()};
+    inputs.encoderOffset = encoderOffset;
   }
 
   @Override
@@ -355,14 +360,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
       tryUntilOk(5, () -> leaderConfigurator.apply(motionMagicConfigs));
       tryUntilOk(5, () -> followerConfigurator.apply(motionMagicConfigs));
     }
-
-    if (manualVoltage.hasChanged(0)) {
-      manualVoltageValue = manualVoltage.get();
-    }
-
-    if (positionTarget.hasChanged(0)) {
-      positionTargetValue = positionTarget.get();
-    }
   }
 
   @Override
@@ -371,13 +368,10 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   }
 
   @Override
-  public void setVolts() {
-    leader.setControl(voltageOut.withOutput(manualVoltageValue));
-  }
-
-  @Override
   public void setHeightRads(double height) {
-    leader.setControl(motionMagicOut.withPosition(Units.radiansToRotations(height)));
+    SmartDashboard.putNumber("targetttt", height);
+    leader.setControl(
+        positionVoltage.withPosition(Units.radiansToRotations(height + encoderOffset[0])));
   }
 
   @Override
@@ -387,61 +381,15 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void setEncoder2Zero() {
-    leader.setPosition(0.0);
-    follower.setPosition(0.0);
-  }
-
-  @Override
-  public double getEncoderPositionRads() {
-    return Units.rotationsToRadians(position.getValueAsDouble());
-  }
-
-  @Override
-  public void set2Position(double target) {
-    setHeightRads(target);
-    if (NarcissusUtil.deadband(
-            getEncoderPositionRads() - target,
-            ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
-        == 0) {
-      stop();
-    }
-  }
-
-  @Override
-  public void set2Position() {
-    setHeightRads(positionTargetValue);
-    if (NarcissusUtil.deadband(
-            getEncoderPositionRads() - positionTargetValue,
-            ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
-        == 0) {
-      stop();
-    }
-  }
-
-  @Override
-  public boolean isAtPosition(double target) {
-    return NarcissusUtil.deadband(
-            getEncoderPositionRads() - target,
-            ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
-        == 0;
-  }
-
-  @Override
-  public boolean isAtPosition() {
-    return NarcissusUtil.deadband(
-            getEncoderPositionRads() - positionTargetValue,
-            ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
-        == 0;
-  }
-
-  @Override
-  public void hold() {
-    setHeightRads(getEncoderPositionRads());
+    SmartDashboard.putNumber("leaderposition", leader.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("followerposition", follower.getPosition().getValueAsDouble());
+    setEncoderOffset(
+        leader.getPosition().getValueAsDouble(), leader.getPosition().getValueAsDouble());
   }
 
   @Override
   public boolean isHallSensorActive() {
-    return hallSensor.get();
+    return !hallSensor.get();
   }
 
   @Override
@@ -452,5 +400,10 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
     followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
     tryUntilOk(5, () -> followerConfigurator.apply(followerConfigs));
+  }
+
+  @Override
+  public void setEncoderOffset(double leaderOffset, double followerOffset) {
+    encoderOffset = new double[] {leaderOffset, followerOffset};
   }
 }

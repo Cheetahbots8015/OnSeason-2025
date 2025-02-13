@@ -14,10 +14,12 @@ import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.ElevatorConstants;
+import frc.robot.util.NarcissusUtil;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSystem extends SubsystemBase {
@@ -26,21 +28,28 @@ public class ElevatorSystem extends SubsystemBase {
   protected final ElevatorSystemIOInputsAutoLogged inputs = new ElevatorSystemIOInputsAutoLogged();
   private final Alert disconnected;
 
-  private ElevatorState systemState = ElevatorState.INITIALIZE;
+  private ElevatorState systemState = ElevatorState.IDLE;
+  private ElevatorRequest elevatorRequest = ElevatorRequest.NULL;
+  private ElevatorPositionTarget elevatorPositionTarget = ElevatorPositionTarget.NULL;
 
-  private boolean requestManual = false;
   private double manualVoltage = 0.0;
   private boolean useManualDynamic = false;
-  private boolean requestHome = false;
-  private boolean requestPosition = false;
-  private String positionString = null;
+  private boolean usePositionDynamic = false;
 
   private boolean homed = false;
   private double homeTimer = -1.0;
 
   /* System States */
   private enum ElevatorState {
-    INITIALIZE,
+    IDLE,
+    HOME_UP,
+    HOME_DOWN,
+    MANUAL,
+    POSITION
+  }
+
+  public enum ElevatorPositionTarget {
+    NULL,
     HOME,
     L1,
     L2,
@@ -51,7 +60,13 @@ public class ElevatorSystem extends SubsystemBase {
     PROCESSOR,
     BARGE,
     STATION,
-    MANUAL
+  }
+
+  public enum ElevatorRequest {
+    NULL,
+    HOME,
+    POSITION,
+    MANUAL,
   }
 
   private final SysIdRoutine m_SysIdRoutineElevator;
@@ -81,6 +96,7 @@ public class ElevatorSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putString("state", systemState.toString());
     io.updateInputs(inputs);
     io.updateTunableNumbers();
     Logger.processInputs(name, inputs);
@@ -92,193 +108,230 @@ public class ElevatorSystem extends SubsystemBase {
     }
   }
 
-  /* Returns the current system state of the elevator/pivot */
-  public ElevatorState getSystemState() {
-    return systemState;
-  }
-
   public void updateStateMachine() {
-
-    if (requestManual) {
-      systemState = ElevatorState.MANUAL;
-      homed = false;
-      if (useManualDynamic) {
-        io.setVolts();
-      } else {
-        io.setVolts(manualVoltage);
-      }
-      return;
-    } else {
-      io.stop();
-      // io.setSoftLimits(true, true);
-      systemState = ElevatorState.INITIALIZE;
-    }
-
-    if (systemState == ElevatorState.INITIALIZE) {
-      // requestHome = true;
-    }
-
-    if (requestHome) {
-      this.home();
-      if (io.isHallSensorActive() && io.isAtPosition(0.0)) {
-        homed = true;
-        systemState = ElevatorState.HOME;
-        requestHome = false;
-      }
-    } else {
-      homeTimer = -1.0;
-    }
-
-    if (requestPosition && homed) {
-      double target = 0.0;
-      switch (positionString) {
-        case "L1":
-          target = ElevatorConstants.ELEVATOR_L1_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.L1;
-          }
+    SmartDashboard.putBoolean("L2 position boolean", false);
+    if (getNewState() != systemState) {
+      switch (getNewState()) {
+        case IDLE:
+          homeTimer = -1.0;
+          setSoftLimitEnable(true, true);
           break;
 
-        case "L2":
-          target = ElevatorConstants.ELEVATOR_L2_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.L2;
-          }
+        case HOME_UP:
+          setSoftLimitEnable(false, true);
           break;
 
-        case "L3":
-          target = ElevatorConstants.ELEVATOR_L3_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.L3;
-          }
+        case HOME_DOWN:
+          setSoftLimitEnable(true, false);
           break;
 
-        case "L4":
-          target = ElevatorConstants.ELEVATOR_L4_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.L4;
-          }
+        case MANUAL:
+          homeTimer = -1.0;
+          homed = false;
+          setSoftLimitEnable(false, false);
           break;
 
-        case "Barge":
-          target = ElevatorConstants.ELEVATOR_BARGE_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.BARGE;
-          }
-          break;
-
-        case "Processor":
-          target = ElevatorConstants.ELEVATOR_PROCESSOR_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.PROCESSOR;
-          }
-          break;
-
-        case "Station":
-          target = ElevatorConstants.ELEVATOR_STATION_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.STATION;
-          }
-          break;
-
-        case "Low_algae":
-          target = ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.LOW_ALGAE;
-          }
-          break;
-
-        case "High_algae":
-          target = ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS;
-          io.set2Position(target);
-          if (io.isAtPosition(target)) {
-            io.hold();
-            requestPosition = false;
-            systemState = ElevatorState.HIGH_ALGAE;
-          }
-          break;
-
-        case "Test":
-          io.set2Position();
-          if (io.isAtPosition()) {
-            io.hold();
-            requestPosition = false;
-          }
+        case POSITION:
+          homeTimer = -1.0;
+          setSoftLimitEnable(true, true);
           break;
 
         default:
-          io.stop();
-          requestPosition = false;
           break;
       }
+      systemState = getNewState();
+    }
+
+    switch (systemState) {
+      case IDLE:
+        if (homed) {
+          hold();
+        } else {
+          io.stop();
+        }
+        break;
+
+      case MANUAL:
+        io.setVolts(manualVoltage);
+        break;
+
+      case POSITION:
+        switch (elevatorPositionTarget) {
+          case HOME:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_HOME_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_HOME_POSITION_RADS);
+            }
+            break;
+
+          case L1:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_L1_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_L1_POSITION_RADS);
+            }
+            break;
+
+          case L2:
+            SmartDashboard.putBoolean("L2 position boolean", true);
+            SmartDashboard.putBoolean(
+                "isatposition", isAtPosition(ElevatorConstants.ELEVATOR_L2_POSITION_RADS));
+
+            if (isAtPosition(ElevatorConstants.ELEVATOR_L2_POSITION_RADS)) {
+              io.stop();
+              // hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_L2_POSITION_RADS);
+            }
+            break;
+
+          case L3:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_L3_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_L3_POSITION_RADS);
+            }
+            break;
+
+          case L4:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_L4_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_L4_POSITION_RADS);
+            }
+            break;
+
+          case LOW_ALGAE:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS);
+            }
+            break;
+
+          case HIGH_ALGAE:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS);
+            }
+            break;
+
+          case PROCESSOR:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_PROCESSOR_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_PROCESSOR_POSITION_RADS);
+            }
+            break;
+
+          case BARGE:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_BARGE_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_BARGE_POSITION_RADS);
+            }
+            break;
+
+          case STATION:
+            if (isAtPosition(ElevatorConstants.ELEVATOR_STATION_POSITION_RADS)) {
+              hold();
+            } else {
+              set2Position(ElevatorConstants.ELEVATOR_STATION_POSITION_RADS);
+            }
+            break;
+
+          case NULL:
+            io.stop();
+
+          default:
+            break;
+        }
+        break;
+
+      case HOME_UP:
+        io.setVolts(ElevatorConstants.ELEVATOR_HOME_UP_VOLTAGE);
+        break;
+
+      case HOME_DOWN:
+        if (io.isHallSensorActive()) {
+          io.setEncoder2Zero();
+          io.stop();
+          homed = true;
+        } else {
+          io.setVolts(ElevatorConstants.ELEVATOR_HOME_DOWN_VOLTAGE);
+        }
+        break;
+
+      default:
+        break;
     }
   }
 
-  private void home() {
-    if (homeTimer == -1.0) {
-      homeTimer = Timer.getFPGATimestamp();
-    }
-
-    if (Timer.getFPGATimestamp() - homeTimer < ElevatorConstants.ELEVATOR_HOME_UP_TIME) {
-      io.setVolts(ElevatorConstants.ELEVATOR_HOME_UP_VOLTAGE);
-    }
-
-    if (Timer.getFPGATimestamp() - homeTimer >= ElevatorConstants.ELEVATOR_HOME_UP_TIME) {
-      io.setVolts(ElevatorConstants.ELEVATOR_HOME_DOWN_VOLTAGE);
-    }
-
-    if (io.isHallSensorActive()) {
-      io.setEncoder2Zero();
-      io.stop();
-    }
-  }
-
-  public void setRequestHome(boolean set) {
-    requestHome = set;
-  }
-
-  public void setRequestManual(boolean set) {
-    requestManual = set;
+  public void setRequest(ElevatorRequest request) {
+    elevatorRequest = request;
   }
 
   public void setUseManualDynamic(boolean set) {
     useManualDynamic = set;
   }
 
-  public void setRequestPosition(boolean set) {
-    requestPosition = set;
-  }
-
   public void setManualVoltage(double value) {
     manualVoltage = value;
   }
 
-  public void setPositionString(String value) {
-    positionString = value;
+  public void setPositionTarget(ElevatorPositionTarget target) {
+    elevatorPositionTarget = target;
+  }
+
+  public void setUsePositionDynamic(boolean set) {
+    usePositionDynamic = set;
+  }
+
+  /* Returns the current system state of the elevator */
+  public ElevatorState getSystemState() {
+    return systemState;
+  }
+
+  private ElevatorState getNewState() {
+
+    if (elevatorRequest == ElevatorRequest.NULL) {
+      return ElevatorState.IDLE;
+    }
+    if (systemState == ElevatorState.HOME_UP) {
+      if (Timer.getFPGATimestamp() - homeTimer >= ElevatorConstants.ELEVATOR_HOME_UP_TIME) {
+        systemState = ElevatorState.HOME_DOWN;
+      }
+    }
+    if (systemState != ElevatorState.IDLE) {
+      return systemState;
+    } else {
+      switch (elevatorRequest) {
+        case HOME:
+          if (homeTimer == -1) {
+            homeTimer = Timer.getFPGATimestamp();
+          }
+          if (Timer.getFPGATimestamp() - homeTimer < ElevatorConstants.ELEVATOR_HOME_UP_TIME) {
+            return ElevatorState.HOME_UP;
+          } else {
+            return ElevatorState.HOME_DOWN;
+          }
+
+        case POSITION:
+          if (homed) {
+            return ElevatorState.POSITION;
+          } else {
+            return ElevatorState.IDLE;
+          }
+
+        case MANUAL:
+          return ElevatorState.MANUAL;
+
+        default:
+          return ElevatorState.IDLE;
+      }
+    }
   }
 
   public Command ElevatorTestDynamic(SysIdRoutine.Direction direction) {
@@ -289,7 +342,37 @@ public class ElevatorSystem extends SubsystemBase {
     return routineToApply.quasistatic(direction);
   }
 
-  public void setSoftLimitEnable(boolean enableForward, boolean enableReverse) {
-    io.setSoftLimits(enableForward, enableReverse);
+  private void setSoftLimitEnable(boolean enableForward, boolean enableReverse) {
+    // io.setSoftLimits(enableForward, enableReverse);
+  }
+
+  public void testCommand() {
+    io.setEncoder2Zero();
+    homed = true;
+  }
+
+  private double getEncoderPositionRads() {
+    return inputs.positionRads;
+  }
+
+  private void set2Position(double target) {
+    io.setHeightRads(target);
+    if (NarcissusUtil.deadband(
+            getEncoderPositionRads() - target,
+            ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+        == 0) {
+      io.stop();
+    }
+  }
+
+  private boolean isAtPosition(double target) {
+    return NarcissusUtil.deadband(
+            getEncoderPositionRads() - target,
+            ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
+        == 0;
+  }
+
+  private void hold() {
+    io.setHeightRads(getEncoderPositionRads());
   }
 }

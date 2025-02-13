@@ -20,7 +20,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ElevatorCommands.ElevatorHomeCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorManualCommand;
+import frc.robot.commands.ElevatorCommands.ElevatorPositionCommand;
+import frc.robot.commands.ElevatorCommands.ElevatorTestCommand;
 import frc.robot.subsystems.elevator.ElevatorSystem;
 import frc.robot.subsystems.elevator.ElevatorSystemIOKrakenX60;
 
@@ -46,9 +49,15 @@ public class RobotContainer {
 
   // commands
   private final Command elevatorManualCommand;
+  private final Command elevatorHomeCommand;
+  private final Command elevatorTestCommand;
+  private final Command elevatorPositionCommand;
 
   // triggers
   private final Trigger elevatorManualTrigger;
+  private final Trigger elevatorHomeTrigger;
+  private final Trigger elevatorTestTrigger;
+  private final Trigger elevatorPositionTrigger;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -126,6 +135,15 @@ public class RobotContainer {
     elevatorManualCommand = new ElevatorManualCommand(elevator);
     elevatorManualTrigger = testController.a();
 
+    elevatorHomeCommand = new ElevatorHomeCommand(elevator);
+    elevatorHomeTrigger = testController.b();
+
+    elevatorTestCommand = new ElevatorTestCommand(elevator);
+    elevatorTestTrigger = testController.x();
+
+    elevatorPositionCommand = new ElevatorPositionCommand(elevator);
+    elevatorPositionTrigger = testController.y();
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -172,6 +190,9 @@ public class RobotContainer {
 
     */
     elevatorManualTrigger.whileTrue(elevatorManualCommand);
+    elevatorHomeTrigger.whileTrue(elevatorHomeCommand);
+    elevatorTestTrigger.whileTrue(elevatorTestCommand);
+    elevatorPositionTrigger.whileTrue(elevatorPositionCommand);
   }
 
   /**
