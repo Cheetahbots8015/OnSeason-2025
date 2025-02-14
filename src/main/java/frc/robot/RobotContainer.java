@@ -9,8 +9,10 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ElevatorReportCommand;
 import frc.robot.commands.ElevatorTestCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.RollerTestCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.RollerSubsystem;
 
 import static edu.wpi.first.units.Units.Newton;
 
@@ -28,6 +30,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -38,8 +41,10 @@ public class RobotContainer {
 
   private final Trigger TestTrigger1 = testController.a();
   private final Trigger TestTrigger2 = testController.b();
+  private final Trigger TestTrigger3 = testController.leftBumper();
   private final Command TestCommand1 = new ElevatorTestCommand(m_elevatorSubsystem, 0.1);
-  private final Command TestCommand2 = new ElevatorTestCommand(m_elevatorSubsystem, -0.1);
+  private final Command TestCommand2 = new ElevatorTestCommand(m_elevatorSubsystem, 0.04);
+  private final Command TestCommand3 = new RollerTestCommand(m_rollerSubsystem, 0.75);
   private final Command ReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -66,6 +71,7 @@ public class RobotContainer {
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     TestTrigger1.whileTrue(TestCommand1);
     TestTrigger2.whileTrue(TestCommand2);
+    TestTrigger3.whileTrue(TestCommand3);
     m_elevatorSubsystem.setDefaultCommand(ReportCommand);
 
   }

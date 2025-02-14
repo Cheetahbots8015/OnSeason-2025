@@ -23,6 +23,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     TalonFXConfiguration followerconfigs = new TalonFXConfiguration();
 
     public ElevatorSubsystem() {
+        leaderconfigs.MotorOutput.withInverted(InvertedValue.CounterClockwise_Positive);
         leader.getConfigurator().apply(leaderconfigs);
         follower.getConfigurator().apply(followerconfigs);
         follower.setControl(new Follower(51, true));
