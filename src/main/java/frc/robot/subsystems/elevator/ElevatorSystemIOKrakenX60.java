@@ -162,20 +162,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE;
     currentLimitsConfigs.SupplyCurrentLimitEnable =
         ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_ENABLE;
-    currentLimitsConfigs.StatorCurrentLimitEnable =
-        ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_ENABLE;
-    currentLimitsConfigs.SupplyCurrentLimitEnable =
-        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_ENABLE;
-    currentLimitsConfigs.StatorCurrentLimit = ElevatorConstants.ELEVATOR_STATOR_CURRENT_LIMIT_AMPS;
-    currentLimitsConfigs.SupplyCurrentLimit = ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LIMIT_AMPS;
-    currentLimitsConfigs.SupplyCurrentLowerLimit =
-        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_LIMIT_AMPS;
-    currentLimitsConfigs.SupplyCurrentLowerLimit =
-        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_LIMIT_AMPS;
     // if supply current limit is active for longer than this period, the supply
     // current will be adjusted to supply current lower limit
-    currentLimitsConfigs.SupplyCurrentLowerTime =
-        ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_TIME;
     currentLimitsConfigs.SupplyCurrentLowerTime =
         ElevatorConstants.ELEVATOR_SUPPLY_CURRENT_LOWER_TIME;
 
@@ -184,22 +172,12 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         ElevatorConstants.ELEVATOR_LEFT_INVERSION
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
-    leaderMotorConfigs.Inverted =
-        ElevatorConstants.ELEVATOR_LEFT_INVERSION
-            ? InvertedValue.Clockwise_Positive
-            : InvertedValue.CounterClockwise_Positive;
-    leaderMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
     leaderMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
-    leaderMotorConfigs.NeutralMode =
-        ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     leaderMotorConfigs.NeutralMode =
         ElevatorConstants.ELEVATOR_LEFT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
     followerMotorConfigs = new MotorOutputConfigs();
     followerMotorConfigs.PeakForwardDutyCycle = ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE;
-    followerMotorConfigs.PeakReverseDutyCycle = ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE;
-    followerMotorConfigs.NeutralMode =
-        ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     followerMotorConfigs.NeutralMode =
         ElevatorConstants.ELEVATOR_RIGHT_BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
@@ -218,17 +196,11 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
     OpenLoopRampsConfigs openLoopRampsConfigs = new OpenLoopRampsConfigs();
     openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod =
-        ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
+        ElevatorConstants.ELEVATOR_DUTYCYCLE_OPENLOOP_RAMP_PERIOD;
     openLoopRampsConfigs.TorqueOpenLoopRampPeriod =
-        ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
+        ElevatorConstants.ELEVATOR_TORQUE_OPENLOOP_RAMP_PERIOD;
     openLoopRampsConfigs.VoltageOpenLoopRampPeriod =
-        ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
-    openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod =
-        ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
-    openLoopRampsConfigs.TorqueOpenLoopRampPeriod =
-        ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
-    openLoopRampsConfigs.VoltageOpenLoopRampPeriod =
-        ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
+        ElevatorConstants.ELEVATOR_VOLTAGE_OPENLOOP_RAMP_PERIOD;
 
     ClosedLoopRampsConfigs closedLoopRampsConfigs = new ClosedLoopRampsConfigs();
     closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod =
@@ -394,13 +366,15 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   @Override
   public void setVolts(double volts) {
     leader.setControl(DutyCycle.withOutput(volts));
-    // leader.setControl(voltageOut.withOutput(volts));
+    // leader.setControl(voltageOut.withOutput(volts));x
   }
 
   @Override
   public void setHeightRads(double height) {
+    SmartDashboard.putNumber(
+        "set height target", Units.radiansToRotations(height) + encoderOffset[0]);
     leader.setControl(
-        torqueCurrentPosition.withPosition(Units.radiansToRotations(height) + encoderOffset[0]));
+        motionMagicOut.withPosition(Units.radiansToRotations(height) + encoderOffset[0]));
   }
 
   @Override
@@ -423,20 +397,20 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void setSoftLimits(boolean enableForward, boolean enableReverse) {
-    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
-    leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
-    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+    leaderSoftLimitConfig.ForwardSoftLimitEnable = enableForward;
+    leaderSoftLimitConfig.ReverseSoftLimitEnable = enableReverse;
+    leaderSoftLimitConfig.ForwardSoftLimitThreshold =
         ElevatorConstants.ELEVATOR_LEADER_SOFT_LIMIT_FORWARD + encoderOffset[0];
-    leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+    leaderSoftLimitConfig.ReverseSoftLimitThreshold =
         ElevatorConstants.ELEVATOR_LEADER_SOFT_LIMIT_REVERSE + encoderOffset[0];
-    tryUntilOk(5, () -> leaderConfigurator.apply(leaderConfigs));
-    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
-    followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
-    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+    tryUntilOk(5, () -> leaderConfigurator.apply(leaderSoftLimitConfig));
+    followerSoftLimitConfig.ForwardSoftLimitEnable = enableForward;
+    followerSoftLimitConfig.ReverseSoftLimitEnable = enableReverse;
+    followerSoftLimitConfig.ForwardSoftLimitThreshold =
         ElevatorConstants.ELEVATOR_FOLLOWER_SOFT_LIMIT_FORWARD + encoderOffset[1];
-    followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+    followerSoftLimitConfig.ReverseSoftLimitThreshold =
         ElevatorConstants.ELEVATOR_FOLLOWER_SOFT_LIMIT_REVERSE + encoderOffset[1];
-    tryUntilOk(5, () -> followerConfigurator.apply(followerConfigs));
+    tryUntilOk(5, () -> followerConfigurator.apply(followerSoftLimitConfig));
   }
 
   @Override
@@ -446,6 +420,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void hold() {
-    leader.setControl(torqueCurrentPosition.withPosition(leader.getPosition().getValueAsDouble()));
+    leader.setControl(motionMagicOut.withPosition(leader.getPosition().getValueAsDouble()));
   }
 }

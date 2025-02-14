@@ -15,7 +15,7 @@ public class ElevatorManualCommand extends Command {
   @Override
   public void execute() {
     m_elevator.setRequest(ElevatorRequest.MANUAL);
-    m_elevator.setManualVoltage(1.0);
+    m_elevator.setManualVoltage(0.3);
     m_elevator.setUseManualDynamic(false);
   }
 

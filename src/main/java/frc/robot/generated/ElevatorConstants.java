@@ -38,7 +38,7 @@ public class ElevatorConstants {
   public static final double ELEVATOR_TORQUE_OPENLOOP_RAMP_PERIOD = 0.5;
   public static final double ELEVATOR_VOLTAGE_OPENLOOP_RAMP_PERIOD = 0.5;
 
-  public static final double ELEVATOR_KP = 0.125;
+  public static final double ELEVATOR_KP = 0.5;
   public static final double ELEVATOR_KI = 0.0;
   public static final double ELEVATOR_KD = 0.0;
   public static final double ELEVATOR_KA = 0.0;
