@@ -8,208 +8,137 @@ import frc.robot.subsystems.rollers.RollerSystem;
 import frc.robot.subsystems.vision.Vision;
 
 public class SuperStructure extends SubsystemBase {
-  private ElevatorSystem elevator;
-  private RollerSystem roller;
-  private Vision vision;
-  private PivotSystem pivot;
+    private ElevatorSystem elevator;
+    private RollerSystem roller;
+    private Vision vision;
+    private PivotSystem pivot;
 
-  private SuperStructureState systemState = SuperStructureState.INITIALIZE;
+    private superStructureState systemState = superStructureState.IDLE;
+    private superStructurePosition systemPosition = superStructurePosition.NULL;
 
-  private boolean homed = false;
-  private boolean loaded = false;
-  private boolean atSetPoint = false;
-
-  private boolean requestHome = false;
-  private boolean requestShoot = false;
-  private boolean requestLoad = false;
-  private boolean requestProcessor = false;
-  private boolean requestManual = false;
-  private String requestAlgae = null;
-  private String requestPosition = null;
-
-  public SuperStructure(ElevatorSystem ele, RollerSystem roll, Vision vis, PivotSystem piv) {
-    this.elevator = ele;
-    this.roller = roll;
-    this.vision = vis;
-    this.pivot = piv;
-  }
-
-  @Override
-  public void periodic() {
-    periodicalUpdate();
-    updateStateMachine();
-    resetRequest();
-
-    if (DriverStation.isDisabled()) {
-      disabledCommands();
-    }
-  }
-
-  public void updateStateMachine() {
-    if (requestManual) {
-      systemState = SuperStructureState.MANUAL;
-      homed = false;
+    public SuperStructure(ElevatorSystem ele, RollerSystem roll, Vision vis, PivotSystem piv) {
+        this.elevator = ele;
+        this.roller = roll;
+        this.vision = vis;
+        this.pivot = piv;
     }
 
-    if (systemState == SuperStructureState.INITIALIZE) {
-      requestHome = true;
-    }
+    @Override
+    public void periodic() {
+        updateStateMachine();
 
-    if (requestHome) {
-      home();
-      if (homed) {
-        requestHome = false;
-        systemState = SuperStructureState.HOME;
-      }
-    }
-
-    if (requestPosition != null && !loaded && requestLoad && atSetPoint) {
-      load("Station");
-    }
-
-    if (requestPosition != null && homed && !atSetPoint) {
-      switch (requestPosition) {
-        case "L1":
-          set2Pos("L1");
-          systemState = SuperStructureState.L1;
-        case "L2":
-          set2Pos("L2");
-          systemState = SuperStructureState.L2;
-        case "L3":
-          set2Pos("L3");
-          systemState = SuperStructureState.L3;
-        case "L4":
-          set2Pos("L4");
-          systemState = SuperStructureState.L4;
-        case "LOW_ALGAE":
-          set2Pos("LOW_ALGAE");
-          systemState = SuperStructureState.LOW_ALGAE;
-        case "HIGH_ALGAE":
-          set2Pos("HIGH_ALGAE");
-          systemState = SuperStructureState.HIGH_ALGAE;
-        case "PROCESSOR":
-          set2Pos("PROCESSOR");
-          systemState = SuperStructureState.PROCESSOR;
-        case "STATION":
-          set2Pos("STATION");
-          systemState = SuperStructureState.STATION;
-        default:
-          break;
-      }
-    }
-
-    if (requestPosition != null && !loaded && requestAlgae != null && atSetPoint) {
-      switch (systemState) {
-        case HIGH_ALGAE -> getAlgae("HIGH");
-        case LOW_ALGAE -> getAlgae("LOW");
-        default -> {
-          break;
+        if (DriverStation.isDisabled()) {
+            disabledCommands();
         }
-      }
     }
 
-    if (requestPosition != null && loaded && requestShoot && atSetPoint) {
-      switch (systemState) {
-        case L1:
-          shoot("L1");
-        case L2:
-          shoot("L2");
-        case L3:
-          shoot("L3");
-        case L4:
-          shoot("L4");
-        default:
-          break;
-      }
+    public void updateStateMachine() {
+        switch (systemState) {
+            case IDLE:
+                setHold();
+                break;
+
+            case HOMING:
+                setHome();
+                break;
+
+            case MANUAL:
+                setManual();
+                break;
+
+            case POSITION:
+                setPosition();
+                if (isAtPosition(systemPosition)) {
+                    switch (systemPosition) {
+                        case HIGH_ALGAE, STATION, LOW_ALGAE -> systemState = superStructureState.LOAD;
+                        case L1, L2, L3, L4, PROCESSOR -> systemState = superStructureState.SHOOT;
+                    }
+                }
+                break;
+
+            case LOAD:
+                setLoad();
+        }
     }
 
-    if (requestPosition != null && requestProcessor && atSetPoint) {
-      shootProcessor();
+    /* commands to other subsystems */
+    private void setHold() {
     }
-  }
 
-  /* commands to other subsystems */
-  private void home() {
-  }
+    private void setHome() {
+        if (isHomed()) {
+            systemState = superStructureState.IDLE;
+        }
+    }
 
-  private void shoot(String pos) {
-  }
+    private void setManual() {
+    }
 
-  private void set2Pos(String pos) {
-  }
+    private void setPosition() {
+        switch (systemPosition){
+            default -> setHold();
+        }
+    }
 
-  private void load(String pos) {
-  }
+    private void setLoad() {
+    }
 
-  private void getAlgae(String pos) {
-  }
+    /* boolean to confirm state changed */
+    private boolean isHomed() {
+        return false;
+    }
 
-  private void shootProcessor() {
-  }
+    private boolean isAtPosition(superStructurePosition pos) {
+        return false;
+    }
 
-  private void disabledCommands() {
-  }
+    private boolean isLoaded() {
+        return false;
+    }
 
-  /* get state from other subsystems */
-  private void getHomed() {
-    this.homed = true;
-  }
+    private boolean isShot() {
+        return false;
+    }
 
-  private void getSetPoint() {
-    this.atSetPoint = true;
-  }
+    /* request to change the state */
+    public void requestHome() {
+        systemState = superStructureState.HOMING;
+    }
 
-  private void getLoaded() {
-    this.loaded = true;
-  }
+    public void requestManual() {
+        systemState = superStructureState.MANUAL;
+    }
 
-  private void periodicalUpdate() {
-    getHomed();
-    getSetPoint();
-    getLoaded();
-  }
+    private void requestPosition(superStructurePosition pos) {
+        systemState = superStructureState.POSITION;
+        systemPosition = pos;
+    }
 
-  /* public request */
-  public void requestManual() {
-    this.requestManual = true;
-  }
 
-  public void requestLoad() {
-    this.requestLoad = true;
-  }
+    // commands when disabled
+    private void disabledCommands() {
+    }
 
-  public void requestShoot() {
-    this.requestShoot = true;
-  }
 
-  public void requestPosition(String pos) {
-    this.requestPosition = pos;
-  }
+    private enum superStructureState {
+        IDLE,
+        HOMING,
+        MANUAL,
+        LOAD,
+        SHOOT,
+        POSITION
+    }
 
-  public void requestAlgae(String pos) {
-    this.requestAlgae = pos;
-  }
-
-  private void resetRequest() { // TODO: need to at when to reset
-    requestHome = false;
-    requestShoot = false;
-    requestLoad = false;
-    requestProcessor = false;
-    requestManual = false;
-    requestPosition = null;
-  }
-
-  private enum SuperStructureState {
-    INITIALIZE,
-    HOME,
-    L1,
-    L2,
-    L3,
-    L4,
-    LOW_ALGAE,
-    HIGH_ALGAE,
-    PROCESSOR,
-    STATION,
-    MANUAL
-  }
+    private enum superStructurePosition {
+        NULL,
+        HOME,
+        L1,
+        L2,
+        L3,
+        L4,
+        LOW_ALGAE,
+        HIGH_ALGAE,
+        PROCESSOR,
+        STATION
+    }
 }

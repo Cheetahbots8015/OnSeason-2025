@@ -222,6 +222,12 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
     closedLoopRampsConfigs.VoltageClosedLoopRampPeriod =
         ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_DUTYCYCLE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.TorqueClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD;
+    closedLoopRampsConfigs.VoltageClosedLoopRampPeriod =
+        ElevatorConstants.ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD;
 
     /* Apply configs */
     tryUntilOk(5, () -> leaderConfigurator.apply(currentLimitsConfigs));
@@ -363,10 +369,9 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void setHeightRads(double height) {
-    SmartDashboard.putNumber("target raw", Units.radiansToRotations(height));
-    SmartDashboard.putNumber("target after", Units.radiansToRotations(height) + encoderOffset[0]);
+    SmartDashboard.putNumber("targetttt", height);
     leader.setControl(
-        motionMagicOut.withPosition(Units.radiansToRotations(height) + encoderOffset[0]));
+        positionVoltage.withPosition(Units.radiansToRotations(height + encoderOffset[0])));
   }
 
   @Override
@@ -389,12 +394,12 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void setSoftLimits(boolean enableForward, boolean enableReverse) {
-    // leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
-    // leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
-    // tryUntilOk(5, () -> leaderConfigurator.apply(leaderConfigs));
-    // followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
-    // followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
-    // tryUntilOk(5, () -> followerConfigurator.apply(followerConfigs));
+    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
+    leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
+    tryUntilOk(5, () -> leaderConfigurator.apply(leaderConfigs));
+    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = enableForward;
+    followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableReverse;
+    tryUntilOk(5, () -> followerConfigurator.apply(followerConfigs));
   }
 
   @Override
