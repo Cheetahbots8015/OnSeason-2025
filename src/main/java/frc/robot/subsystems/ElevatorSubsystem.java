@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -21,17 +23,19 @@ public class ElevatorSubsystem extends SubsystemBase{
     
     public ElevatorSubsystem(){
         leader.getConfigurator().apply(leaderconfigs);
-        follower.getConfigurator().apply(followerconfigs);
+        follower.setControl(new Follower(51, false));
     }
 
     public void ShutDown(){
         leader.setControl(new NeutralOut());
-        follower.setControl(new NeutralOut());
     }
 
-    public void RunVolts(double volts){
-        leader.setControl(new VoltageOut(volts));
-        follower.setControl(new VoltageOut(volts));
+    public void RunVolts(double duty){
+        leader.setControl(new DutyCycleOut(duty));
+    }
+
+    public void report(){
+        SmartDashboard.putNumber("position difference", leader.getPosition().getValueAsDouble() - follower.getPosition().getValueAsDouble());
     }
    
 

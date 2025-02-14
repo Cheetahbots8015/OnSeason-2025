@@ -9,7 +9,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class ElevatorTestCommand extends Command {
+public class ElevatorReportCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_subsystem;
 
@@ -18,7 +18,7 @@ public class ElevatorTestCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorTestCommand(ElevatorSubsystem subsystem) {
+  public ElevatorReportCommand(ElevatorSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -31,14 +31,12 @@ public class ElevatorTestCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.RunVolts(0.3);
     m_subsystem.report();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.ShutDown();
   }
 
   // Returns true when the command should end.

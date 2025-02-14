@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ElevatorReportCommand;
 import frc.robot.commands.ElevatorTestCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -37,6 +38,7 @@ public class RobotContainer {
 
   private final Trigger TestTrigger = testController.a();
   private final Command TestCommand = new ElevatorTestCommand(m_elevatorSubsystem);
+  private final Command ReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -61,6 +63,7 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     TestTrigger.whileTrue(TestCommand);
+    m_elevatorSubsystem.setDefaultCommand(ReportCommand);
   }
 
   /**
