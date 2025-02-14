@@ -145,7 +145,7 @@ public class ElevatorSystem extends SubsystemBase {
     switch (systemState) {
       case IDLE:
         if (homed) {
-          io.stop();
+          io.hold();
         } else {
           io.stop();
         }
@@ -159,7 +159,7 @@ public class ElevatorSystem extends SubsystemBase {
         switch (elevatorPositionTarget) {
           case HOME:
             if (isAtPosition(ElevatorConstants.ELEVATOR_HOME_POSITION_RADS)) {
-              hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_HOME_POSITION_RADS);
             }
@@ -167,7 +167,7 @@ public class ElevatorSystem extends SubsystemBase {
 
           case L1:
             if (isAtPosition(ElevatorConstants.ELEVATOR_L1_POSITION_RADS)) {
-              hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_L1_POSITION_RADS);
             }
@@ -179,8 +179,7 @@ public class ElevatorSystem extends SubsystemBase {
                 "isatposition", isAtPosition(ElevatorConstants.ELEVATOR_L2_POSITION_RADS));
 
             if (isAtPosition(ElevatorConstants.ELEVATOR_L2_POSITION_RADS)) {
-              io.stop();
-              // hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_L2_POSITION_RADS);
             }
@@ -188,8 +187,7 @@ public class ElevatorSystem extends SubsystemBase {
 
           case L3:
             if (isAtPosition(ElevatorConstants.ELEVATOR_L3_POSITION_RADS)) {
-              io.stop();
-              // hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_L3_POSITION_RADS);
             }
@@ -197,7 +195,7 @@ public class ElevatorSystem extends SubsystemBase {
 
           case L4:
             if (isAtPosition(ElevatorConstants.ELEVATOR_L4_POSITION_RADS)) {
-              hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_L4_POSITION_RADS);
             }
@@ -205,7 +203,7 @@ public class ElevatorSystem extends SubsystemBase {
 
           case LOW_ALGAE:
             if (isAtPosition(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS)) {
-              hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION_RADS);
             }
@@ -213,7 +211,7 @@ public class ElevatorSystem extends SubsystemBase {
 
           case HIGH_ALGAE:
             if (isAtPosition(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS)) {
-              hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION_RADS);
             }
@@ -221,7 +219,7 @@ public class ElevatorSystem extends SubsystemBase {
 
           case PROCESSOR:
             if (isAtPosition(ElevatorConstants.ELEVATOR_PROCESSOR_POSITION_RADS)) {
-              hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_PROCESSOR_POSITION_RADS);
             }
@@ -229,7 +227,7 @@ public class ElevatorSystem extends SubsystemBase {
 
           case BARGE:
             if (isAtPosition(ElevatorConstants.ELEVATOR_BARGE_POSITION_RADS)) {
-              hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_BARGE_POSITION_RADS);
             }
@@ -237,7 +235,7 @@ public class ElevatorSystem extends SubsystemBase {
 
           case STATION:
             if (isAtPosition(ElevatorConstants.ELEVATOR_STATION_POSITION_RADS)) {
-              hold();
+              io.hold();
             } else {
               set2Position(ElevatorConstants.ELEVATOR_STATION_POSITION_RADS);
             }
@@ -344,7 +342,7 @@ public class ElevatorSystem extends SubsystemBase {
   }
 
   private void setSoftLimitEnable(boolean enableForward, boolean enableReverse) {
-    // io.setSoftLimits(enableForward, enableReverse);
+    io.setSoftLimits(enableForward, enableReverse);
   }
 
   public void testCommand() {
@@ -371,9 +369,5 @@ public class ElevatorSystem extends SubsystemBase {
             getEncoderPositionRads() - target,
             ElevatorConstants.ELEVATOR_SET_POSITION_TOLERANCE_RADS)
         == 0;
-  }
-
-  private void hold() {
-    // io.setHeightRads(getEncoderPositionRads());
   }
 }
