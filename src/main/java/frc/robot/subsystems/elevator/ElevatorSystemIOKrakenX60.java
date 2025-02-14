@@ -365,8 +365,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void setVolts(double volts) {
-    leader.setControl(DutyCycle.withOutput(volts));
-    // leader.setControl(voltageOut.withOutput(volts));x
+    // leader.setControl(DutyCycle.withOutput(volts));
+    leader.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
