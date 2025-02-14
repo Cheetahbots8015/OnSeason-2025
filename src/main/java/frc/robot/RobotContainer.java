@@ -36,8 +36,10 @@ public class RobotContainer {
   private final CommandXboxController testController =
       new CommandXboxController(1);
 
-  private final Trigger TestTrigger = testController.a();
-  private final Command TestCommand = new ElevatorTestCommand(m_elevatorSubsystem);
+  private final Trigger TestTrigger1 = testController.a();
+  private final Trigger TestTrigger2 = testController.b();
+  private final Command TestCommand1 = new ElevatorTestCommand(m_elevatorSubsystem, 0.1);
+  private final Command TestCommand2 = new ElevatorTestCommand(m_elevatorSubsystem, -0.1);
   private final Command ReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -62,8 +64,10 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-    TestTrigger.whileTrue(TestCommand);
+    TestTrigger1.whileTrue(TestCommand1);
+    TestTrigger2.whileTrue(TestCommand2);
     m_elevatorSubsystem.setDefaultCommand(ReportCommand);
+
   }
 
   /**

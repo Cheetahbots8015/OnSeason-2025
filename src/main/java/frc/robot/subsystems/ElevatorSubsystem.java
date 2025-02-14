@@ -13,30 +13,34 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ElevatorSubsystem extends SubsystemBase{
+public class ElevatorSubsystem extends SubsystemBase {
     private final TalonFX leader = new TalonFX(51, "canivore");
     private final TalonFX follower = new TalonFX(52, "canivore");
     TalonFXConfiguration leaderconfigs = new TalonFXConfiguration();
     TalonFXConfiguration followerconfigs = new TalonFXConfiguration();
-    
-    public ElevatorSubsystem(){
+
+    public ElevatorSubsystem() {
         leader.getConfigurator().apply(leaderconfigs);
-        follower.setControl(new Follower(51, false));
+        follower.getConfigurator().apply(followerconfigs);
+        follower.setControl(new Follower(51, true));
     }
 
-    public void ShutDown(){
+    public void ShutDown() {
         leader.setControl(new NeutralOut());
     }
 
     public void RunVolts(double duty){
+        
         leader.setControl(new DutyCycleOut(duty));
+        
+        
     }
 
     public void report(){
-        SmartDashboard.putNumber("position difference", leader.getPosition().getValueAsDouble() - follower.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("position difference", leader.getPosition().getValueAsDouble()-follower.getPosition().getValueAsDouble());
     }
-   
 
 }

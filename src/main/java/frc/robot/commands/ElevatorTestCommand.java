@@ -12,16 +12,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ElevatorTestCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_subsystem;
+  private double duty;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorTestCommand(ElevatorSubsystem subsystem) {
+  public ElevatorTestCommand(ElevatorSubsystem subsystem, double duty) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
+    this.duty = duty;
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +33,7 @@ public class ElevatorTestCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.RunVolts(0.3);
+    m_subsystem.RunVolts(duty);
     m_subsystem.report();
   }
 
