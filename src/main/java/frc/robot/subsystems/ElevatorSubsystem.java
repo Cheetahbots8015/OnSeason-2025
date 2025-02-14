@@ -40,6 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void report(){
+        SmartDashboard.putNumber("leader position", leader.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("position difference", leader.getPosition().getValueAsDouble()-follower.getPosition().getValueAsDouble());
     }
 
