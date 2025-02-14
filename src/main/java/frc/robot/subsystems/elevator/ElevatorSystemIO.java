@@ -52,4 +52,6 @@ public interface ElevatorSystemIO {
 
   /* Stop elevator */
   default void stop() {}
+
+  default void hold() {}
 }

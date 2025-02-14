@@ -5,8 +5,9 @@ public class ElevatorConstants {
   public static final int ELEVATOR_RIGHT_ID = 51;
   public static final int ELEVATOR_HALL_SENSOR_ID = 0;
 
-  public static final boolean ELEVATOR_LEFT_INVERSION = false;
+  public static final boolean ELEVATOR_LEFT_INVERSION = true;
   public static final boolean ELEVATOR_LEFT_BRAKE = true;
+  public static final boolean ELEVATOR_RIGHT_INVERSION = true;
   public static final boolean ELEVATOR_RIGHT_BRAKE = true;
   public static final boolean OPPOSE_MASTER = true;
 
@@ -33,18 +34,22 @@ public class ElevatorConstants {
   public static final double ELEVATOR_TORQUE_CLOSEDLOOP_RAMP_PERIOD = 0.5;
   public static final double ELEVATOR_VOLTAGE_CLOSEDLOOP_RAMP_PERIOD = 0.5;
 
-  public static final double ELEVATOR_KP = 0.5;
+  public static final double ELEVATOR_DUTYCYCLE_OPENLOOP_RAMP_PERIOD = 0.5;
+  public static final double ELEVATOR_TORQUE_OPENLOOP_RAMP_PERIOD = 0.5;
+  public static final double ELEVATOR_VOLTAGE_OPENLOOP_RAMP_PERIOD = 0.5;
+
+  public static final double ELEVATOR_KP = 0.125;
   public static final double ELEVATOR_KI = 0.0;
   public static final double ELEVATOR_KD = 0.0;
   public static final double ELEVATOR_KA = 0.0;
   public static final double ELEVATOR_KS = 0.0;
   public static final double ELEVATOR_KV = 0.0;
-  public static final double ELEVATOR_MOTION_MAGIC_ACCELERATION = 60.0;
-  public static final double ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY = 300.0;
-  public static final double ELEVATOR_MOTION_MAGIC_JERK = 60.0;
+  public static final double ELEVATOR_MOTION_MAGIC_ACCELERATION = 30.0;
+  public static final double ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY = 100.0;
+  public static final double ELEVATOR_MOTION_MAGIC_JERK = 30.0;
 
-  public static final double SIGNAL_UPDATE_FREQUENCY_HZ = 50.0;
-  public static final double CONTROL_UPDATE_FREQUENCY_HZ = 50.0;
+  public static final double SIGNAL_UPDATE_FREQUENCY_HZ = 200.0;
+  public static final double CONTROL_UPDATE_FREQUENCY_HZ = 200.0;
 
   public static final double ELEVATOR_HOME_UP_TIME = 5.0;
   public static final double ELEVATOR_HOME_UP_VOLTAGE = 0.3;
