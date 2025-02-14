@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.vision;
+package frc.robot.generated;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -24,14 +24,16 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "camera_0";
-  public static String camera1Name = "camera_1";
+  public static String cameraReefName = "camera_Reef";
+  public static int cameraReefIndex = 0;
+  public static String cameraStationName = "camera_Station";
+  public static int cameraStationIndex = 1;
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
+  public static Transform3d robotToCameraReef =
       new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
-  public static Transform3d robotToCamera1 =
+  public static Transform3d robotToCameraStation =
       new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
 
   // Basic filtering thresholds
@@ -55,4 +57,29 @@ public class VisionConstants {
   public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
+
+  // Multipliers for calculation of x, y and rot of the robot
+  public static double kPVerticalAim = 1.0; // x, m/s
+  public static double kPHorizontalAim = 1.0; // y
+  public static double kPRotationalAim = 1.0; // rot
+
+  // threshold distance (in meter) for tracking and reached
+  public static double trackingDistance2Reef = 1.0; // meter
+  public static double trackingDistance2Station = 1.0;
+  public static double reachedDistance2Reef = 1.0;
+  public static double reachedDistance2Station = 1.0;
+
+  // parameter of the camera on the robot
+  // looking down means negative tilt
+  public static double reefCamHeight = 1.0;
+  public static double reefHeight = 0.3;
+  public static double reefCamTilt = 0.5;
+  public static double stationCamHeight = 1.0;
+  public static double stationHeight = 1.3;
+  public static double stationCamTilt = 0.3;
+
+  public static double reefCamXShift = 0.2;
+  public static double reefCamYShift = 0.15;
+
+  public static double reefTagShift = 0.5;
 }

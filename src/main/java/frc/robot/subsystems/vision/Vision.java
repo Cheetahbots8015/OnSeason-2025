@@ -13,7 +13,7 @@
 
 package frc.robot.subsystems.vision;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
+import static frc.robot.generated.VisionConstants.*;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -25,6 +25,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.generated.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,12 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+
+  private VisionState systemState = VisionState.INITIALIZE;
+
+  private boolean requestTracking = false;
+  private boolean isTracking = false;
+  private boolean isReached = false;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -66,6 +73,7 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
+    updateStateMachine();
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
@@ -159,6 +167,9 @@ public class Vision extends SubsystemBase {
       Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
+      Logger.recordOutput(
+          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+          this.getSystemState());
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
@@ -176,6 +187,107 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+  }
+
+  public void updateStateMachine() {
+    if (hasTarget()) {
+      systemState = VisionState.AIMED;
+    } else {
+      systemState = VisionState.INITIALIZE;
+    }
+
+    if (requestTracking && getDistance2Target() < trackingDistance2Reef) {
+      systemState = VisionState.TRACKING;
+    }
+
+    if (systemState == VisionState.TRACKING) {
+      isTracking = true;
+    }
+
+    if (systemState == VisionState.TRACKING && getDistance2Target() < reachedDistance2Station) {
+      systemState = VisionState.REACHED;
+      isReached = true;
+    }
+  }
+
+  private boolean hasTarget() {
+    return false;
+  }
+
+  private double getDistance2Target() {
+    return 0.0;
+  }
+
+  /* Returns the current system state of the vision */
+  public VisionState getSystemState() {
+    return systemState;
+  }
+
+  public void setRequestTracking(boolean set) {
+    this.requestTracking = set;
+  }
+
+  public boolean getIsTracking() {
+    return isTracking;
+  }
+
+  public boolean getIsReached() {
+    return isReached;
+  }
+
+  public double[] calculateChassisInput(int cameraIndex, boolean isLeft) {
+    double[] input = new double[3];
+    if (isTracking) {
+      if (cameraIndex == 0) {
+        double shift = VisionConstants.reefTagShift;
+        if (isLeft) {
+          shift = -shift;
+        }
+        double targety =
+            inputs[cameraIndex].distance2target
+                * Math.cos(
+                    inputs[cameraIndex].lastestAprilTagObservation
+                        .tx()); // TODO: this should be calculateDistance2Tar4Reef
+        double targetx =
+            inputs[cameraIndex].distance2target
+                    * Math.sin(inputs[cameraIndex].lastestAprilTagObservation.tx())
+                + shift;
+        double D =
+            Math.sqrt(
+                (targety + VisionConstants.reefCamYShift)
+                        * (targety + VisionConstants.reefCamYShift)
+                    + (targetx - VisionConstants.reefCamXShift)
+                        * (targetx - VisionConstants.reefCamXShift));
+        double angle =
+            Math.atan(
+                (targetx - VisionConstants.reefCamXShift)
+                    / (targety + VisionConstants.reefCamYShift));
+        input[0] = VisionConstants.kPVerticalAim * D * Math.cos(angle);
+        input[1] = VisionConstants.kPHorizontalAim * D * Math.sin(angle);
+        input[2] =
+            VisionConstants.kPRotationalAim * inputs[cameraIndex].lastestAprilTagObservation.tx();
+      } else if (cameraIndex == 1) {
+        input[0] =
+            VisionConstants.kPVerticalAim
+                * inputs[cameraIndex].distance2target
+                * Math.cos(inputs[cameraIndex].lastestAprilTagObservation.tx());
+        input[1] =
+            VisionConstants.kPHorizontalAim
+                * inputs[cameraIndex].distance2target
+                * Math.sin(inputs[cameraIndex].lastestAprilTagObservation.tx());
+        input[2] =
+            VisionConstants.kPRotationalAim * inputs[cameraIndex].lastestAprilTagObservation.tx();
+      }
+    }
+    return input;
+  }
+
+  /* System States */
+  private enum VisionState {
+    INITIALIZE,
+    AIMED,
+    TRACKING,
+    REACHED
   }
 
   @FunctionalInterface
