@@ -7,7 +7,10 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Generated.ElevatorConstants;
@@ -15,7 +18,7 @@ import frc.robot.Generated.ElevatorConstants;
 public class ElevatorSubsystem extends SubsystemBase {
     private final TalonFX leader = new TalonFX(ElevatorConstants.leaderID, ElevatorConstants.canName);
     private final TalonFX follower = new TalonFX(ElevatorConstants.followerID, ElevatorConstants.canName);
-    private DigitalInput hallSensor = new DigitalInput(ElevatorConstants.hallSensorID);
+    private final DigitalInput hallSensor = new DigitalInput(ElevatorConstants.hallSensorID);
 
     private TalonFXConfiguration leaderconfigs = new TalonFXConfiguration();
     private TalonFXConfiguration followerconfigs = new TalonFXConfiguration();
@@ -23,6 +26,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
     private MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0.0);
     private NeutralOut neutralOut = new NeutralOut();
+
+    private double encoderOffset = 0.0;
 
     public ElevatorSubsystem() {
         leaderconfigs.MotorOutput.withInverted(ElevatorConstants.inverted ? InvertedValue.Clockwise_Positive
@@ -45,6 +50,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void manualVolts() {
+        report();
         leader.setControl(voltageOut.withOutput(ElevatorConstants.manualVoltage));
     }
 
@@ -53,18 +59,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setHeight(double height) {
-        leader.setControl(motionMagic.withPosition(height));
+        leader.setControl(motionMagic.withPosition(height+encoderOffset));
+    }
+
+    public void hold(){
+        leader.setControl(motionMagic.withPosition(leader.getPosition().getValueAsDouble()));
     }
 
     public boolean getHallSensorActive() {
         return !hallSensor.get();
     }
 
+
     public void report() {
         SmartDashboard.putNumber("elevator/leader position", leader.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("elevator/position difference",
                 leader.getPosition().getValueAsDouble() - follower.getPosition().getValueAsDouble());
-        SmartDashboard.putBoolean("elevator/hallsensor", getHallSensorActive());
+        SmartDashboard.putBoolean("elevator/hallsensor", !hallSensor.get());
+        SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
+        SmartDashboard.putNumber("elevator/encoder offset", encoderOffset);
     }
 
 }
