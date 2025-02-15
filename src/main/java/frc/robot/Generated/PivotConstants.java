@@ -1,11 +1,11 @@
 package frc.robot.Generated;
 
 public class PivotConstants {
-    public static final int pivotID = 51;
+    public static final int pivotID = 61;
     public static final boolean inverted = false;
     public static final String canName = "canivore";
-    public static final double manualVoltageForward = 2.0;
-    public static final double manualVoltageReverse = -2.0;
+    public static final double manualVoltageForward = 0.5;
+    public static final double manualVoltageReverse = -0.5;
     public static final double forwardDutyCycleLimit = 0.4;
     public static final double reverseDutyCycleLimit = -0.4;
     public static final double kP = 0.0;

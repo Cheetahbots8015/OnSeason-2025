@@ -12,9 +12,13 @@ import frc.robot.commands.ElevatorResetCommand;
 import frc.robot.commands.ElevatorHoldCommand;
 import frc.robot.commands.ElevatorVoltageOutCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.PivotForwardCommand;
+import frc.robot.commands.PivotReportCommand;
+import frc.robot.commands.PivotReverseCommand;
 import frc.robot.commands.RollerVoltageOutCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 import static edu.wpi.first.units.Units.Newton;
@@ -34,6 +38,7 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
+  private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -47,12 +52,18 @@ public class RobotContainer {
   private final Trigger ElevatorResetTrigger = testController.x();
   private final Trigger ElevatorL2Trigger = testController.y();
   private final Trigger RollerManualTrigger = testController.leftBumper();
+  private final Trigger PivotManualForwardTrigger = testController.rightTrigger();
+  private final Trigger PivotManualReverseTrigger = testController.leftTrigger();
+
   private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
   private final Command ElevatorHoldCommand = new ElevatorHoldCommand(m_elevatorSubsystem);
   private final Command RollerManualCommand = new RollerVoltageOutCommand(m_rollerSubsystem);
   private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
   private final Command ElevatorResetCommand = new ElevatorResetCommand(m_elevatorSubsystem);
   private final Command ElevatorL2Command = new ElevatorL2Command(m_elevatorSubsystem);
+  private final Command PivotReportCommand = new PivotReportCommand(m_pivotSubsystem);
+  private final Command PivotForwardCommand = new PivotForwardCommand(m_pivotSubsystem);
+  private final Command PivotReverseCommand = new PivotReverseCommand(m_pivotSubsystem);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -82,6 +93,9 @@ public class RobotContainer {
     ElevatorL2Trigger.whileTrue(ElevatorL2Command);
     RollerManualTrigger.whileTrue(RollerManualCommand);
     m_elevatorSubsystem.setDefaultCommand(ElevatorReportCommand);
+    m_pivotSubsystem.setDefaultCommand(PivotReportCommand);
+    PivotManualForwardTrigger.whileTrue(PivotForwardCommand);
+    PivotManualReverseTrigger.whileTrue(PivotReverseCommand);
 
   }
 
