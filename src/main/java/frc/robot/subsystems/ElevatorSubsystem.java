@@ -25,7 +25,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private TalonFXConfiguration followerconfigs = new TalonFXConfiguration();
 
     private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    private MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(200);
+    private MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(0);
     private NeutralOut neutralOut = new NeutralOut();
 
     private double encoderOffset = 0.0;
@@ -45,13 +45,15 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderconfigs.MotorOutput.withPeakReverseDutyCycle(ElevatorConstants.reverseDutyCycleLimit);
         followerconfigs.MotorOutput.withPeakForwardDutyCycle(ElevatorConstants.forwardDutyCycleLimit);
         followerconfigs.MotorOutput.withPeakReverseDutyCycle(ElevatorConstants.reverseDutyCycleLimit);
-        leader.getTorqueCurrent().setUpdateFrequency(200);
-        leader.getClosedLoopReference().setUpdateFrequency(200);
-        follower.getTorqueCurrent().setUpdateFrequency(200);
-        follower.getClosedLoopReference().setUpdateFrequency(200);
+        leader.getTorqueCurrent().setUpdateFrequency(1000);
+        leader.getClosedLoopReference().setUpdateFrequency(1000);
+        follower.getTorqueCurrent().setUpdateFrequency(1000);
+        follower.getClosedLoopReference().setUpdateFrequency(1000);
         leader.getConfigurator().apply(leaderconfigs);
         follower.getConfigurator().apply(followerconfigs);
         follower.setControl(new Follower(ElevatorConstants.leaderID, ElevatorConstants.opposeMaster));
+        leader.optimizeBusUtilization();
+        follower.optimizeBusUtilization();
         
     }
 
