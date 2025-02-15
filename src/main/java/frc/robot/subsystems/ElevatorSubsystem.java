@@ -29,6 +29,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private NeutralOut neutralOut = new NeutralOut();
 
     private double encoderOffset = 0.0;
+    private double timer = -1.0;
+    private boolean hasHomed = false;
 
     public ElevatorSubsystem() {
         leaderconfigs.MotorOutput.withInverted(ElevatorConstants.inverted ? InvertedValue.Clockwise_Positive
@@ -61,29 +63,73 @@ public class ElevatorSubsystem extends SubsystemBase {
         leader.setControl(neutralOut);
     }
 
-    public void manualVolts() {
-        follower.setControl(new Follower(ElevatorConstants.leaderID, ElevatorConstants.opposeMaster));
-        report();
-        leader.setControl(voltageOut.withOutput(ElevatorConstants.manualVoltage));
+    public void manualUpVolts() {
+        leader.setControl(voltageOut.withOutput(ElevatorConstants.manualUpVoltage));
+    }
+
+    public void manualDownVolts() {
+        leader.setControl(voltageOut.withOutput(ElevatorConstants.manualDownVoltage));
     }
 
     public void lockVolts(){
-        follower.setControl(new Follower(ElevatorConstants.leaderID, ElevatorConstants.opposeMaster));
         leader.setControl(voltageOut.withOutput(ElevatorConstants.lockVoltage));
     }
 
     public void setHeight(double height) {
-        follower.setControl(new Follower(ElevatorConstants.leaderID, ElevatorConstants.opposeMaster));
-        var leaderPositionSignal = leader.getPosition();
-        var followerPositionSignal = follower.getPosition();
-        BaseStatusSignal.waitForAll(0.02, leaderPositionSignal,followerPositionSignal);
-        leader.setControl(motionMagic.withPosition(height+encoderOffset).withFeedForward(ElevatorConstants.kF));
+        height += encoderOffset;
+        if (Math.abs(leader.getPosition().getValueAsDouble() - height) < ElevatorConstants.positionDeadband) {
+            lockVolts();
+        } else if (leader.getPosition().getValueAsDouble() > height) {
+            manualDownVolts();
+        } else {
+            manualUpVolts();
+        }
+    }
+
+    public boolean isAtPosition(double height) {
+        height += encoderOffset;
+        return Math.abs(leader.getPosition().getValueAsDouble() - height) < ElevatorConstants.positionDeadband;
+    }
+
+    public void home() {
+        if (timer == -1) {
+            SmartDashboard.putNumber("temp", 33);
+            timer = Timer.getFPGATimestamp();
+        }
+
+        if (Timer.getFPGATimestamp() - timer < ElevatorConstants.homeUpTime) {
+            manualUpVolts();
+        } else {
+            manualDownVolts();
+            if (getHallSensorActive()) {
+                resetOffset();
+                shutDown();
+                hasHomed = true;
+            }
+
+        }
+    }
+
+    public void setHasHomed(boolean set) {
+        hasHomed = set;
+    }
+
+    public boolean getHasHomed() {
+        return hasHomed;
+    }
+
+    public void resetTimer() {
+        timer = -1;
     }
 
     public void set2L2(){
-        
         report();
         setHeight(ElevatorConstants.L2Position);
+    }
+
+    public void set2L4() {
+        report();
+        setHeight(ElevatorConstants.L4Position);
     }
 
     public void hold(){
@@ -113,6 +159,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("elevator/leader torquecurrent", leader.getTorqueCurrent().getValueAsDouble());
         SmartDashboard.putNumber("elevator/follower torquecurrent", follower.getTorqueCurrent().getValueAsDouble());
         SmartDashboard.putNumber("elevator/motionmagic target", leader.getClosedLoopReference().getValueAsDouble());
+        SmartDashboard.putNumber("elevator/timer", timer);
+        SmartDashboard.putBoolean("elevator/hasHomed", hasHomed);
     }
 
 }

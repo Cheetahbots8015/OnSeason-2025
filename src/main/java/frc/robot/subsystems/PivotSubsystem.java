@@ -4,6 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Generated.ElevatorConstants;
 import frc.robot.Generated.PivotConstants;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -25,7 +27,7 @@ public class PivotSubsystem extends SubsystemBase {
     private TalonFXConfiguration pivotconfigs = new TalonFXConfiguration();
 
     private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-    private MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0.0);
+    private MotionMagicVoltage motionMagic = new MotionMagicVoltage(0.0).withEnableFOC(true);
     private NeutralOut neutralOut = new NeutralOut();
 
     private double encoderOffset = 0.0;
@@ -33,8 +35,8 @@ public class PivotSubsystem extends SubsystemBase {
     private final SysIdRoutine m_SysIdRoutinePivot = new SysIdRoutine(
             new SysIdRoutine.Config(
                     null,
-                    Volts.of(0.5),
-                    Seconds.of(0.5),
+                    Volts.of(1.5),
+                    Seconds.of(3.0),
                     (state) -> SignalLogger.writeString("state", state.toString())),
             new SysIdRoutine.Mechanism(
                     (volts) -> {
@@ -58,6 +60,10 @@ public class PivotSubsystem extends SubsystemBase {
         pivotconfigs.MotionMagic.MotionMagicAcceleration = PivotConstants.cruiseAcceleration;
         pivotconfigs.MotorOutput.withPeakForwardDutyCycle(PivotConstants.forwardDutyCycleLimit);
         pivotconfigs.MotorOutput.withPeakReverseDutyCycle(PivotConstants.reverseDutyCycleLimit);
+        pivotconfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        pivotconfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        pivotconfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 16.5;
+        pivotconfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.3;
         pivot.getConfigurator().apply(pivotconfigs);
 
         BaseStatusSignal.setUpdateFrequencyForAll(250, pivot.getPosition(), pivot.getVelocity(),
@@ -89,12 +95,25 @@ public class PivotSubsystem extends SubsystemBase {
         setHeight(PivotConstants.L2Position);
     }
 
+    public void set2L4() {
+        setHeight(PivotConstants.L4Position);
+    }
+
+    public void home() {
+        setHeight(0.0);
+    }
+
     public void hold() {
         pivot.setControl(motionMagic.withPosition(pivot.getPosition().getValueAsDouble() - encoderOffset));
     }
 
     public void resetOffset() {
         encoderOffset = pivot.getPosition().getValueAsDouble();
+    }
+
+    public boolean isAtPosition(double height) {
+        height += encoderOffset;
+        return Math.abs(pivot.getPosition().getValueAsDouble() - height) < PivotConstants.positionDeadband;
     }
 
     public void report() {

@@ -36,7 +36,7 @@ public class ElevatorL2Command extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.shutDown();
+    m_subsystem.lockVolts();
   }
 
   // Returns true when the command should end.

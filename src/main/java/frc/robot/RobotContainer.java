@@ -5,17 +5,7 @@
 package frc.robot;
 
 import frc.robot.Generated.JoystickConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ElevatorL2Command;
-import frc.robot.commands.ElevatorReportCommand;
-import frc.robot.commands.ElevatorResetCommand;
-import frc.robot.commands.ElevatorHoldCommand;
-import frc.robot.commands.ElevatorVoltageOutCommand;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.PivotForwardCommand;
-import frc.robot.commands.PivotReportCommand;
-import frc.robot.commands.PivotReverseCommand;
-import frc.robot.commands.RollerVoltageOutCommand;
+import frc.robot.commands.*;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -57,11 +47,14 @@ public class RobotContainer {
 
     private final Trigger ElevatorManualTrigger = testController.a();
     private final Trigger ElevatorVoltageLockTrigger = testController.b();
-    private final Trigger ElevatorResetTrigger = testController.x();
-    private final Trigger ElevatorL2Trigger = testController.y();
+    private final Trigger L4Trigger = testController.x();
+    private final Trigger L2Trigger = testController.y();
     private final Trigger RollerManualTrigger = testController.leftBumper();
     private final Trigger PivotManualForwardTrigger = testController.rightTrigger();
     private final Trigger PivotManualReverseTrigger = testController.leftTrigger();
+    private final Trigger PivotL2Trigger = testController.rightBumper();
+    private final Trigger PivotResetTrigger = testController.povUp();
+    private final Trigger ElevatorHomeTrigger = testController.povDown();
 
     private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
     private final Command ElevatorHoldCommand = new ElevatorHoldCommand(m_elevatorSubsystem);
@@ -72,6 +65,11 @@ public class RobotContainer {
     private final Command PivotReportCommand = new PivotReportCommand(m_pivotSubsystem);
     private final Command PivotForwardCommand = new PivotForwardCommand(m_pivotSubsystem);
     private final Command PivotReverseCommand = new PivotReverseCommand(m_pivotSubsystem);
+    private final Command PivotL2Command = new PivotL2Command(m_pivotSubsystem);
+    private final Command PivotResetCommand = new PivotResetCommand(m_pivotSubsystem);
+    private final Command ElevatorHomeCommand = new ElevatorHomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
+    private final Command L2Command = new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+    private final Command L4Command = new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -106,13 +104,16 @@ public class RobotContainer {
         m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
         ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
         ElevatorVoltageLockTrigger.whileTrue(ElevatorHoldCommand);
-        ElevatorResetTrigger.whileTrue(ElevatorResetCommand);
-        ElevatorL2Trigger.whileTrue(ElevatorL2Command);
+        L4Trigger.whileTrue(L4Command);
+        L2Trigger.whileTrue(L2Command);
         RollerManualTrigger.whileTrue(RollerManualCommand);
         m_elevatorSubsystem.setDefaultCommand(ElevatorReportCommand);
         m_pivotSubsystem.setDefaultCommand(PivotReportCommand);
         PivotManualForwardTrigger.whileTrue(PivotForwardCommand);
         PivotManualReverseTrigger.whileTrue(PivotReverseCommand);
+        PivotL2Trigger.whileTrue(PivotL2Command);
+        PivotResetTrigger.whileTrue(PivotResetCommand);
+        ElevatorHomeTrigger.whileTrue(ElevatorHomeCommand);
 
         SysIDController.a().whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kForward));
         SysIDController.b().whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kReverse));

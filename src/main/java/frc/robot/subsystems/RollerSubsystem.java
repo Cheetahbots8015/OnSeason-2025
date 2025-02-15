@@ -42,6 +42,14 @@ public class RollerSubsystem extends SubsystemBase {
         roller.setControl(voltageOut.withOutput(RollerConstants.manualVoltage));
     }
 
+    public void L2Vots() {
+        roller.setControl(voltageOut.withOutput(RollerConstants.manualVoltage));
+    }
+
+    public void L4Vots() {
+        roller.setControl(voltageOut.withOutput(RollerConstants.manualVoltage));
+    }
+
     public void setVelocity(double velocity) {
         roller.setControl(velocityFOC.withVelocity(velocity));
     }
