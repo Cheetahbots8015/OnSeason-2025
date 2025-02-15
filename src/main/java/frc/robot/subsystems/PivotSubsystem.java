@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -10,8 +12,12 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Generated.PivotConstants;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 public class PivotSubsystem extends SubsystemBase {
     private final TalonFX pivot = new TalonFX(PivotConstants.pivotID, PivotConstants.canName);
@@ -23,6 +29,21 @@ public class PivotSubsystem extends SubsystemBase {
     private NeutralOut neutralOut = new NeutralOut();
 
     private double encoderOffset = 0.0;
+
+    private final SysIdRoutine m_SysIdRoutinePivot = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                    null,
+                    Volts.of(0.5),
+                    Seconds.of(0.5),
+                    (state) -> SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    (volts) -> {
+                        pivot.setVoltage(volts.magnitude() * 0.5);
+                    },
+                    null,
+                    this));
+
+    private final SysIdRoutine routineToApply = m_SysIdRoutinePivot;
 
     public PivotSubsystem() {
         pivotconfigs.MotorOutput.withInverted(PivotConstants.inverted ? InvertedValue.Clockwise_Positive
@@ -38,6 +59,11 @@ public class PivotSubsystem extends SubsystemBase {
         pivotconfigs.MotorOutput.withPeakForwardDutyCycle(PivotConstants.forwardDutyCycleLimit);
         pivotconfigs.MotorOutput.withPeakReverseDutyCycle(PivotConstants.reverseDutyCycleLimit);
         pivot.getConfigurator().apply(pivotconfigs);
+
+        BaseStatusSignal.setUpdateFrequencyForAll(250, pivot.getPosition(), pivot.getVelocity(),
+                pivot.getMotorVoltage());
+
+        SignalLogger.start();
     }
 
     public void shutDown() {
@@ -49,28 +75,27 @@ public class PivotSubsystem extends SubsystemBase {
         pivot.setControl(voltageOut.withOutput(PivotConstants.manualVoltageForward));
     }
 
-    public void manualVoltsReverse(){
+    public void manualVoltsReverse() {
         report();
         pivot.setControl(voltageOut.withOutput(PivotConstants.manualVoltageReverse));
     }
 
     public void setHeight(double height) {
         report();
-        pivot.setControl(motionMagic.withPosition(height+encoderOffset));
+        pivot.setControl(motionMagic.withPosition(height + encoderOffset));
     }
 
-    public void set2L2(){
+    public void set2L2() {
         setHeight(PivotConstants.L2Position);
     }
 
-    public void hold(){
-        pivot.setControl(motionMagic.withPosition(pivot.getPosition().getValueAsDouble()-encoderOffset));
+    public void hold() {
+        pivot.setControl(motionMagic.withPosition(pivot.getPosition().getValueAsDouble() - encoderOffset));
     }
 
-    public void resetOffset(){
+    public void resetOffset() {
         encoderOffset = pivot.getPosition().getValueAsDouble();
     }
-
 
     public void report() {
         SmartDashboard.putNumber("pivot/pivot position", pivot.getPosition().getValueAsDouble());
@@ -80,6 +105,14 @@ public class PivotSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("pivot/pivot acceleration", pivot.getAcceleration().getValueAsDouble());
         SmartDashboard.putNumber("pivot/pivot torquecurrent", pivot.getTorqueCurrent().getValueAsDouble());
         SmartDashboard.putNumber("pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
+    }
+
+    public Command PivotTestDynamic(SysIdRoutine.Direction direction) {
+        return routineToApply.dynamic(direction);
+    }
+
+    public Command PivotTestQuasistatic(SysIdRoutine.Direction direction) {
+        return routineToApply.quasistatic(direction);
     }
 
 }
