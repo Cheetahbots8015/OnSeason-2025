@@ -38,6 +38,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderconfigs.Slot0.kA = ElevatorConstants.kA;
         leaderconfigs.Slot0.kS = ElevatorConstants.kS;
         leaderconfigs.Slot0.kV = ElevatorConstants.kV;
+        leaderconfigs.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.cruiseVelocity;
+        leaderconfigs.MotionMagic.MotionMagicAcceleration = ElevatorConstants.cruiseAcceleration;
         leaderconfigs.MotorOutput.withPeakForwardDutyCycle(ElevatorConstants.forwardDutyCycleLimit);
         leaderconfigs.MotorOutput.withPeakReverseDutyCycle(ElevatorConstants.reverseDutyCycleLimit);
         leader.getConfigurator().apply(leaderconfigs);
@@ -59,11 +61,20 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setHeight(double height) {
-        leader.setControl(motionMagic.withPosition(height+encoderOffset));
+        leader.setControl(motionMagic.withPosition(height+encoderOffset).withFeedForward(ElevatorConstants.kF));
+    }
+
+    public void set2L2(){
+        report();
+        setHeight(ElevatorConstants.L2Position);
     }
 
     public void hold(){
         leader.setControl(motionMagic.withPosition(leader.getPosition().getValueAsDouble()));
+    }
+
+    public void resetOffset(){
+        encoderOffset = leader.getPosition().getValueAsDouble();
     }
 
     public boolean getHallSensorActive() {
@@ -78,6 +89,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("elevator/hallsensor", !hallSensor.get());
         SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
         SmartDashboard.putNumber("elevator/encoder offset", encoderOffset);
+        SmartDashboard.putNumber("elevator/leader velocity", leader.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("elevator/leader acceleration", leader.getAcceleration().getValueAsDouble());
+        SmartDashboard.putNumber("elevator/leader torquecurrent", leader.getTorqueCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("elevator/follower torquecurrent", follower.getTorqueCurrent().getValueAsDouble());
     }
 
 }

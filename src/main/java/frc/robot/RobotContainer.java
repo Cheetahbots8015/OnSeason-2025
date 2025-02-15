@@ -6,7 +6,9 @@ package frc.robot;
 
 import frc.robot.Generated.JoystickConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ElevatorL2Command;
 import frc.robot.commands.ElevatorReportCommand;
+import frc.robot.commands.ElevatorResetCommand;
 import frc.robot.commands.ElevatorVoltageLockCommand;
 import frc.robot.commands.ElevatorVoltageOutCommand;
 import frc.robot.commands.ExampleCommand;
@@ -42,11 +44,15 @@ public class RobotContainer {
 
   private final Trigger ElevatorManualTrigger = testController.a();
   private final Trigger ElevatorVoltageLockTrigger = testController.b();
+  private final Trigger ElevatorResetTrigger = testController.x();
+  private final Trigger ElevatorL2Trigger = testController.y();
   private final Trigger RollerManualTrigger = testController.leftBumper();
   private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
   private final Command ElevatorVoltageLockCommand = new ElevatorVoltageLockCommand(m_elevatorSubsystem);
   private final Command RollerManualCommand = new RollerVoltageOutCommand(m_rollerSubsystem);
   private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
+  private final Command ElevatorResetCommand = new ElevatorResetCommand(m_elevatorSubsystem);
+  private final Command ElevatorL2Command = new ElevatorL2Command(m_elevatorSubsystem);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -72,6 +78,8 @@ public class RobotContainer {
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
     ElevatorVoltageLockTrigger.whileTrue(ElevatorVoltageLockCommand);
+    ElevatorResetTrigger.whileTrue(ElevatorResetCommand);
+    ElevatorL2Trigger.whileTrue(ElevatorL2Command);
     RollerManualTrigger.whileTrue(RollerManualCommand);
     m_elevatorSubsystem.setDefaultCommand(ElevatorReportCommand);
 
