@@ -41,11 +41,11 @@ public class RollerSystem extends SubsystemBase {
   private String velocityString = null;
 
   private enum RollerState {
-    INITIALIZE,
-    CORAL_LOADED,
-    ALGEA_LOADED,
-    VELOCITY_CONTROL,
-    MANUAL
+    IDLE,
+    LOAD,
+    SHOOT,
+    INVERT,
+    MANUAL,
   }
 
   public RollerState getSystemState() {
@@ -85,102 +85,7 @@ public class RollerSystem extends SubsystemBase {
   }
 
   private void updateStateMachine() {
-    if (requestManual) {
-      io.runVolts(manualVoltage);
-      systemState = RollerState.MANUAL;
-      return;
-    }
-
-    if (!hasCoral() && hasAlgea()) {
-      systemState = RollerState.ALGEA_LOADED;
-    }
-
-    if (hasCoral() && !hasAlgea()) {
-      systemState = RollerState.CORAL_LOADED;
-    }
-
-    if (hasCoral() && hasAlgea()) {
-      systemState = RollerState.MANUAL;
-    }
-
-    if (!hasCoral() && !hasAlgea()) {
-      systemState = RollerState.INITIALIZE;
-    }
-
-    if (systemState == RollerState.INITIALIZE) {
-      io.stop();
-    }
-
-    if (requestVelocity) {
-      switch (velocityString) {
-        case "L1":
-          if (systemState == RollerState.CORAL_LOADED) {
-            systemState = RollerState.VELOCITY_CONTROL;
-            io.runTorqueCurrentVelocity(
-                Units.radiansToRotations(RollerConstants.ROLLER_L1_VELOCITY));
-          }
-          break;
-
-        case "L2":
-          if (systemState == RollerState.CORAL_LOADED) {
-            systemState = RollerState.VELOCITY_CONTROL;
-            io.runTorqueCurrentVelocity(
-                Units.radiansToRotations(RollerConstants.ROLLER_L2_VELOCITY));
-          }
-          break;
-
-        case "L3":
-          if (systemState == RollerState.CORAL_LOADED) {
-            systemState = RollerState.VELOCITY_CONTROL;
-            io.runTorqueCurrentVelocity(
-                Units.radiansToRotations(RollerConstants.ROLLER_L3_VELOCITY));
-          }
-          break;
-
-        case "L4":
-          if (systemState == RollerState.CORAL_LOADED) {
-            systemState = RollerState.VELOCITY_CONTROL;
-            io.runTorqueCurrentVelocity(
-                Units.radiansToRotations(RollerConstants.ROLLER_L4_VELOCITY));
-          }
-          break;
-
-        case "Barge":
-          if (systemState == RollerState.ALGEA_LOADED) {
-            systemState = RollerState.VELOCITY_CONTROL;
-            io.runTorqueCurrentVelocity(
-                Units.radiansToRotations(RollerConstants.ROLLER_BARGE_VELOCITY));
-          }
-          break;
-
-        case "Processor":
-          if (systemState == RollerState.ALGEA_LOADED) {
-            systemState = RollerState.VELOCITY_CONTROL;
-            io.runTorqueCurrentVelocity(
-                Units.radiansToRotations(RollerConstants.ROLLER_PROCESSOR_VELOCITY));
-          }
-          break;
-
-        case "Station":
-          if (systemState == RollerState.INITIALIZE) {
-            systemState = RollerState.VELOCITY_CONTROL;
-            io.runTorqueCurrentVelocity(
-                Units.radiansToRotations(RollerConstants.ROLLER_STATION_VELOCITY));
-          }
-          break;
-
-        case "Reef":
-          if (systemState == RollerState.INITIALIZE) {
-            systemState = RollerState.VELOCITY_CONTROL;
-            io.runTorqueCurrentVelocity(
-                Units.radiansToRotations(RollerConstants.ROLLER_REEF_VELOCITY));
-          }
-          break;
-
-        default:
-          break;
-      }
-    }
+   
   }
 
   private boolean hasCoral() {

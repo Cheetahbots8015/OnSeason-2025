@@ -15,18 +15,34 @@ package frc.robot;
 
 import static frc.robot.generated.VisionConstants.*;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands.ElevatorHomeCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorL2Command;
 import frc.robot.commands.ElevatorCommands.ElevatorL3Command;
 import frc.robot.commands.ElevatorCommands.ElevatorManualCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorTestCommand;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.ElevatorSystem;
 import frc.robot.subsystems.elevator.ElevatorSystemIOKrakenX60;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,8 +52,8 @@ import frc.robot.subsystems.elevator.ElevatorSystemIOKrakenX60;
  */
 public class RobotContainer {
   // Subsystems
-  // private final Drive drive;
-  // private final Vision vision;
+   private final Drive drive;
+   private final Vision vision;
   private final ElevatorSystemIOKrakenX60 elevatorIO;
   private final ElevatorSystem elevator;
 
@@ -46,7 +62,7 @@ public class RobotContainer {
   private final CommandXboxController testController = new CommandXboxController(1);
 
   // Dashboard inputs
-  // private final LoggedDashboardChooser<Command> autoChooser;
+   private final LoggedDashboardChooser<Command> autoChooser;
 
   // commands
   private final Command elevatorManualCommand;
@@ -64,7 +80,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    /*
+    
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -131,7 +147,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    */
+    
     elevatorIO = new ElevatorSystemIOKrakenX60();
     elevator = new ElevatorSystem("elevator", elevatorIO);
 
@@ -162,7 +178,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    /*
+    
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -194,7 +210,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    */
+    
     elevatorManualTrigger.whileTrue(elevatorManualCommand);
     elevatorHomeTrigger.whileTrue(elevatorHomeCommand);
     elevatorTestTrigger.whileTrue(elevatorTestCommand);
