@@ -9,7 +9,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ElevatorL2Command;
 import frc.robot.commands.ElevatorReportCommand;
 import frc.robot.commands.ElevatorResetCommand;
-import frc.robot.commands.ElevatorVoltageLockCommand;
+import frc.robot.commands.ElevatorHoldCommand;
 import frc.robot.commands.ElevatorVoltageOutCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.RollerVoltageOutCommand;
@@ -48,7 +48,7 @@ public class RobotContainer {
   private final Trigger ElevatorL2Trigger = testController.y();
   private final Trigger RollerManualTrigger = testController.leftBumper();
   private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
-  private final Command ElevatorVoltageLockCommand = new ElevatorVoltageLockCommand(m_elevatorSubsystem);
+  private final Command ElevatorHoldCommand = new ElevatorHoldCommand(m_elevatorSubsystem);
   private final Command RollerManualCommand = new RollerVoltageOutCommand(m_rollerSubsystem);
   private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
   private final Command ElevatorResetCommand = new ElevatorResetCommand(m_elevatorSubsystem);
@@ -77,7 +77,7 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
-    ElevatorVoltageLockTrigger.whileTrue(ElevatorVoltageLockCommand);
+    ElevatorVoltageLockTrigger.whileTrue(ElevatorHoldCommand);
     ElevatorResetTrigger.whileTrue(ElevatorResetCommand);
     ElevatorL2Trigger.whileTrue(ElevatorL2Command);
     RollerManualTrigger.whileTrue(RollerManualCommand);

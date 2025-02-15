@@ -11,15 +11,15 @@ public class ElevatorConstants {
     public static final double lockVoltage = 0.3;
     public static final double forwardDutyCycleLimit = 0.4;
     public static final double reverseDutyCycleLimit = -0.4;
-    public static final double kP = 10.0;
+    public static final double kP = 50.0;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double kA = 0.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
     public static final double kF = 10.0;
-    public static final double cruiseVelocity = 13.0;
-    public static final double cruiseAcceleration = 13.0;
-    public static final double L2Position = 25.0;
+    public static final double cruiseVelocity = 50.0;
+    public static final double cruiseAcceleration = 30.0;
+    public static final double L2Position = 64.0;
     
 }
