@@ -9,21 +9,19 @@ import frc.robot.subsystems.RollerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class RollerTestCommand extends Command {
+public class RollerVoltageOutCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_subsystem;
-  private double duty;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public RollerTestCommand(RollerSubsystem subsystem, double duty) {
+  public RollerVoltageOutCommand(RollerSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
-    this.duty = duty;
   }
 
   // Called when the command is initially scheduled.
@@ -33,13 +31,13 @@ public class RollerTestCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.RunVolts(duty);
+    m_subsystem.runVolts();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.ShutDown();
+    m_subsystem.shutDown();
   }
 
   // Returns true when the command should end.

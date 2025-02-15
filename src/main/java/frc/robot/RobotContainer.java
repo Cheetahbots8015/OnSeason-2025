@@ -4,12 +4,13 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Generated.JoystickConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ElevatorReportCommand;
-import frc.robot.commands.ElevatorTestCommand;
+import frc.robot.commands.ElevatorVoltageLockCommand;
+import frc.robot.commands.ElevatorVoltageOutCommand;
 import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.RollerTestCommand;
+import frc.robot.commands.RollerVoltageOutCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
@@ -34,18 +35,18 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+      new CommandXboxController(JoystickConstants.driverControllerPort);
 
   private final CommandXboxController testController =
-      new CommandXboxController(1);
+      new CommandXboxController(JoystickConstants.testControllerPort);
 
-  private final Trigger TestTrigger1 = testController.a();
-  private final Trigger TestTrigger2 = testController.b();
-  private final Trigger TestTrigger3 = testController.leftBumper();
-  private final Command TestCommand1 = new ElevatorTestCommand(m_elevatorSubsystem, 0.1);
-  private final Command TestCommand2 = new ElevatorTestCommand(m_elevatorSubsystem, 0.04);
-  private final Command TestCommand3 = new RollerTestCommand(m_rollerSubsystem, 0.75);
-  private final Command ReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
+  private final Trigger ElevatorManualTrigger = testController.a();
+  private final Trigger ElevatorVoltageLockTrigger = testController.b();
+  private final Trigger RollerManualTrigger = testController.leftBumper();
+  private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
+  private final Command ElevatorVoltageLockCommand = new ElevatorVoltageLockCommand(m_elevatorSubsystem);
+  private final Command RollerManualCommand = new RollerVoltageOutCommand(m_rollerSubsystem);
+  private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -69,10 +70,10 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-    TestTrigger1.whileTrue(TestCommand1);
-    TestTrigger2.whileTrue(TestCommand2);
-    TestTrigger3.whileTrue(TestCommand3);
-    m_elevatorSubsystem.setDefaultCommand(ReportCommand);
+    ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
+    ElevatorVoltageLockTrigger.whileTrue(ElevatorVoltageLockCommand);
+    RollerManualTrigger.whileTrue(RollerManualCommand);
+    m_elevatorSubsystem.setDefaultCommand(ElevatorReportCommand);
 
   }
 
