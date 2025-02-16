@@ -49,7 +49,7 @@ public class RobotContainer {
   private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
+  private final CommandXboxController driverController =
       new CommandXboxController(JoystickConstants.driverControllerPort);
 
   private final CommandXboxController testController =
@@ -57,6 +57,14 @@ public class RobotContainer {
 
   private final CommandXboxController SysIDController =
       new CommandXboxController(JoystickConstants.sysIDControllerPort);
+
+  private final Trigger DriverL1Trigger = driverController.a();
+  private final Trigger DriverL2Trigger = driverController.b();
+  private final Trigger DriverL3Trigger = driverController.x();
+  private final Trigger DriverL4Trigger = driverController.y();
+  private final Trigger DriverHomeTrigger = driverController.povUp();
+  private final Trigger DriverStationTrigger = driverController.leftTrigger();
+  private final Trigger DriveerReverseTrigger = driverController.rightTrigger();
 
   private final Trigger ElevatorManualTrigger = testController.a();
   private final Trigger ElevatorVoltageLockTrigger = testController.b();
@@ -69,6 +77,19 @@ public class RobotContainer {
   private final Trigger PivotManualReverseTrigger = testController.leftTrigger();
   private final Trigger PivotL2Trigger = testController.povUp();
   private final Trigger ElevatorHomeTrigger = testController.povDown();
+
+  private final Command DriverL1Command =
+      new L1Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command DriverL2Command =
+      new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command DriverL3Command =
+      new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command DriverL4Command =
+      new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command DriverHomeCommand =
+      new ElevatorHomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
+  private final Command DriverStationCommand = new StationCommand(m_rollerSubsystem);
+  private final Command DriverReverseCommand = new RollerManualReverseCommand(m_rollerSubsystem);
 
   private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
   private final Command ElevatorHoldCommand = new ElevatorHoldCommand(m_elevatorSubsystem);
@@ -121,7 +142,16 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is
     // pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+    DriverL1Trigger.whileTrue(DriverL1Command);
+    DriverL2Trigger.whileTrue(DriverL2Command);
+    DriverL3Trigger.whileTrue(DriverL3Command);
+    DriverL4Trigger.whileTrue(DriverL4Command);
+    DriverHomeTrigger.whileTrue(DriverHomeCommand);
+    DriverStationTrigger.whileTrue(DriverStationCommand);
+    DriveerReverseTrigger.whileTrue(DriverReverseCommand);
+
+    driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
     ElevatorVoltageLockTrigger.whileTrue(ElevatorHoldCommand);
     L4Trigger.whileTrue(L4Command);
@@ -148,26 +178,28 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -m_driverController.getLeftY(),
-            () -> -m_driverController.getLeftX(),
-            () -> -m_driverController.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    m_driverController
+    /*
+    driverController
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
+    */
 
     // Switch to X pattern when X button is pressed
-    m_driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    m_driverController
-        .b()
+    driverController
+        .leftBumper()
         .onTrue(
             Commands.runOnce(
                     () ->

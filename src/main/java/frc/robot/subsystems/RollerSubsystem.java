@@ -48,6 +48,10 @@ public class RollerSubsystem extends SubsystemBase {
     roller.setControl(voltageOut.withOutput(RollerConstants.manualReverseVoltage));
   }
 
+  public void station() {
+    roller.setControl(voltageOut.withOutput(RollerConstants.stationVoltage));
+  }
+
   public void L1Vots() {
     roller.setControl(voltageOut.withOutput(RollerConstants.L1Voltage));
   }

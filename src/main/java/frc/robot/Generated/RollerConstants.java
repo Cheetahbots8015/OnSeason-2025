@@ -6,8 +6,9 @@ public class RollerConstants {
   public static final int canRangeID = 1;
   public static boolean inverted = false;
   public static final double manualForwardVoltage = 8.0;
-  public static final double manualReverseVoltage = -8.0;
-  public static final double L1Voltage = 3.0;
+  public static final double manualReverseVoltage = -2.0;
+  public static final double stationVoltage = 2.0;
+  public static final double L1Voltage = 6.0;
   public static final double L2Voltage = 8.0;
   public static final double L3Voltage = 8.0;
   public static final double L4Voltage = 8.0;

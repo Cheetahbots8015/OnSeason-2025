@@ -103,11 +103,18 @@ public class PivotSubsystem extends SubsystemBase {
 
   public void setHeight(double height) {
     report();
-    pivot.setControl(motionMagic.withPosition(height));
+    double offset =
+        candi.getPWM1Position().getValueAsDouble()
+            - (candi.getPWM1Position().getValueAsDouble() % 1.0);
+    pivot.setControl(motionMagic.withPosition(height + offset));
   }
 
   public double getPosition() {
     return pivot.getPosition().getValueAsDouble();
+  }
+
+  public void set2L1() {
+    setHeight(PivotConstants.L1Position);
   }
 
   public void set2L2() {
@@ -131,7 +138,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition(double height) {
-    return Math.abs(pivot.getPosition().getValueAsDouble() - height)
+    return Math.abs((pivot.getPosition().getValueAsDouble() % 1.0) - height)
         < PivotConstants.positionDeadband;
   }
 

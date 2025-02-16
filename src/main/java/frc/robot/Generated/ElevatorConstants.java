@@ -21,6 +21,7 @@ public class ElevatorConstants {
   public static final double kF = 10.0;
   public static final double cruiseVelocity = 50.0;
   public static final double cruiseAcceleration = 30.0;
+  public static final double L1Position = 21.68;
   public static final double L2Position = 21.68;
   public static final double L4Position = 120.0;
   public static final double L3Position = 63.0;
