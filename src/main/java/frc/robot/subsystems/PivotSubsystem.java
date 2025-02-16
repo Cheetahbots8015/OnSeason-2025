@@ -91,9 +91,6 @@ public class PivotSubsystem extends SubsystemBase {
         pivot.setControl(motionMagic.withPosition(height + encoderOffset));
     }
 
-    public void set2L1() {
-        setHeight(PivotConstants.L1Position);
-    }
 
     public void set2L2() {
         setHeight(PivotConstants.L2Position);
