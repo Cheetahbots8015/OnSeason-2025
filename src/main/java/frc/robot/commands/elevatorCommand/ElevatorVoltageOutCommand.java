@@ -4,9 +4,8 @@
 
 package frc.robot.commands.elevatorCommand;
 
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorVoltageOutCommand extends Command {
@@ -31,7 +30,7 @@ public class ElevatorVoltageOutCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      m_subsystem.manualUpVolts();
+    m_subsystem.manualUpVolts();
     m_subsystem.report();
   }
 

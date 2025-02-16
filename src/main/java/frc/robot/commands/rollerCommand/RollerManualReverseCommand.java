@@ -4,9 +4,8 @@
 
 package frc.robot.commands.rollerCommand;
 
-
-import frc.robot.subsystems.RollerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class RollerManualReverseCommand extends Command {

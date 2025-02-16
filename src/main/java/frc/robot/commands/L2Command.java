@@ -11,57 +11,58 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
-/**
- * An example command that uses an example subsystem.
- */
+/** An example command that uses an example subsystem. */
 public class L2Command extends Command {
-    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-    private final ElevatorSubsystem m_elevatorSubsystem;
-    private final PivotSubsystem m_pivotSubsystem;
-    private final RollerSubsystem m_rollerSubsystem;
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private final ElevatorSubsystem m_elevatorSubsystem;
 
+  private final PivotSubsystem m_pivotSubsystem;
+  private final RollerSubsystem m_rollerSubsystem;
 
-    /**
-     * Creates a new ExampleCommand.
-     *
-     * @param subsystem The subsystem used by this command.
-     */
-    public L2Command(ElevatorSubsystem elevatorSubsystem, PivotSubsystem pivotSubsystem, RollerSubsystem rollerSubsystem) {
-        m_elevatorSubsystem = elevatorSubsystem;
-        m_pivotSubsystem = pivotSubsystem;
-        m_rollerSubsystem = rollerSubsystem;
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  /**
+   * Creates a new ExampleCommand.
+   *
+   * @param subsystem The subsystem used by this command.
+   */
+  public L2Command(
+      ElevatorSubsystem elevatorSubsystem,
+      PivotSubsystem pivotSubsystem,
+      RollerSubsystem rollerSubsystem) {
+    m_elevatorSubsystem = elevatorSubsystem;
+    m_pivotSubsystem = pivotSubsystem;
+    m_rollerSubsystem = rollerSubsystem;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    m_elevatorSubsystem.set2L2();
+    m_pivotSubsystem.set2L2();
+    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L2Position)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
+      m_rollerSubsystem.L2Vots();
     }
+    m_elevatorSubsystem.report();
+    m_pivotSubsystem.report();
+  }
 
-    // Called when the command is initially scheduled.
-    @Override
-    public void initialize() {
-    }
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    m_rollerSubsystem.shutDown();
+    m_elevatorSubsystem.lockVolts();
+    m_pivotSubsystem.hold();
+  }
 
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-        m_elevatorSubsystem.set2L2();
-        m_pivotSubsystem.set2L2();
-        if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L2Position) && m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
-            m_rollerSubsystem.L2Vots();
-        }
-        m_elevatorSubsystem.report();
-        m_pivotSubsystem.report();
-    }
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        m_rollerSubsystem.shutDown();
-        m_elevatorSubsystem.lockVolts();
-        m_pivotSubsystem.hold();
-    }
-
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }

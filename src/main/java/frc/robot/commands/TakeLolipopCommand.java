@@ -4,17 +4,16 @@
 
 package frc.robot.commands;
 
-
-import frc.robot.generated.ElevatorConstants;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class TakeLolipopCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_rollerSubsystem;
+
   private final PivotSubsystem m_pivotSubsystem;
 
   /**
@@ -38,7 +37,7 @@ public class TakeLolipopCommand extends Command {
   public void execute() {
     m_pivotSubsystem.set2L2();
     if (m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
-        m_rollerSubsystem.LolipopVolts();
+      m_rollerSubsystem.LolipopVolts();
     }
     m_pivotSubsystem.report();
   }
