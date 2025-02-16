@@ -2,22 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.rollerCommand;
 
-import frc.robot.subsystems.PivotSubsystem;
+
+import frc.robot.subsystems.RollerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class PivotReverseCommand extends Command {
+public class RollerManualForwardCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final PivotSubsystem m_subsystem;
+  private final RollerSubsystem m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public PivotReverseCommand(PivotSubsystem subsystem) {
+  public RollerManualForwardCommand(RollerSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -30,7 +31,7 @@ public class PivotReverseCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.manualVoltsReverse();
+    m_subsystem.manualForwardVolts();
   }
 
   // Called once the command ends or is interrupted.
@@ -38,7 +39,6 @@ public class PivotReverseCommand extends Command {
   public void end(boolean interrupted) {
     m_subsystem.shutDown();
   }
-  
 
   // Returns true when the command should end.
   @Override

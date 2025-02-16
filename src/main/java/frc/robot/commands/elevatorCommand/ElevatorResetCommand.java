@@ -2,13 +2,13 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.elevatorCommand;
 
 import frc.robot.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class ElevatorL2Command extends Command {
+public class ElevatorResetCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_subsystem;
 
@@ -17,7 +17,7 @@ public class ElevatorL2Command extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorL2Command(ElevatorSubsystem subsystem) {
+  public ElevatorResetCommand(ElevatorSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -30,13 +30,12 @@ public class ElevatorL2Command extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.set2L2();
+    m_subsystem.resetOffset();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.lockVolts();
   }
 
   // Returns true when the command should end.

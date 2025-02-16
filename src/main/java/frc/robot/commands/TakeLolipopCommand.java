@@ -4,23 +4,29 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ElevatorSubsystem;
+
+import frc.robot.Generated.ElevatorConstants;
+import frc.robot.Generated.PivotConstants;
+import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.RollerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class ElevatorResetCommand extends Command {
+public class TakeLolipopCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorSubsystem m_subsystem;
+  private final RollerSubsystem m_rollerSubsystem;
+  private final PivotSubsystem m_pivotSubsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorResetCommand(ElevatorSubsystem subsystem) {
-    m_subsystem = subsystem;
+  public TakeLolipopCommand(RollerSubsystem rollerSubsystem, PivotSubsystem pivotSubsystem) {
+    this.m_rollerSubsystem = rollerSubsystem;
+    this.m_pivotSubsystem = pivotSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    addRequirements(rollerSubsystem, pivotSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -30,12 +36,18 @@ public class ElevatorResetCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.resetOffset();
+    m_pivotSubsystem.set2L2();
+    if (m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
+        m_rollerSubsystem.LolipopVolts();
+    }
+    m_pivotSubsystem.report();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_pivotSubsystem.hold();
+    m_rollerSubsystem.shutDown();
   }
 
   // Returns true when the command should end.

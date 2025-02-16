@@ -6,6 +6,18 @@ package frc.robot;
 
 import frc.robot.Generated.JoystickConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.elevatorCommand.ElevatorHoldCommand;
+import frc.robot.commands.elevatorCommand.ElevatorHomeCommand;
+import frc.robot.commands.elevatorCommand.ElevatorL2Command;
+import frc.robot.commands.elevatorCommand.ElevatorReportCommand;
+import frc.robot.commands.elevatorCommand.ElevatorResetCommand;
+import frc.robot.commands.elevatorCommand.ElevatorVoltageOutCommand;
+import frc.robot.commands.pivotCommand.PivotForwardCommand;
+import frc.robot.commands.pivotCommand.PivotL2Command;
+import frc.robot.commands.pivotCommand.PivotReportCommand;
+import frc.robot.commands.pivotCommand.PivotReverseCommand;
+import frc.robot.commands.rollerCommand.RollerManualForwardCommand;
+import frc.robot.commands.rollerCommand.RollerManualReverseCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -51,15 +63,16 @@ public class RobotContainer {
     private final Trigger L2Trigger = testController.y();
     private final Trigger L3Trigger = testController.povRight();
     private final Trigger RollerManualTrigger = testController.leftBumper();
+    private final Trigger RollerReverseTrigger = testController.rightBumper();
     private final Trigger PivotManualForwardTrigger = testController.rightTrigger();
     private final Trigger PivotManualReverseTrigger = testController.leftTrigger();
-    private final Trigger PivotL2Trigger = testController.rightBumper();
-    private final Trigger PivotResetTrigger = testController.povUp();
+    private final Trigger PivotL2Trigger = testController.povUp();
     private final Trigger ElevatorHomeTrigger = testController.povDown();
 
     private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
     private final Command ElevatorHoldCommand = new ElevatorHoldCommand(m_elevatorSubsystem);
-    private final Command RollerManualCommand = new RollerVoltageOutCommand(m_rollerSubsystem);
+    private final Command RollerManualCommand = new RollerManualForwardCommand(m_rollerSubsystem);
+    private final Command RollerReverseCommand = new RollerManualReverseCommand(m_rollerSubsystem);
     private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
     private final Command ElevatorResetCommand = new ElevatorResetCommand(m_elevatorSubsystem);
     private final Command ElevatorL2Command = new ElevatorL2Command(m_elevatorSubsystem);
@@ -67,7 +80,6 @@ public class RobotContainer {
     private final Command PivotForwardCommand = new PivotForwardCommand(m_pivotSubsystem);
     private final Command PivotReverseCommand = new PivotReverseCommand(m_pivotSubsystem);
     private final Command PivotL2Command = new PivotL2Command(m_pivotSubsystem);
-    private final Command PivotResetCommand = new PivotResetCommand(m_pivotSubsystem);
     private final Command ElevatorHomeCommand = new ElevatorHomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
     private final Command L2Command = new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
     private final Command L4Command = new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
@@ -110,13 +122,13 @@ public class RobotContainer {
         L2Trigger.whileTrue(L2Command);
         L3Trigger.whileTrue(L3Command);
         RollerManualTrigger.whileTrue(RollerManualCommand);
+        RollerReverseTrigger.whileTrue(RollerReverseCommand);
         m_elevatorSubsystem.setDefaultCommand(ElevatorReportCommand);
         m_pivotSubsystem.setDefaultCommand(PivotReportCommand);
         PivotManualForwardTrigger.whileTrue(PivotForwardCommand);
         PivotManualReverseTrigger.whileTrue(PivotReverseCommand);
-        PivotL2Trigger.whileTrue(PivotL2Command);
-        PivotResetTrigger.whileTrue(PivotResetCommand);
         ElevatorHomeTrigger.whileTrue(ElevatorHomeCommand);
+        PivotL2Trigger.whileTrue(PivotL2Command);
         
         SysIDController.a().whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kForward));
         SysIDController.b().whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kReverse));

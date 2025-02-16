@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.pivotCommand;
 
 import frc.robot.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,7 +38,6 @@ public class PivotL2Command extends Command {
     public void end(boolean interrupted) {
         m_subsystem.hold();
     }
-
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {

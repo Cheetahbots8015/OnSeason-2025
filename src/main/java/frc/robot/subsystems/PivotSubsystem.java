@@ -2,12 +2,15 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.units.measure.Time;
@@ -23,20 +26,20 @@ import static edu.wpi.first.units.Units.Volts;
 
 public class PivotSubsystem extends SubsystemBase {
     private final TalonFX pivot = new TalonFX(PivotConstants.pivotID, PivotConstants.canName);
+    private final CANdi candi = new CANdi(PivotConstants.candiID,PivotConstants.canName);
 
     private TalonFXConfiguration pivotconfigs = new TalonFXConfiguration();
+    private CANdiConfiguration candiconfigs = new CANdiConfiguration();
 
     private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
     private MotionMagicVoltage motionMagic = new MotionMagicVoltage(0.0).withEnableFOC(true);
     private NeutralOut neutralOut = new NeutralOut();
 
-    private double encoderOffset = 0.0;
-
     private final SysIdRoutine m_SysIdRoutinePivot = new SysIdRoutine(
             new SysIdRoutine.Config(
                     null,
                     Volts.of(1.5),
-                    Seconds.of(3.0),
+                    Seconds.of(3.5),
                     (state) -> SignalLogger.writeString("state", state.toString())),
             new SysIdRoutine.Mechanism(
                     (volts) -> {
@@ -60,11 +63,20 @@ public class PivotSubsystem extends SubsystemBase {
         pivotconfigs.MotionMagic.MotionMagicAcceleration = PivotConstants.cruiseAcceleration;
         pivotconfigs.MotorOutput.withPeakForwardDutyCycle(PivotConstants.forwardDutyCycleLimit);
         pivotconfigs.MotorOutput.withPeakReverseDutyCycle(PivotConstants.reverseDutyCycleLimit);
-        pivotconfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        pivotconfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        pivotconfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 16.5;
-        pivotconfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.3;
+        pivotconfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = PivotConstants.forwardSoftLimitEnable;
+        pivotconfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = PivotConstants.reverseSoftLimitEnable;
+        pivotconfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PivotConstants.forwardSoftLimitThreshold;
+        pivotconfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PivotConstants.reverseSoftLimitThreshold;
+        pivotconfigs.Feedback.FeedbackRemoteSensorID = PivotConstants.candiID;
+        pivotconfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANdiPWM1;
+        pivotconfigs.Feedback.SensorToMechanismRatio = PivotConstants.candi2MechanismRatio;
+        pivotconfigs.Feedback.RotorToSensorRatio = PivotConstants.rotor2CandiRatio;
         pivot.getConfigurator().apply(pivotconfigs);
+
+        candiconfigs.PWM1.SensorDirection = PivotConstants.candiDirection;
+        candiconfigs.PWM1.AbsoluteSensorOffset = PivotConstants.candiOffset;
+        //candiconfigs.PWM1.AbsoluteSensorDiscontinuityPoint = 1;//Setting this to 1 makes the absolute position unsigned [0, 1)
+        candi.getConfigurator().apply(candiconfigs);
 
         BaseStatusSignal.setUpdateFrequencyForAll(250, pivot.getPosition(), pivot.getVelocity(),
                 pivot.getMotorVoltage());
@@ -88,9 +100,12 @@ public class PivotSubsystem extends SubsystemBase {
 
     public void setHeight(double height) {
         report();
-        pivot.setControl(motionMagic.withPosition(height + encoderOffset));
+        pivot.setControl(motionMagic.withPosition(height));
     }
 
+    public double getPosition(){
+        return pivot.getPosition().getValueAsDouble();
+    }
 
     public void set2L2() {
         setHeight(PivotConstants.L2Position);
@@ -109,26 +124,20 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void hold() {
-        pivot.setControl(motionMagic.withPosition(pivot.getPosition().getValueAsDouble() - encoderOffset));
+        pivot.setControl(motionMagic.withPosition(pivot.getPosition().getValueAsDouble()));
     }
-
-    public void resetOffset() {
-        encoderOffset = pivot.getPosition().getValueAsDouble();
-    }
-
     public boolean isAtPosition(double height) {
-        height += encoderOffset;
         return Math.abs(pivot.getPosition().getValueAsDouble() - height) < PivotConstants.positionDeadband;
     }
 
     public void report() {
         SmartDashboard.putNumber("pivot/pivot position", pivot.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
-        SmartDashboard.putNumber("pivot/encoder offset", encoderOffset);
         SmartDashboard.putNumber("pivot/pivot velocity", pivot.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("pivot/pivot acceleration", pivot.getAcceleration().getValueAsDouble());
         SmartDashboard.putNumber("pivot/pivot torquecurrent", pivot.getTorqueCurrent().getValueAsDouble());
         SmartDashboard.putNumber("pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
+        SmartDashboard.putNumber("pivot/s1 position", candi.getPWM1Position().getValueAsDouble());
     }
 
     public Command PivotTestDynamic(SysIdRoutine.Direction direction) {
