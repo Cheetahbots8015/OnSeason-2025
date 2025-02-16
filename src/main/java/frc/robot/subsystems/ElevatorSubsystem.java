@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Generated.ElevatorConstants;
+import frc.robot.generated.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
     private final TalonFX leader = new TalonFX(ElevatorConstants.leaderID, ElevatorConstants.canName);

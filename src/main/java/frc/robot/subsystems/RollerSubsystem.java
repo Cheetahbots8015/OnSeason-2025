@@ -10,7 +10,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Generated.RollerConstants;
+import frc.robot.generated.RollerConstants;
 
 public class RollerSubsystem extends SubsystemBase {
     private final TalonFX roller = new TalonFX(RollerConstants.rollerID, RollerConstants.canName);

@@ -1,4 +1,4 @@
-package frc.robot.Generated;
+package frc.robot.generated;
 
 public class ElevatorConstants {
     public static final int leaderID = 51;

@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.Generated.JoystickConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.elevatorCommand.ElevatorHoldCommand;
 import frc.robot.commands.elevatorCommand.ElevatorHomeCommand;
@@ -18,6 +17,7 @@ import frc.robot.commands.pivotCommand.PivotReportCommand;
 import frc.robot.commands.pivotCommand.PivotReverseCommand;
 import frc.robot.commands.rollerCommand.RollerManualForwardCommand;
 import frc.robot.commands.rollerCommand.RollerManualReverseCommand;
+import frc.robot.generated.JoystickConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.PivotSubsystem;

@@ -1,4 +1,4 @@
-package frc.robot.Generated;
+package frc.robot.generated;
 
 public class RollerConstants {
     public static final int rollerID = 62;

@@ -5,8 +5,8 @@
 package frc.robot.commands;
 
 
-import frc.robot.Generated.ElevatorConstants;
-import frc.robot.Generated.PivotConstants;
+import frc.robot.generated.ElevatorConstants;
+import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
