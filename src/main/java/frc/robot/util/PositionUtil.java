@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.elevator.ElevatorSystem;
+import frc.robot.subsystems.rollers.RollerSystem;
 
 public class PositionUtil {
     public static ElevatorSystem.ElevatorPositionTarget super2elevator(
@@ -37,6 +38,30 @@ public class PositionUtil {
             default -> {
                 return ElevatorSystem.ElevatorPositionTarget.NULL;
             }
+        }
+    }
+
+    public static RollerSystem.RollerPosition super2roller(SuperStructure.superStructurePosition pos) {
+        switch (pos) {
+            case L1 -> {
+                return RollerSystem.RollerPosition.L1;
+            }
+            case L2 -> {
+                return RollerSystem.RollerPosition.L2;
+            }
+            case L3 -> {
+                return RollerSystem.RollerPosition.L3;
+            }
+            case L4 -> {
+                return RollerSystem.RollerPosition.L4;
+            }
+            case STATION -> {
+                return RollerSystem.RollerPosition.STATION;
+            }
+            default -> {
+                return RollerSystem.RollerPosition.NULL;
+            }
+
         }
     }
 }

@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import static frc.robot.util.PositionUtil.super2elevator;
+import static frc.robot.util.PositionUtil.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -146,9 +146,13 @@ public class SuperStructure extends SubsystemBase {
   }
 
   private void setLoad() {
+    roller.setSystemPosition(RollerSystem.RollerPosition.STATION);
+    roller.setSystemState(RollerSystem.RollerState.LOAD);
   }
 
   private void setShotReef() {
+    roller.setSystemPosition(super2roller(systemPosition));
+    roller.setSystemState(RollerSystem.RollerState.SHOOT);
   }
 
   /* private boolean from other subsystems*/

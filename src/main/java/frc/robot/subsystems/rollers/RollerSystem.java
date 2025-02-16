@@ -7,122 +7,104 @@
 
 package frc.robot.subsystems.rollers;
 
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
-import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
-import com.ctre.phoenix6.hardware.CANrange;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.RollerConstants;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class RollerSystem extends SubsystemBase {
-  private final String name;
-  private final RollerSystemIO io;
-  protected final RollerSystemIOInputsAutoLogged inputs = new RollerSystemIOInputsAutoLogged();
-  private final Alert disconnected;
-  private final CANrange canRange = new CANrange(RollerConstants.ROLLER_CANRANGE_ID, "dabus");
-  private final CANrangeConfiguration configs;
+    protected final RollerSystemIOInputsAutoLogged inputs = new RollerSystemIOInputsAutoLogged();
+    private final String name;
+    private final RollerSystemIO io;
+    private final Alert disconnected;
 
-  private final SysIdRoutine m_SysIdRoutineRoller;
-  private final SysIdRoutine routineToApply;
+    private RollerState systemState = RollerState.IDLE;
+    private RollerPosition systemPosition = RollerPosition.NULL;
+    private RollerState nextSystemState = RollerState.IDLE;
 
-  private RollerState systemState = RollerState.INITIALIZE;
+    public RollerSystem(String name, RollerSystemIO io) {
+        this.name = name;
+        this.io = io;
+        disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
+    }
 
-  private boolean requestManual = false;
-  private double manualVoltage = 0.0;
-  private boolean requestVelocity = false;
-  private String velocityString = null;
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs(name, inputs);
+        Logger.recordOutput(name, this.getSystemState());
+        disconnected.set(!inputs.connected);
 
-  private enum RollerState {
-    IDLE,
-    LOAD,
-    SHOOT,
-    INVERT,
-    MANUAL,
-  }
+        if (DriverStation.isDisabled()) {
+            io.stop();
+        }
+        updateStateMachine();
+    }
 
-  public RollerState getSystemState() {
-    return systemState;
-  }
+    public RollerState getSystemState() {
+        return systemState;
+    }
 
-  public RollerSystem(String name, RollerSystemIO io) {
-    configs = new CANrangeConfiguration();
-    canRange.getConfigurator().apply(configs);
-    this.name = name;
-    this.io = io;
-    disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
-    m_SysIdRoutineRoller =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                Volts.of(2.4),
-                Seconds.of(3),
-                (state) -> SignalLogger.writeString("state", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (volts) -> {
-                  io.runVolts(volts.magnitude());
-                },
-                null,
-                this));
+    private void updateStateMachine() {
+        if (systemState != nextSystemState) {
+            systemState = nextSystemState;
+        }
 
-    routineToApply = m_SysIdRoutineRoller;
-  }
+        switch (systemState) {
+            case IDLE:
+                break;
+            case LOAD:
+                io.runVolts(RollerConstants.ROLLER_LOAD_VOLTAGE);
+                break;
+            case SHOOT:
+                switch (systemPosition) {
+                    case L1 -> io.runVolts(RollerConstants.ROLLER_L1_VOLTAGE);
+                    case L2 -> io.runVolts(RollerConstants.ROLLER_L2_VOLTAGE);
+                    case L3 -> io.runVolts(RollerConstants.ROLLER_L3_VOLTAGE);
+                    case L4 -> io.runVolts(RollerConstants.ROLLER_L4_VOLTAGE);
+                    case LOLIPOP -> io.runVolts(RollerConstants.ROLLER_LOLIPOP_VOLTAGE);
+                    case STATION -> io.runVolts(RollerConstants.ROLLER_STATION_VOLTAGE);
+                    case NULL -> io.runVolts(0);
+                }
+                break;
+            case MANUALFORWARD:
+                io.runVolts(RollerConstants.ROLLER_MANUALFORWARD_VOLTAGE);
+                break;
+            case MANUALINVERT:
+                io.runVolts(RollerConstants.ROLLER_MANUALINVERT_VOLTAGE);
+                break;
+        }
 
-  public void periodic() {
-    io.updateInputs(inputs);
-    io.updateTunableNumbers();
-    Logger.processInputs(name, inputs);
-    Logger.recordOutput(name, this.getSystemState());
-    disconnected.set(!inputs.connected);
-    updateStateMachine();
-  }
+    }
 
-  private void updateStateMachine() {
-   
-  }
+    public enum RollerState {
+        IDLE,
+        LOAD,
+        SHOOT,
+        MANUALINVERT,
+        MANUALFORWARD,
+    }
 
-  private boolean hasCoral() {
-    return canRange.getDistance().getValueAsDouble() < RollerConstants.CANRANGE_DISRANCE_THRESHOLD;
-  }
+    public enum RollerPosition {
+        NULL,
+        STATION,
+        L1,
+        L2,
+        L3,
+        L4,
+        LOLIPOP,
+    }
 
-  private boolean hasAlgea() {
-    // need to fill in with actual content
-    return false;
-  }
+    public void setSystemState(RollerState state) {
+        nextSystemState = state;
+    }
 
-  @AutoLogOutput
-  public Command runRoller(double inputVolts) {
-    return startEnd(() -> io.runVolts(inputVolts), () -> io.stop());
-  }
+    public void setSystemPosition(RollerPosition position) {
+        systemPosition = position;
+    }
 
-  public Command RollerTestDynamic(SysIdRoutine.Direction direction) {
-    return routineToApply.dynamic(direction);
-  }
+    public boolean isLoaded(){
+        return false;
+    }
 
-  public Command RollerTestQuasistatic(SysIdRoutine.Direction direction) {
-    return routineToApply.quasistatic(direction);
-  }
-
-  public void setRequestManual(boolean set) {
-    requestManual = set;
-  }
-
-  public void setManualVoltage(double value) {
-    manualVoltage = value;
-  }
-
-  public void setRequestVelocity(boolean set) {
-    requestVelocity = set;
-  }
-
-  public void setVelocityString(String value) {
-    velocityString = value;
-  }
 }

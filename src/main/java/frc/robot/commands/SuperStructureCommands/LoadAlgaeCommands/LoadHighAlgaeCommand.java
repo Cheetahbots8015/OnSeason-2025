@@ -4,29 +4,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SuperStructure;
 
 public class LoadHighAlgaeCommand extends Command {
-    private SuperStructure m_superStructure;
+  private SuperStructure m_superStructure;
 
-    public LoadHighAlgaeCommand(SuperStructure superStructure) {
-        m_superStructure = superStructure;
-        addRequirements(m_superStructure);
-    }
+  public LoadHighAlgaeCommand(SuperStructure superStructure) {
+    m_superStructure = superStructure;
+    addRequirements(m_superStructure);
+  }
 
-    @Override
-    public void initialize() {
-    }
+  @Override
+  public void initialize() {}
 
-    @Override
-    public void execute() {
-        m_superStructure.requestLoadAlgae(SuperStructure.superStructurePosition.HIGH_ALGAE);
-    }
+  @Override
+  public void execute() {
+    m_superStructure.requestLoadAlgae(SuperStructure.superStructurePosition.HIGH_ALGAE);
+  }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        m_superStructure.requestEnd();
-    }
+  @Override
+  public void end(boolean interrupted) {
+    m_superStructure.requestEnd();
+  }
 }

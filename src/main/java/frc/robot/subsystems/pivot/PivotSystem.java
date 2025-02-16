@@ -30,7 +30,6 @@ public class PivotSystem extends SubsystemBase {
     this.io = pivotIO;
   }
 
-
   @Override
   public void periodic() {
     io.updateInputs(inputs);
@@ -42,7 +41,5 @@ public class PivotSystem extends SubsystemBase {
     return pivotState;
   }
 
-  public void updateStateMachine() {
-      
-  }
+  public void updateStateMachine() {}
 }
