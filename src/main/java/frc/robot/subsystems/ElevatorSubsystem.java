@@ -122,9 +122,19 @@ public class ElevatorSubsystem extends SubsystemBase {
         timer = -1;
     }
 
+    public void set2L1 () {
+        report();
+        setHeight(ElevatorConstants.L1Position);
+    }
+
     public void set2L2(){
         report();
         setHeight(ElevatorConstants.L2Position);
+    }
+
+    public void set2L3 (){
+        report();
+        setHeight(ElevatorConstants.L3Position);
     }
 
     public void set2L4() {

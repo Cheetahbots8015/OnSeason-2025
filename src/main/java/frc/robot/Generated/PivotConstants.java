@@ -17,6 +17,7 @@ public class PivotConstants {
     public static final double cruiseVelocity = 10.0;
     public static final double cruiseAcceleration = 10.0;
     public static final double L2Position = 1.4;
+    public static final double L3Position = 1.4;
     public static final double L4Position = 3.5;
     public static final double positionDeadband = 0.1;
     

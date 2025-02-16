@@ -49,6 +49,7 @@ public class RobotContainer {
     private final Trigger ElevatorVoltageLockTrigger = testController.b();
     private final Trigger L4Trigger = testController.x();
     private final Trigger L2Trigger = testController.y();
+    private final Trigger L3Trigger = testController.povRight();
     private final Trigger RollerManualTrigger = testController.leftBumper();
     private final Trigger PivotManualForwardTrigger = testController.rightTrigger();
     private final Trigger PivotManualReverseTrigger = testController.leftTrigger();
@@ -70,6 +71,7 @@ public class RobotContainer {
     private final Command ElevatorHomeCommand = new ElevatorHomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
     private final Command L2Command = new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
     private final Command L4Command = new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+    private final Command L3Command = new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -106,6 +108,7 @@ public class RobotContainer {
         ElevatorVoltageLockTrigger.whileTrue(ElevatorHoldCommand);
         L4Trigger.whileTrue(L4Command);
         L2Trigger.whileTrue(L2Command);
+        L3Trigger.whileTrue(L3Command);
         RollerManualTrigger.whileTrue(RollerManualCommand);
         m_elevatorSubsystem.setDefaultCommand(ElevatorReportCommand);
         m_pivotSubsystem.setDefaultCommand(PivotReportCommand);
@@ -114,7 +117,7 @@ public class RobotContainer {
         PivotL2Trigger.whileTrue(PivotL2Command);
         PivotResetTrigger.whileTrue(PivotResetCommand);
         ElevatorHomeTrigger.whileTrue(ElevatorHomeCommand);
-
+        
         SysIDController.a().whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kForward));
         SysIDController.b().whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kReverse));
         SysIDController.x().whileTrue(m_pivotSubsystem.PivotTestQuasistatic(SysIdRoutine.Direction.kForward));

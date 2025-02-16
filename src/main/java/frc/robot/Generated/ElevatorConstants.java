@@ -23,6 +23,7 @@ public class ElevatorConstants {
     public static final double cruiseAcceleration = 30.0;
     public static final double L2Position = 21.68;
     public static final double L4Position = 120.0;
+    public static final double L3Position = 63.0;
     public static final double positionDeadband = 0.25;
     public static final double homeUpTime = 0.3;
     
