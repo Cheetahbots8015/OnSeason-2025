@@ -5,35 +5,27 @@ import org.littletonrobotics.junction.AutoLog;
 
 /* Interface encapsulating pivot hardware */
 public interface PivotIO {
-  @AutoLog
-  public static class PivotIOInputs {
-    public boolean connected = false;
-    public double angleDegrees = 0.0;
-    public double angleRads = 0.0;
-    public double velDegreesPerSecond = 0.0;
-    public double appliedVoltage = 0.0;
-    public double tempCelcius = 0.0;
-    public double motionMagicPositionTargetDeg = 0.0;
-    public double motionMagicVelocityTargetDeg = 0.0;
-    public double setpointDeg = 0.0;
-  }
-
   /** Updates the set of loggable inputs */
   public default void updateInputs(PivotIOInputs inputs) {}
 
   /** Sets the desired angle of the pivot */
-  public default void setAngle(Rotation2d angle, double elevatorAcceleration) {}
+  public default void setAngle(double height, double offset) {}
 
   /** Sets the speed of the pivot to the desired percent output */
   public default void setVoltage(double voltage) {}
 
-  /** Sets current limit for the pivot motor. */
-  public default void setCurrentLimit(
-      double currentLimit, double supplyCurrentThreshold, double supplyTimeThreshold) {}
+  public default void hold(double position){}
 
-  /** Enables or disables the pivot in brake mode */
-  public default void enableBrakeMode(boolean enable) {}
-
-  /** Updates tunable numbers */
-  public default void updateTunableNumbers() {}
+  @AutoLog
+  public static class PivotIOInputs {
+    public boolean connected = false;
+    public double position = 0.0;
+    public double velocity = 0.0;
+    public double acceleration = 0.0;
+    public double torqueCurrent = 0.0;
+    public double motionMagicTarget = 0.0;
+    public double appliedVoltage = 0.0;
+    public double tempCelcius = 0.0;
+    public double s1Position = 0.0;
+  }
 }

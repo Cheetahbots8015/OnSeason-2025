@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.elevator.ElevatorSystem;
+import frc.robot.subsystems.pivot.PivotSystem;
 import frc.robot.subsystems.rollers.RollerSystem;
 
 public class PositionUtil {
@@ -41,7 +42,8 @@ public class PositionUtil {
         }
     }
 
-    public static RollerSystem.RollerPosition super2roller(SuperStructure.superStructurePosition pos) {
+    public static RollerSystem.RollerPosition super2roller(
+            SuperStructure.superStructurePosition pos) {
         switch (pos) {
             case L1 -> {
                 return RollerSystem.RollerPosition.L1;
@@ -61,7 +63,38 @@ public class PositionUtil {
             default -> {
                 return RollerSystem.RollerPosition.NULL;
             }
+        }
+    }
 
+    public static PivotSystem.PivotPosition super2pivot(SuperStructure.superStructurePosition pos) {
+        switch (pos) {
+            case L1 -> {
+                return PivotSystem.PivotPosition.L1;
+            }
+            case L2 -> {
+                return PivotSystem.PivotPosition.L2;
+            }
+            case L3 -> {
+                return PivotSystem.PivotPosition.L3;
+            }
+            case L4 -> {
+                return PivotSystem.PivotPosition.L4;
+            }
+            case LOW_ALGAE -> {
+                return PivotSystem.PivotPosition.LOWALGAE;
+            }
+            case HIGH_ALGAE -> {
+                return PivotSystem.PivotPosition.HIGHALGAE;
+            }
+            case LOLIPOP -> {
+                return PivotSystem.PivotPosition.LOLIPOP;
+            }
+            case PROCESSOR -> {
+                return PivotSystem.PivotPosition.PROCESSOR;
+            }
+            default -> {
+                return PivotSystem.PivotPosition.NULL;
+            }
         }
     }
 }
