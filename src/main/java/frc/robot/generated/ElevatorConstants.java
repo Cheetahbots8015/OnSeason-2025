@@ -9,6 +9,8 @@ public class ElevatorConstants {
   public static final boolean opposeMaster = true;
   public static final double manualUpVoltage = 2.5;
   public static final double manualDownVoltage = -2.0;
+  public static final double lowManualUpVoltage = 1.0;
+  public static final double lowManualDownVoltage = -0.8;
   public static final double lockVoltage = 0.3;
   public static final double forwardDutyCycleLimit = 0.4;
   public static final double reverseDutyCycleLimit = -0.4;
@@ -25,6 +27,7 @@ public class ElevatorConstants {
   public static final double L2Position = 21.68;
   public static final double L4Position = 120.0;
   public static final double L3Position = 63.0;
-  public static final double positionDeadband = 0.25;
+  public static final double positionDeadband = 0.5;
+  public static final double closePositionDeadband = 3.0;
   public static final double homeUpTime = 0.3;
 }

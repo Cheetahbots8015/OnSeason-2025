@@ -9,6 +9,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.DifferentialSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +35,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private boolean hasHomed = false;
 
   public ElevatorSubsystem() {
+    leaderconfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    followerconfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     leaderconfigs.MotorOutput.withInverted(
         ElevatorConstants.inverted
             ? InvertedValue.Clockwise_Positive
@@ -43,13 +46,13 @@ public class ElevatorSubsystem extends SubsystemBase {
             ? InvertedValue.CounterClockwise_Positive
             : InvertedValue.Clockwise_Positive);
     /*
-    leaderconfigs.Slot0.kP = ElevatorConstants.kP;
-    leaderconfigs.Slot0.kI = ElevatorConstants.kI;
-    leaderconfigs.Slot0.kD = ElevatorConstants.kD;
-    leaderconfigs.Slot0.kA = ElevatorConstants.kA;
-    leaderconfigs.Slot0.kS = ElevatorConstants.kS;
-    leaderconfigs.Slot0.kV = ElevatorConstants.kV;
-    */
+     * leaderconfigs.Slot0.kP = ElevatorConstants.kP;
+     * leaderconfigs.Slot0.kI = ElevatorConstants.kI;
+     * leaderconfigs.Slot0.kD = ElevatorConstants.kD;
+     * leaderconfigs.Slot0.kA = ElevatorConstants.kA;
+     * leaderconfigs.Slot0.kS = ElevatorConstants.kS;
+     * leaderconfigs.Slot0.kV = ElevatorConstants.kV;
+     */
     followerconfigs.Slot1.kP = 2.0;
     leaderconfigs.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.cruiseVelocity;
     leaderconfigs.MotionMagic.MotionMagicAcceleration = ElevatorConstants.cruiseAcceleration;
@@ -58,10 +61,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     followerconfigs.MotorOutput.withPeakForwardDutyCycle(ElevatorConstants.forwardDutyCycleLimit);
     followerconfigs.MotorOutput.withPeakReverseDutyCycle(ElevatorConstants.reverseDutyCycleLimit);
     leaderconfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.9;
-    leader.getTorqueCurrent().setUpdateFrequency(1000);
-    leader.getClosedLoopReference().setUpdateFrequency(1000);
-    follower.getTorqueCurrent().setUpdateFrequency(1000);
-    follower.getClosedLoopReference().setUpdateFrequency(1000);
+    leader.getTorqueCurrent().setUpdateFrequency(50);
+    leader.getClosedLoopReference().setUpdateFrequency(50);
+    follower.getTorqueCurrent().setUpdateFrequency(50);
+    follower.getClosedLoopReference().setUpdateFrequency(50);
     // follower differential control
     followerconfigs.DifferentialConstants.PeakDifferentialDutyCycle =
         ElevatorConstants.forwardDutyCycleLimit;
@@ -73,8 +76,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     follower.getConfigurator().apply(followerconfigs);
     // follower.setControl(new Follower(ElevatorConstants.leaderID,
     // ElevatorConstants.opposeMaster));
-    leader.optimizeBusUtilization();
-    follower.optimizeBusUtilization();
+    // leader.optimizeBusUtilization();
+    // follower.optimizeBusUtilization();
   }
 
   public void shutDown() {
@@ -94,6 +97,19 @@ public class ElevatorSubsystem extends SubsystemBase {
         new DifferentialVoltage(ElevatorConstants.manualDownVoltage, 0.0).withDifferentialSlot(1));
   }
 
+  public void lowManualUpVolts() {
+    leader.setControl(voltageOut.withOutput(ElevatorConstants.lowManualUpVoltage));
+    follower.setControl(
+        new DifferentialVoltage(ElevatorConstants.lowManualUpVoltage, 0.0).withDifferentialSlot(1));
+  }
+
+  public void lowManualDownVolts() {
+    leader.setControl(voltageOut.withOutput(ElevatorConstants.lowManualDownVoltage));
+    follower.setControl(
+        new DifferentialVoltage(ElevatorConstants.lowManualDownVoltage, 0.0)
+            .withDifferentialSlot(1));
+  }
+
   public void lockVolts() {
     leader.setControl(voltageOut.withOutput(ElevatorConstants.lockVoltage));
     follower.setControl(
@@ -105,6 +121,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (Math.abs(leader.getPosition().getValueAsDouble() - height)
         < ElevatorConstants.positionDeadband) {
       lockVolts();
+    } else if (Math.abs(leader.getPosition().getValueAsDouble() - height)
+            < ElevatorConstants.closePositionDeadband
+        && leader.getPosition().getValueAsDouble() > height) {
+      lowManualDownVolts();
+    } else if (Math.abs(leader.getPosition().getValueAsDouble() - height)
+            < ElevatorConstants.closePositionDeadband
+        && leader.getPosition().getValueAsDouble() <= height) {
+      lowManualUpVolts();
     } else if (leader.getPosition().getValueAsDouble() > height) {
       manualDownVolts();
     } else {
