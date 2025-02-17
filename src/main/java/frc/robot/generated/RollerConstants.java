@@ -12,7 +12,7 @@ public class RollerConstants {
   public static final double L2Voltage = 8.0;
   public static final double L3Voltage = 8.0;
   public static final double L4Voltage = 8.0;
-  public static final double LolipopVoltage = 8.0;
+  public static final double AlgaeVoltage = 8.0;
   public static final double coralVelocity = 0.0;
   public static final double kP = 0.0;
   public static final double kI = 0.0;

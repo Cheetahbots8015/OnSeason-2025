@@ -9,9 +9,10 @@ import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.generated.*;
 
 /** An example command that uses an example subsystem. */
-public class TakeLolipopCommand extends Command {
+public class TakeHighAlgaeCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_rollerSubsystem;
 
@@ -24,7 +25,7 @@ public class TakeLolipopCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public TakeLolipopCommand(
+  public TakeHighAlgaeCommand(
       RollerSubsystem rollerSubsystem,
       PivotSubsystem pivotSubsystem,
       ElevatorSubsystem elevatorSubsystem) {
@@ -43,8 +44,9 @@ public class TakeLolipopCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_pivotSubsystem.set2lolipop();
-    if (m_pivotSubsystem.isAtPosition(PivotConstants.lolipopPosition)) {
+    m_elevatorSubsystem.set2HighAlgae();
+    m_pivotSubsystem.set2HighAlgae();
+    if (m_pivotSubsystem.isAtPosition(PivotConstants.highAlgaePosition)) {
       m_rollerSubsystem.AlgaeVolts();
     }
     m_pivotSubsystem.report();
@@ -54,6 +56,7 @@ public class TakeLolipopCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_pivotSubsystem.hold();
+    m_elevatorSubsystem.lockVolts();
     m_rollerSubsystem.shutDown();
   }
 

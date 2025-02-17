@@ -129,8 +129,24 @@ public class PivotSubsystem extends SubsystemBase {
     setHeight(PivotConstants.L4Position);
   }
 
+  public void set2lolipop() {
+    setHeight(PivotConstants.lolipopPosition);
+  }
+
+  public void set2LowAlgae() {
+    setHeight(PivotConstants.lowAlgaePosition);
+  }
+
+  public void set2HighAlgae() {
+    setHeight(PivotConstants.highAlgaePosition);
+  }
+
   public void home() {
     setHeight(0.0);
+  }
+
+  public void algaeHome() {
+    setHeight(PivotConstants.algaeHome);
   }
 
   public void hold() {

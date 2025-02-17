@@ -29,5 +29,9 @@ public class PivotConstants {
   public static final double L2Position = 1.4 / rotor2CandiRatio;
   public static final double L3Position = 1.4 / rotor2CandiRatio;
   public static final double L4Position = 3.5 / rotor2CandiRatio;
+  public static final double lowAlgaePosition = 0.0; // TODO: Change This
+  public static final double highAlgaePosition = 0.0; // TODO: Change This
+  public static final double lolipopPosition = 0.4; // TODO: Change This
+  public static final double algaeHome = 0.3; // TODO: Change This
   public static final double positionDeadband = 0.01;
 }

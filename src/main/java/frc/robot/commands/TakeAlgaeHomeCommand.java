@@ -5,13 +5,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.generated.*;
 
 /** An example command that uses an example subsystem. */
-public class TakeLolipopCommand extends Command {
+public class TakeAlgaeHomeCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_rollerSubsystem;
 
@@ -24,7 +24,7 @@ public class TakeLolipopCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public TakeLolipopCommand(
+  public TakeAlgaeHomeCommand(
       RollerSubsystem rollerSubsystem,
       PivotSubsystem pivotSubsystem,
       ElevatorSubsystem elevatorSubsystem) {
@@ -43,10 +43,9 @@ public class TakeLolipopCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_pivotSubsystem.set2lolipop();
-    if (m_pivotSubsystem.isAtPosition(PivotConstants.lolipopPosition)) {
-      m_rollerSubsystem.AlgaeVolts();
-    }
+    m_elevatorSubsystem.home();
+    m_pivotSubsystem.algaeHome();
+    m_rollerSubsystem.shutDown();
     m_pivotSubsystem.report();
   }
 
@@ -54,12 +53,13 @@ public class TakeLolipopCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_pivotSubsystem.hold();
+    m_elevatorSubsystem.lockVolts();
     m_rollerSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_elevatorSubsystem.isAtPosition(0.0)&&m_pivotSubsystem.isAtPosition(PivotConstants.algaeHome);
   }
 }
