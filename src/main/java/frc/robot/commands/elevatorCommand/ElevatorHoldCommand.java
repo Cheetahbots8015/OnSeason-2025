@@ -30,13 +30,14 @@ public class ElevatorHoldCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.lockVolts();
+    m_subsystem.manualDownVolts();
     m_subsystem.report();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // m_subsystem.lockVolts();
     m_subsystem.shutDown();
   }
 
