@@ -5,10 +5,9 @@ import com.ctre.phoenix6.controls.DifferentialVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.mechanisms.DifferentialMechanism;
+import com.ctre.phoenix6.signals.DifferentialSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -34,42 +33,48 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double timer = -1.0;
   private boolean hasHomed = false;
 
-
-  private final DifferentialMechanism diffMechanism = new DifferentialMechanism(leader, follower,false);
   public ElevatorSubsystem() {
     leaderconfigs.MotorOutput.withInverted(
         ElevatorConstants.inverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive);
     followerconfigs.MotorOutput.withInverted(
-              ElevatorConstants.inverted
-                  ? InvertedValue.CounterClockwise_Positive
-                  : InvertedValue.Clockwise_Positive);
+        ElevatorConstants.inverted
+            ? InvertedValue.CounterClockwise_Positive
+            : InvertedValue.Clockwise_Positive);
+    /*
     leaderconfigs.Slot0.kP = ElevatorConstants.kP;
     leaderconfigs.Slot0.kI = ElevatorConstants.kI;
     leaderconfigs.Slot0.kD = ElevatorConstants.kD;
     leaderconfigs.Slot0.kA = ElevatorConstants.kA;
     leaderconfigs.Slot0.kS = ElevatorConstants.kS;
-    leaderconfigs.Slot0.kV = ElevatorConstants.kV;    
+    leaderconfigs.Slot0.kV = ElevatorConstants.kV;
+    */
+    followerconfigs.Slot1.kP = 2.0;
     leaderconfigs.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.cruiseVelocity;
     leaderconfigs.MotionMagic.MotionMagicAcceleration = ElevatorConstants.cruiseAcceleration;
     leaderconfigs.MotorOutput.withPeakForwardDutyCycle(ElevatorConstants.forwardDutyCycleLimit);
     leaderconfigs.MotorOutput.withPeakReverseDutyCycle(ElevatorConstants.reverseDutyCycleLimit);
     followerconfigs.MotorOutput.withPeakForwardDutyCycle(ElevatorConstants.forwardDutyCycleLimit);
     followerconfigs.MotorOutput.withPeakReverseDutyCycle(ElevatorConstants.reverseDutyCycleLimit);
+    leaderconfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.9;
     leader.getTorqueCurrent().setUpdateFrequency(1000);
     leader.getClosedLoopReference().setUpdateFrequency(1000);
     follower.getTorqueCurrent().setUpdateFrequency(1000);
     follower.getClosedLoopReference().setUpdateFrequency(1000);
-    //slot 1 for diff axis for both motors.
-    leaderconfigs.Slot1.kP = 0.5;
-    followerconfigs.Slot0.kP = 0.5;
+    // follower differential control
+    followerconfigs.DifferentialConstants.PeakDifferentialDutyCycle =
+        ElevatorConstants.forwardDutyCycleLimit;
+    followerconfigs.DifferentialConstants.PeakDifferentialVoltage = 4.0;
+    followerconfigs.DifferentialSensors.DifferentialSensorSource =
+        DifferentialSensorSourceValue.RemoteTalonFX_Diff;
+    followerconfigs.DifferentialSensors.DifferentialTalonFXSensorID = ElevatorConstants.leaderID;
     leader.getConfigurator().apply(leaderconfigs);
     follower.getConfigurator().apply(followerconfigs);
-    //follower.setControl(new Follower(ElevatorConstants.leaderID, ElevatorConstants.opposeMaster));
+    // follower.setControl(new Follower(ElevatorConstants.leaderID,
+    // ElevatorConstants.opposeMaster));
     leader.optimizeBusUtilization();
     follower.optimizeBusUtilization();
-    diffMechanism.applyConfigs();
   }
 
   public void shutDown() {
@@ -78,18 +83,21 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void manualUpVolts() {
-    //leader.setControl(voltageOut.withOutput(ElevatorConstants.manualUpVoltage));
-    diffMechanism.setControl(voltageOut.withOutput(ElevatorConstants.manualUpVoltage), new PositionVoltage(0.0));
+    leader.setControl(voltageOut.withOutput(ElevatorConstants.manualUpVoltage));
+    follower.setControl(
+        new DifferentialVoltage(ElevatorConstants.manualUpVoltage, 0.0).withDifferentialSlot(1));
   }
 
   public void manualDownVolts() {
-    //leader.setControl(voltageOut.withOutput(ElevatorConstants.manualDownVoltage));
-    diffMechanism.setControl(voltageOut.withOutput(ElevatorConstants.manualDownVoltage), new PositionVoltage(0.0));
+    leader.setControl(voltageOut.withOutput(ElevatorConstants.manualDownVoltage));
+    follower.setControl(
+        new DifferentialVoltage(ElevatorConstants.manualDownVoltage, 0.0).withDifferentialSlot(1));
   }
 
   public void lockVolts() {
-    //leader.setControl(voltageOut.withOutput(ElevatorConstants.lockVoltage));
-    diffMechanism.setControl(voltageOut.withOutput(ElevatorConstants.lockVoltage), new PositionVoltage(0.0));
+    leader.setControl(voltageOut.withOutput(ElevatorConstants.lockVoltage));
+    follower.setControl(
+        new DifferentialVoltage(ElevatorConstants.lockVoltage, 0.0).withDifferentialSlot(1));
   }
 
   public void setHeight(double height) {
@@ -197,5 +205,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         "elevator/motionmagic target", leader.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putNumber("elevator/timer", timer);
     SmartDashboard.putBoolean("elevator/hasHomed", hasHomed);
+    SmartDashboard.putNumber("elevator/leaderVoltage", leader.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "elevator/followerVoltage", follower.getMotorVoltage().getValueAsDouble());
   }
 }
