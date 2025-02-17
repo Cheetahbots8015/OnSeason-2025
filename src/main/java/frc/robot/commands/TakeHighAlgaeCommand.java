@@ -5,11 +5,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.generated.*;
 import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.generated.*;
 
 /** An example command that uses an example subsystem. */
 public class TakeHighAlgaeCommand extends Command {

@@ -5,10 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.generated.*;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.generated.*;
 
 /** An example command that uses an example subsystem. */
 public class TakeAlgaeHomeCommand extends Command {
@@ -60,6 +60,7 @@ public class TakeAlgaeHomeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevatorSubsystem.isAtPosition(0.0)&&m_pivotSubsystem.isAtPosition(PivotConstants.algaeHome);
+    return m_elevatorSubsystem.isAtPosition(0.0)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.algaeHome);
   }
 }
