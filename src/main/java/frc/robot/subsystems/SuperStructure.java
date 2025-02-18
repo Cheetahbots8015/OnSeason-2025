@@ -128,30 +128,27 @@ public class SuperStructure extends SubsystemBase {
 
     /* private request to other subsystems */
     private void setHome() {
-        elevator.setRequest(ElevatorSystem.ElevatorRequest.HOME);
-
+        elevator.setElevatorState(ElevatorSystem.ElevatorState.HOMING);
     }
 
     private void setHold() {
-        elevator.setRequest(ElevatorSystem.ElevatorRequest.NULL);
+        elevator.setElevatorState(ElevatorSystem.ElevatorState.IDLE);
         pivot.setPivotState(PivotSystem.PivotState.IDLE);
+        roller.setSystemState(RollerSystem.RollerState.IDLE);
     }
 
     private void setManual() {
-        elevator.setRequest(ElevatorSystem.ElevatorRequest.MANUAL);
     }
 
     private void setPosition() {
-        elevator.setPositionTarget(super2elevator(systemPosition));
-        elevator.setUsePositionDynamic(false);
-        elevator.setRequest(ElevatorSystem.ElevatorRequest.POSITION);
+        elevator.setElevatorPosition(super2elevator(systemPosition));
+        elevator.setElevatorState(ElevatorSystem.ElevatorState.POSITION);
 
         pivot.setPivotPosition(super2pivot(systemPosition));
         pivot.setPivotState(PivotSystem.PivotState.POSITION);
     }
 
     private void setLoad() {
-        roller.setSystemPosition(RollerSystem.RollerPosition.STATION);
         roller.setSystemState(RollerSystem.RollerState.LOAD);
     }
 
@@ -162,28 +159,25 @@ public class SuperStructure extends SubsystemBase {
 
     /* private boolean from other subsystems*/
     private boolean isHomed() {
-        return false;
+        return elevator.getHomed();
     }
 
     private boolean isLoaded() {
-        return false;
+        return roller.getLoaded();
     }
 
     private boolean isShot() {
-        return false;
+        return roller.getShot();
     }
 
     private boolean isAtPosition() {
-        return pivot.isAtPosition();
+        return pivot.isAtPosition() && elevator.isAtPos();
     }
 
     // commands when disabled
     private void disabledCommands() {
         systemState = superStructureState.IDLE;
         systemPosition = superStructurePosition.NULL;
-
-        elevator.setRequest(ElevatorSystem.ElevatorRequest.NULL);
-        elevator.setPositionTarget(super2elevator(systemPosition));
     }
 
     private enum superStructureState {

@@ -63,7 +63,6 @@ public class RollerSystem extends SubsystemBase {
           case L3 -> io.runVolts(RollerConstants.ROLLER_L3_VOLTAGE);
           case L4 -> io.runVolts(RollerConstants.ROLLER_L4_VOLTAGE);
           case LOLIPOP -> io.runVolts(RollerConstants.ROLLER_LOLIPOP_VOLTAGE);
-          case STATION -> io.runVolts(RollerConstants.ROLLER_STATION_VOLTAGE);
           case NULL -> io.runVolts(0);
         }
         break;
@@ -86,7 +85,6 @@ public class RollerSystem extends SubsystemBase {
 
   public enum RollerPosition {
     NULL,
-    STATION,
     L1,
     L2,
     L3,
@@ -102,7 +100,11 @@ public class RollerSystem extends SubsystemBase {
     systemPosition = position;
   }
 
-  public boolean isLoaded() {
+  public boolean getLoaded() {
+    return false;
+  }
+
+  public boolean getShot() {
     return false;
   }
 }

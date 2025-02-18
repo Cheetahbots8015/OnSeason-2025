@@ -77,10 +77,14 @@ public class PivotSystem extends SubsystemBase {
             case L2 -> Math.abs((inputs.position % 1.0) - PIVOT_L2_HEIGHT) < PIVOT_POSITION_TOLERANCE;
             case L3 -> Math.abs((inputs.position % 1.0) - PIVOT_L3_HEIGHT) < PIVOT_POSITION_TOLERANCE;
             case L4 -> Math.abs((inputs.position % 1.0) - PIVOT_L4_HEIGHT) < PIVOT_POSITION_TOLERANCE;
-            case HIGHALGAE -> Math.abs((inputs.position % 1.0) - PIVOT_HIGHALGAE_HEIGHT) < PIVOT_POSITION_TOLERANCE;
-            case LOWALGAE -> Math.abs((inputs.position % 1.0) - PIVOT_LOWALGAE_HEIGHT) < PIVOT_POSITION_TOLERANCE;
-            case LOLIPOP -> Math.abs((inputs.position % 1.0) - PIVOT_LOLIPOP_HEIGHT) < PIVOT_POSITION_TOLERANCE;
-            case PROCESSOR -> Math.abs((inputs.position % 1.0) - PIVOT_PROCESSOR_HEIGHT) < PIVOT_POSITION_TOLERANCE;
+            case HIGHALGAE -> Math.abs((inputs.position % 1.0) - PIVOT_HIGHALGAE_HEIGHT)
+                    < PIVOT_POSITION_TOLERANCE;
+            case LOWALGAE -> Math.abs((inputs.position % 1.0) - PIVOT_LOWALGAE_HEIGHT)
+                    < PIVOT_POSITION_TOLERANCE;
+            case LOLIPOP -> Math.abs((inputs.position % 1.0) - PIVOT_LOLIPOP_HEIGHT)
+                    < PIVOT_POSITION_TOLERANCE;
+            case PROCESSOR -> Math.abs((inputs.position % 1.0) - PIVOT_PROCESSOR_HEIGHT)
+                    < PIVOT_POSITION_TOLERANCE;
             default -> false;
         };
     }

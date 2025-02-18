@@ -25,13 +25,21 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.SuperStructureCommands.ShootReefCommands.ShootLeftReefL2Command;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.ElevatorSystem;
+import frc.robot.subsystems.elevator.ElevatorSystemIOKrakenX60;
+import frc.robot.subsystems.pivot.PivotIOKrakenX60;
+import frc.robot.subsystems.pivot.PivotSystem;
+import frc.robot.subsystems.rollers.RollerSystem;
+import frc.robot.subsystems.rollers.RollerSystemIOKrakenX60;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -47,7 +55,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final RollerSystem roller;
+  private final PivotSystem pivot;
+  private final ElevatorSystem elevator;
   private final Vision vision;
+  private final SuperStructure superStructure;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -67,11 +79,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        roller = new RollerSystem("Roller", new RollerSystemIOKrakenX60());
+        pivot = new PivotSystem("Pivot", new PivotIOKrakenX60());
+        elevator = new ElevatorSystem("Elevator", new ElevatorSystemIOKrakenX60());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(cameraReefName, drive::getRotation),
                 new VisionIOLimelight(cameraStationName, drive::getRotation));
+        superStructure = new SuperStructure(elevator, roller, vision, pivot);
         break;
 
       case SIM:
@@ -83,12 +99,16 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        roller = new RollerSystem("Roller", new RollerSystemIOKrakenX60());
+        pivot = new PivotSystem("Pivot", new PivotIOKrakenX60());
+        elevator = new ElevatorSystem("Elevator", new ElevatorSystemIOKrakenX60());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(cameraReefName, robotToCameraReef, drive::getPose),
                 new VisionIOPhotonVisionSim(
                     cameraStationName, robotToCameraStation, drive::getPose));
+        superStructure = new SuperStructure(elevator, roller, vision, pivot);
         break;
 
       default:
@@ -100,7 +120,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        roller = new RollerSystem("Roller", new RollerSystemIOKrakenX60());
+        pivot = new PivotSystem("Pivot", new PivotIOKrakenX60());
+        elevator = new ElevatorSystem("Elevator", new ElevatorSystemIOKrakenX60());
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        superStructure = new SuperStructure(elevator, roller, vision, pivot);
         break;
     }
 
@@ -151,6 +175,8 @@ public class RobotContainer {
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
+
+    controller.y().whileTrue(new ShootLeftReefL2Command(superStructure));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
