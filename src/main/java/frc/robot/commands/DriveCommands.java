@@ -14,9 +14,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,6 +30,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -288,14 +291,52 @@ public class DriveCommands {
                     })));
   }
 
+  public static Command rotate2Apriltag(Drive drive) {
+    return Commands.run(
+        () -> {
+          LimelightHelpers.setCameraPose_RobotSpace("", 0, -0.25, 0.82, 0, -30, 0);
+          LimelightHelpers.setFiducial3DOffset("null", 0.5, 0, 0);
+          boolean hasTarget = LimelightHelpers.getTV("");
+          PIDController pidx = new PIDController(4, 0, 0);
+          PIDController pidy = new PIDController(2.4, 0, 0);
+          PIDController pidyaw = new PIDController(4, 0, 0);
+          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace(null);
+          pidx.setSetpoint(0.8);
+          pidy.setSetpoint(0);
+          pidyaw.setSetpoint(0);
+          if (hasTarget) {
+            if (pose.getTranslation().getZ() <= 0.8) {
+              if (Math.abs(LimelightHelpers.getTX("")) < 2) {
+                ChassisSpeeds drivSpeeds = new ChassisSpeeds(0.5, 0, 0);
+                drive.runVelocity(drivSpeeds);
+              } else {
+                pidy = new PIDController(0.02, 0, 0);
+                pidyaw = new PIDController(0.05, 0, 0);
+                ChassisSpeeds drivSpeeds =
+                    new ChassisSpeeds(
+                        0,
+                        pidy.calculate(LimelightHelpers.getTX("")),
+                        pidyaw.calculate(pose.getRotation().getY()));
+                drive.runVelocity(drivSpeeds);
+              }
+            } else {
+              ChassisSpeeds drivSpeeds =
+                  new ChassisSpeeds(
+                      -pidx.calculate(pose.getTranslation().getZ()),
+                      pidy.calculate(pose.getTranslation().getX()),
+                      pidyaw.calculate(pose.getRotation().getY()));
+              drive.runVelocity(drivSpeeds);
+            }
+          } else {
+            ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
+            drive.runVelocity(drivSpeeds);
+          }
+        });
+  }
+
   private static class WheelRadiusCharacterizationState {
     double[] positions = new double[4];
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
-  }
-
-  public static Command rotate2Apriltag(Drive drive) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'rotate2Apriltag'");
   }
 }
