@@ -25,6 +25,8 @@ public class PivotSubsystem extends SubsystemBase {
   private final TalonFX pivot = new TalonFX(PivotConstants.pivotID, PivotConstants.canName);
   private final CANdi candi = new CANdi(PivotConstants.candiID, PivotConstants.canName);
 
+  private double offset;
+
   private TalonFXConfiguration pivotconfigs = new TalonFXConfiguration();
   private CANdiConfiguration candiconfigs = new CANdiConfiguration();
 
@@ -52,12 +54,6 @@ public class PivotSubsystem extends SubsystemBase {
   private final SysIdRoutine routineToApply = m_SysIdRoutinePivot;
 
   public PivotSubsystem() {
-
-    forwardLimit =
-        PivotConstants.forwardSoftLimitThreshold + candi.getPWM1Position().getValueAsDouble();
-    reverseLimit =
-        PivotConstants.reverseSoftLimitThreshold + candi.getPWM1Position().getValueAsDouble();
-
     pivotconfigs.MotorOutput.withInverted(
         PivotConstants.inverted
             ? InvertedValue.Clockwise_Positive
@@ -85,10 +81,14 @@ public class PivotSubsystem extends SubsystemBase {
     pivot.getConfigurator().apply(pivotconfigs);
 
     candiconfigs.PWM1.SensorDirection = PivotConstants.candiDirection;
-    candiconfigs.PWM1.AbsoluteSensorOffset = PivotConstants.candiOffset;
     // candiconfigs.PWM1.AbsoluteSensorDiscontinuityPoint = 1;//Setting this to 1 makes the absolute
     // position unsigned [0, 1)
     candi.getConfigurator().apply(candiconfigs);
+
+    offset = candi.getPWM1Position().getValueAsDouble();
+
+    forwardLimit = PivotConstants.forwardSoftLimitThreshold + offset;
+    reverseLimit = PivotConstants.reverseSoftLimitThreshold + offset;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         250, pivot.getPosition(), pivot.getVelocity(), pivot.getMotorVoltage());
@@ -120,9 +120,6 @@ public class PivotSubsystem extends SubsystemBase {
 
   public void setHeight(double height) {
     report();
-    double offset =
-        candi.getPWM1Position().getValueAsDouble()
-            - (candi.getPWM1Position().getValueAsDouble() % 1.0);
     pivot.setControl(
         motionMagic
             .withPosition(height + offset)
@@ -131,7 +128,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public double getPosition() {
-    return candi.getPWM1Position().getValueAsDouble() % 1.0;
+    return candi.getPWM1Position().getValueAsDouble() - offset;
   }
 
   public void set2Home() {
@@ -179,7 +176,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition(double height) {
-    return Math.abs(this.getPosition() - height) < PivotConstants.positionDeadband;
+    return Math.abs(this.getPosition() - height - offset) < PivotConstants.positionDeadband;
   }
 
   public void report() {
