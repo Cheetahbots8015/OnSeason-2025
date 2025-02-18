@@ -10,24 +10,32 @@ package frc.robot.subsystems.rollers;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface RollerSystemIO {
-  default void updateInputs(RollerSystemIOInputs inputs) {}
+    default void updateInputs(RollerSystemIOInputs inputs) {
+    }
 
-  default void runVolts(double volts) {}
+    default void runVolts(double volts) {
+    }
 
-  default void runTorqueCurrentVelocity(double velocity) {}
+    default void runTorqueCurrentVelocity(double velocity) {
+    }
 
-  default void stop() {}
+    default void stop() {
+    }
 
-  @AutoLog
-  static class RollerSystemIOInputs {
-    public boolean connected = false;
-    public double positionRads = 0.0;
-    public double velocityRadsPerSec = 0.0;
-    public double accelerationRadsPerSec2 = 0.0;
-    public double TorqueCurrentTarget = 0.0;
-    public double appliedVoltage = 0.0;
-    public double supplyCurrentAmps = 0.0;
-    public double torqueCurrentAmps = 0.0;
-    public double tempCelsius = 0.0;
-  }
+    default boolean isCanRangeTriggered() {
+        return false;
+    }
+
+    @AutoLog
+    static class RollerSystemIOInputs {
+        public boolean connected = false;
+        public double positionRads = 0.0;
+        public double velocityRadsPerSec = 0.0;
+        public double accelerationRadsPerSec2 = 0.0;
+        public double TorqueCurrentTarget = 0.0;
+        public double appliedVoltage = 0.0;
+        public double supplyCurrentAmps = 0.0;
+        public double torqueCurrentAmps = 0.0;
+        public double tempCelsius = 0.0;
+    }
 }

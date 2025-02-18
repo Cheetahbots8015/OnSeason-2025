@@ -213,15 +213,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   }
 
   @Override
-  public void hold() {
-    //    leader.setControl(voltageOut.withOutput(ElevatorConstants.ELEVATOR_HOLD_VOLTAGE));
-    //    follower.setControl(
-    //        new DifferentialVoltage(ElevatorConstants.ELEVATOR_HOLD_VOLTAGE, 0.0)
-    //            .withDifferentialSlot(1));
-    setPosition(leader.getPosition().getValueAsDouble());
-  }
-
-  @Override
   public void setPosition(double position) {
     position += encoderOffset;
     if (Math.abs(leader.getPosition().getValueAsDouble() - position)
@@ -240,6 +231,14 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     } else {
       setVoltage(ElevatorConstants.ELEVATOR_UP_VOLTAGE);
     }
+  }
+
+  @Override
+  public void hold() {
+    leader.setControl(voltageOut.withOutput(ElevatorConstants.ELEVATOR_HOLD_VOLTAGE));
+    follower.setControl(
+            new DifferentialVoltage(ElevatorConstants.ELEVATOR_HOLD_VOLTAGE, 0.0)
+                    .withDifferentialSlot(1));
   }
 
   @Override

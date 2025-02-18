@@ -50,7 +50,7 @@ public class ElevatorSystem extends SubsystemBase {
 
     switch (systemState) {
       case IDLE:
-        io.hold();
+        io.setPosition(inputs.position[0]);
         break;
       case HOMING:
         io.setHome();
