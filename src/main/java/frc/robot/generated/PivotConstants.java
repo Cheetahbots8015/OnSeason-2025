@@ -17,7 +17,7 @@ public class PivotConstants {
   public static final double manualVoltageReverse = -0.5;
   public static final double forwardDutyCycleLimit = 0.4;
   public static final double reverseDutyCycleLimit = -0.4;
-  public static final double kP = 3.596 * 15;
+  public static final double kP = 3.596 * 19;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
   public static final double kA = 0.0;

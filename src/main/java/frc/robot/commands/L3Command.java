@@ -47,6 +47,8 @@ public class L3Command extends Command {
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L3Position)
         && m_pivotSubsystem.isAtPosition(PivotConstants.L3Position)) {
       m_rollerSubsystem.L3Vots();
+    } else {
+      m_rollerSubsystem.shutDown();
     }
     m_elevatorSubsystem.report();
     m_pivotSubsystem.report();

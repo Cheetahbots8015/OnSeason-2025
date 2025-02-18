@@ -35,8 +35,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private boolean hasHomed = false;
 
   public ElevatorSubsystem() {
-    leaderconfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    followerconfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    leaderconfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    followerconfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     leaderconfigs.MotorOutput.withInverted(
         ElevatorConstants.inverted
             ? InvertedValue.Clockwise_Positive

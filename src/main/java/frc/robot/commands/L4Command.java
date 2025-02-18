@@ -47,6 +47,8 @@ public class L4Command extends Command {
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L4Position)
         && m_pivotSubsystem.isAtPosition(PivotConstants.L4Position)) {
       m_rollerSubsystem.L4Vots();
+    } else {
+      m_rollerSubsystem.shutDown();
     }
     m_elevatorSubsystem.report();
     m_pivotSubsystem.report();

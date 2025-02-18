@@ -47,6 +47,8 @@ public class L2Command extends Command {
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L2Position)
         && m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
       m_rollerSubsystem.L2Vots();
+    } else {
+      m_rollerSubsystem.shutDown();
     }
     m_elevatorSubsystem.report();
     m_pivotSubsystem.report();
