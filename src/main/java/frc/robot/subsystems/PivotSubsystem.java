@@ -14,6 +14,7 @@ import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,9 +34,6 @@ public class PivotSubsystem extends SubsystemBase {
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private MotionMagicVoltage motionMagic = new MotionMagicVoltage(0.0).withEnableFOC(true);
   private NeutralOut neutralOut = new NeutralOut();
-
-  private double forwardLimit = 0.0;
-  private double reverseLimit = 0.0;
 
   private final SysIdRoutine m_SysIdRoutinePivot =
       new SysIdRoutine(
@@ -58,6 +56,7 @@ public class PivotSubsystem extends SubsystemBase {
         PivotConstants.inverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive);
+    pivotconfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     pivotconfigs.Slot0.kP = PivotConstants.kP;
     pivotconfigs.Slot0.kI = PivotConstants.kI;
     pivotconfigs.Slot0.kD = PivotConstants.kD;
@@ -75,7 +74,7 @@ public class PivotSubsystem extends SubsystemBase {
     pivotconfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
         PivotConstants.reverseSoftLimitThreshold + candi.getPWM1Position().getValueAsDouble();
     pivotconfigs.Feedback.FeedbackRemoteSensorID = PivotConstants.candiID;
-    pivotconfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANdiPWM1;
+    pivotconfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANdiPWM1;
     pivotconfigs.Feedback.SensorToMechanismRatio = PivotConstants.candi2MechanismRatio;
     pivotconfigs.Feedback.RotorToSensorRatio = PivotConstants.rotor2CandiRatio;
     pivot.getConfigurator().apply(pivotconfigs);
@@ -86,9 +85,6 @@ public class PivotSubsystem extends SubsystemBase {
     candi.getConfigurator().apply(candiconfigs);
 
     offset = candi.getPWM1Position().getValueAsDouble();
-
-    forwardLimit = PivotConstants.forwardSoftLimitThreshold + offset;
-    reverseLimit = PivotConstants.reverseSoftLimitThreshold + offset;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         250, pivot.getPosition(), pivot.getVelocity(), pivot.getMotorVoltage());
@@ -172,11 +168,16 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void hold() {
-    this.setHeight(this.getPosition());
+    report();
+    pivot.setControl(
+        motionMagic
+            .withPosition(candi.getPWM1Position().getValueAsDouble())
+            .withLimitForwardMotion(getPosition() > PivotConstants.forwardSoftLimitThreshold)
+            .withLimitReverseMotion(getPosition() < PivotConstants.reverseSoftLimitThreshold));
   }
 
   public boolean isAtPosition(double height) {
-    return Math.abs(this.getPosition() - height - offset) < PivotConstants.positionDeadband;
+    return Math.abs(this.getPosition() - height) < PivotConstants.positionDeadband;
   }
 
   public void report() {
@@ -190,6 +191,7 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putNumber("pivot/s1 position", candi.getPWM1Position().getValueAsDouble());
+    SmartDashboard.putNumber("pivot/offset", offset);
   }
 
   public Command PivotTestDynamic(SysIdRoutine.Direction direction) {
