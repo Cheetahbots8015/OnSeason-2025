@@ -28,6 +28,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.LimelightHelpers;
@@ -291,14 +292,14 @@ public class DriveCommands {
                     })));
   }
 
-  public static Command rotate2Apriltag(Drive drive) {
+  public static Command rotate2Apriltagright(Drive drive) {
+    LimelightHelpers.setPipelineIndex("", 0);
     return Commands.run(
         () -> {
           LimelightHelpers.setCameraPose_RobotSpace("", 0, -0.25, 0.82, 0, -30, 0);
-          LimelightHelpers.setFiducial3DOffset("null", 0.5, 0, 0);
           boolean hasTarget = LimelightHelpers.getTV("");
-          PIDController pidx = new PIDController(4, 0, 0);
-          PIDController pidy = new PIDController(2.4, 0, 0);
+          PIDController pidx = new PIDController(6, 0, 0);
+          PIDController pidy = new PIDController(4, 0, 0);
           PIDController pidyaw = new PIDController(4, 0, 0);
           Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace(null);
           pidx.setSetpoint(0.8);
@@ -306,11 +307,54 @@ public class DriveCommands {
           pidyaw.setSetpoint(0);
           if (hasTarget) {
             if (pose.getTranslation().getZ() <= 0.8) {
-              if (Math.abs(LimelightHelpers.getTX("")) < 2) {
-                ChassisSpeeds drivSpeeds = new ChassisSpeeds(0.5, 0, 0);
-                drive.runVelocity(drivSpeeds);
+              if (Math.abs(LimelightHelpers.getTX("")) < 1) {
+                SmartDashboard.putBoolean("limelight", true);
               } else {
-                pidy = new PIDController(0.04, 0, 0);
+                SmartDashboard.putBoolean("limelight", false);
+                pidy = new PIDController(0.08, 0, 0);
+                pidyaw = new PIDController(0.05, 0, 0);
+                ChassisSpeeds drivSpeeds =
+                    new ChassisSpeeds(
+                        0,
+                        pidy.calculate(LimelightHelpers.getTX("")),
+                        pidyaw.calculate(pose.getRotation().getY()));
+                drive.runVelocity(drivSpeeds);
+              }
+            } else {
+              ChassisSpeeds drivSpeeds =
+                  new ChassisSpeeds(
+                      -pidx.calculate(pose.getTranslation().getZ()),
+                      pidy.calculate(pose.getTranslation().getX()),
+                      pidyaw.calculate(pose.getRotation().getY()));
+              drive.runVelocity(drivSpeeds);
+            }
+          } else {
+            ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
+            drive.runVelocity(drivSpeeds);
+          }
+        });
+  }
+
+  public static Command rotate2Apriltagleft(Drive drive) {
+    LimelightHelpers.setPipelineIndex("", 1);
+    return Commands.run(
+        () -> {
+          LimelightHelpers.setCameraPose_RobotSpace("", 0, -0.25, 0.82, 0, -30, 0);
+          boolean hasTarget = LimelightHelpers.getTV("");
+          PIDController pidx = new PIDController(6, 0, 0);
+          PIDController pidy = new PIDController(4, 0, 0);
+          PIDController pidyaw = new PIDController(4, 0, 0);
+          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace(null);
+          pidx.setSetpoint(0.8);
+          pidy.setSetpoint(0);
+          pidyaw.setSetpoint(0);
+          if (hasTarget) {
+            if (pose.getTranslation().getZ() <= 0.8) {
+              if (Math.abs(LimelightHelpers.getTX("")) < 1) {
+                SmartDashboard.putBoolean("limelight", true);
+              } else {
+                SmartDashboard.putBoolean("limelight", false);
+                pidy = new PIDController(0.08, 0, 0);
                 pidyaw = new PIDController(0.05, 0, 0);
                 ChassisSpeeds drivSpeeds =
                     new ChassisSpeeds(
