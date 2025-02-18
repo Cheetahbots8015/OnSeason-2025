@@ -310,7 +310,7 @@ public class DriveCommands {
                 ChassisSpeeds drivSpeeds = new ChassisSpeeds(0.5, 0, 0);
                 drive.runVelocity(drivSpeeds);
               } else {
-                pidy = new PIDController(0.02, 0, 0);
+                pidy = new PIDController(0.04, 0, 0);
                 pidyaw = new PIDController(0.05, 0, 0);
                 ChassisSpeeds drivSpeeds =
                     new ChassisSpeeds(

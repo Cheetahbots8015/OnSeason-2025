@@ -34,5 +34,5 @@ public class PivotConstants {
   public static final double highAlgaePosition = 0.0; // TODO: Change This
   public static final double lolipopPosition = 0.4; // TODO: Change This
   public static final double algaeHome = 0.3; // TODO: Change This
-  public static final double positionDeadband = 0.01;
+  public static final double positionDeadband = 0.02;
 }
