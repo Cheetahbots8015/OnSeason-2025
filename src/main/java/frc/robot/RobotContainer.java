@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
+import frc.robot.commands.elevatorCommand.ElevatorDefaultDownCommand;
 import frc.robot.commands.elevatorCommand.ElevatorHoldCommand;
 import frc.robot.commands.elevatorCommand.ElevatorHomeCommand;
 import frc.robot.commands.elevatorCommand.ElevatorL2Command;
@@ -62,7 +63,7 @@ public class RobotContainer {
   private final Trigger DriverL2Trigger = driverController.b();
   private final Trigger DriverL3Trigger = driverController.x();
   private final Trigger DriverL4Trigger = driverController.y();
-  private final Trigger DriverHomeTrigger = driverController.povUp();
+  private final Trigger DriverHomeTrigger = driverController.rightBumper();
   private final Trigger DriverStationTrigger = driverController.leftTrigger();
   private final Trigger DriveerReverseTrigger = driverController.rightTrigger();
 
@@ -93,6 +94,8 @@ public class RobotContainer {
 
   private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
   private final Command ElevatorHoldCommand = new ElevatorHoldCommand(m_elevatorSubsystem);
+  private final Command ElevatorDefaultDownCommand =
+      new ElevatorDefaultDownCommand(m_elevatorSubsystem);
   private final Command RollerManualCommand = new RollerManualForwardCommand(m_rollerSubsystem);
   private final Command RollerReverseCommand = new RollerManualReverseCommand(m_rollerSubsystem);
   private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
@@ -159,7 +162,7 @@ public class RobotContainer {
     L3Trigger.whileTrue(L3Command);
     RollerManualTrigger.whileTrue(RollerManualCommand);
     RollerReverseTrigger.whileTrue(RollerReverseCommand);
-    m_elevatorSubsystem.setDefaultCommand(ElevatorReportCommand);
+    // m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultDownCommand);
     m_pivotSubsystem.setDefaultCommand(PivotReportCommand);
     PivotManualForwardTrigger.whileTrue(PivotForwardCommand);
     PivotManualReverseTrigger.whileTrue(PivotReverseCommand);

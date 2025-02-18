@@ -12,6 +12,8 @@ public class PivotReverseCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final PivotSubsystem m_subsystem;
 
+  private double target;
+
   /**
    * Creates a new ExampleCommand.
    *
@@ -25,8 +27,10 @@ public class PivotReverseCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
-
+  public void initialize() {
+    target = m_subsystem.getPosition();
+  }
+  ;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -36,8 +40,9 @@ public class PivotReverseCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.shutDown();
-    // m_subsystem.hold();
+    // m_subsystem.shutDown();
+    // m_subsystem.report();
+    m_subsystem.hold();
   }
 
   // Returns true when the command should end.

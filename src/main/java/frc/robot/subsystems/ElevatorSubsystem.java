@@ -116,6 +116,17 @@ public class ElevatorSubsystem extends SubsystemBase {
         new DifferentialVoltage(ElevatorConstants.lockVoltage, 0.0).withDifferentialSlot(1));
   }
 
+  public void defaultDown() {
+    leader.setControl(
+        voltageOut
+            .withOutput(ElevatorConstants.defaultDownVoltage)
+            .withLimitReverseMotion(getHallSensorActive()));
+    follower.setControl(
+        new DifferentialVoltage(ElevatorConstants.defaultDownVoltage, 0.0)
+            .withDifferentialSlot(1)
+            .withLimitReverseMotion(getHallSensorActive()));
+  }
+
   public void setHeight(double height) {
     height += encoderOffset;
     if (Math.abs(leader.getPosition().getValueAsDouble() - height)
