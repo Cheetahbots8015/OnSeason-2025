@@ -10,196 +10,196 @@ import frc.robot.subsystems.rollers.RollerSystem;
 import frc.robot.subsystems.vision.Vision;
 
 public class SuperStructure extends SubsystemBase {
-    private final ElevatorSystem elevator;
-    private RollerSystem roller;
-    private Vision vision;
-    private PivotSystem pivot;
+  private final ElevatorSystem elevator;
+  private RollerSystem roller;
+  private Vision vision;
+  private PivotSystem pivot;
 
-    private boolean isLeft = true;
+  private boolean isLeft = true;
 
-    private superStructureState systemState = superStructureState.IDLE;
-    private superStructureState nextSystemState = superStructureState.IDLE;
-    private superStructurePosition systemPosition = superStructurePosition.NULL;
+  private superStructureState systemState = superStructureState.IDLE;
+  private superStructureState nextSystemState = superStructureState.IDLE;
+  private superStructurePosition systemPosition = superStructurePosition.NULL;
 
-    public SuperStructure(ElevatorSystem ele, RollerSystem roll, Vision vis, PivotSystem piv) {
-        this.elevator = ele;
-        this.roller = roll;
-        this.vision = vis;
-        this.pivot = piv;
+  public SuperStructure(ElevatorSystem ele, RollerSystem roll, Vision vis, PivotSystem piv) {
+    this.elevator = ele;
+    this.roller = roll;
+    this.vision = vis;
+    this.pivot = piv;
 
-        // nextSystemState = superStructureState.HOMING;
+    // nextSystemState = superStructureState.HOMING;
+  }
+
+  @Override
+  public void periodic() {
+    updateStateMachine();
+
+    if (DriverStation.isDisabled()) {
+      disabledCommands();
+    }
+  }
+
+  public void updateStateMachine() {
+    if (systemState != nextSystemState) {
+      systemState = nextSystemState;
     }
 
-    @Override
-    public void periodic() {
-        updateStateMachine();
-
-        if (DriverStation.isDisabled()) {
-            disabledCommands();
-        }
+    switch (systemState) {
+      case IDLE:
+        setHold();
+        break;
+      case HOMING:
+        setHome();
+        break;
+      case MANUAL:
+        setManual();
+        break;
+      case LOAD:
+        setLoad();
+        break;
+      case SHOOT:
+        setShotReef();
+        break;
+      case POSITION:
+        setPosition();
+        break;
     }
+  }
 
-    public void updateStateMachine() {
-        if (systemState != nextSystemState) {
-            systemState = nextSystemState;
-        }
-
-        switch (systemState) {
-            case IDLE:
-                setHold();
-                break;
-            case HOMING:
-                setHome();
-                break;
-            case MANUAL:
-                setManual();
-                break;
-            case LOAD:
-                setLoad();
-                break;
-            case SHOOT:
-                setShotReef();
-                break;
-            case POSITION:
-                setPosition();
-                break;
-        }
+  /* public request from commands */
+  public void requestHome() {
+    if (!isHomed()) {
+      nextSystemState = superStructureState.HOMING;
+    } else {
+      nextSystemState = superStructureState.IDLE;
     }
+  }
 
-    /* public request from commands */
-    public void requestHome() {
-        if (!isHomed()) {
-            nextSystemState = superStructureState.HOMING;
-        } else {
-            nextSystemState = superStructureState.IDLE;
-        }
+  public void requestManual() {
+    nextSystemState = superStructureState.MANUAL;
+  }
+
+  public void requestShootReef(superStructurePosition pos, boolean isLeft) {
+    systemPosition = pos;
+    this.isLeft = isLeft;
+    if (isShot()) {
+      nextSystemState = superStructureState.IDLE;
+    } else if (!isAtPosition()) {
+      nextSystemState = superStructureState.POSITION;
+    } else if (isAtPosition()) {
+      nextSystemState = superStructureState.SHOOT;
     }
+  }
 
-    public void requestManual() {
-        nextSystemState = superStructureState.MANUAL;
+  public void requestLoad() {
+    systemPosition = superStructurePosition.STATION;
+    if (isLoaded()) {
+      nextSystemState = superStructureState.IDLE;
+    } else if (!isAtPosition()) {
+      nextSystemState = superStructureState.POSITION;
+    } else if (isAtPosition()) {
+      nextSystemState = superStructureState.LOAD;
     }
+  }
 
-    public void requestShootReef(superStructurePosition pos, boolean isLeft) {
-        systemPosition = pos;
-        this.isLeft = isLeft;
-        if (isShot()) {
-            nextSystemState = superStructureState.IDLE;
-        } else if (!isAtPosition()) {
-            nextSystemState = superStructureState.POSITION;
-        } else if (isAtPosition()) {
-            nextSystemState = superStructureState.SHOOT;
-        }
+  public void requestShootProcessor() {
+    systemPosition = superStructurePosition.PROCESSOR;
+    if (!isAtPosition()) {
+      nextSystemState = superStructureState.POSITION;
+    } else if (isAtPosition()) {
+      nextSystemState = superStructureState.SHOOT;
     }
+  }
 
-    public void requestLoad() {
-        systemPosition = superStructurePosition.STATION;
-        if (isLoaded()) {
-            nextSystemState = superStructureState.IDLE;
-        } else if (!isAtPosition()) {
-            nextSystemState = superStructureState.POSITION;
-        } else if (isAtPosition()) {
-            nextSystemState = superStructureState.LOAD;
-        }
+  public void requestLoadAlgae(superStructurePosition pos) {
+    systemPosition = pos;
+    if (isLoaded()) {
+      nextSystemState = superStructureState.IDLE;
+    } else if (!isAtPosition()) {
+      nextSystemState = superStructureState.POSITION;
+    } else if (isAtPosition()) {
+      nextSystemState = superStructureState.LOAD;
     }
+  }
 
-    public void requestShootProcessor() {
-        systemPosition = superStructurePosition.PROCESSOR;
-        if (!isAtPosition()) {
-            nextSystemState = superStructureState.POSITION;
-        } else if (isAtPosition()) {
-            nextSystemState = superStructureState.SHOOT;
-        }
-    }
+  public void requestEnd() {
+    nextSystemState = superStructureState.IDLE;
+  }
 
-    public void requestLoadAlgae(superStructurePosition pos) {
-        systemPosition = pos;
-        if (isLoaded()) {
-            nextSystemState = superStructureState.IDLE;
-        } else if (!isAtPosition()) {
-            nextSystemState = superStructureState.POSITION;
-        } else if (isAtPosition()) {
-            nextSystemState = superStructureState.LOAD;
-        }
-    }
+  /* private request to other subsystems */
+  private void setHome() {
+    elevator.setElevatorState(ElevatorSystem.ElevatorState.HOMING);
+  }
 
-    public void requestEnd() {
-        nextSystemState = superStructureState.IDLE;
-    }
+  private void setHold() {
+    elevator.setElevatorState(ElevatorSystem.ElevatorState.IDLE);
+    pivot.setPivotState(PivotSystem.PivotState.IDLE);
+    roller.setSystemState(RollerSystem.RollerState.IDLE);
+  }
 
-    /* private request to other subsystems */
-    private void setHome() {
-        elevator.setElevatorState(ElevatorSystem.ElevatorState.HOMING);
-    }
+  private void setManual() {
+  }
 
-    private void setHold() {
-        elevator.setElevatorState(ElevatorSystem.ElevatorState.IDLE);
-        pivot.setPivotState(PivotSystem.PivotState.IDLE);
-        roller.setSystemState(RollerSystem.RollerState.IDLE);
-    }
+  private void setPosition() {
+    elevator.setElevatorPosition(super2elevator(systemPosition));
+    elevator.setElevatorState(ElevatorSystem.ElevatorState.POSITION);
 
-    private void setManual() {
-    }
+    pivot.setPivotPosition(super2pivot(systemPosition));
+    pivot.setPivotState(PivotSystem.PivotState.POSITION);
+  }
 
-    private void setPosition() {
-        elevator.setElevatorPosition(super2elevator(systemPosition));
-        elevator.setElevatorState(ElevatorSystem.ElevatorState.POSITION);
+  private void setLoad() {
+    roller.setSystemState(RollerSystem.RollerState.LOAD);
+  }
 
-        pivot.setPivotPosition(super2pivot(systemPosition));
-        pivot.setPivotState(PivotSystem.PivotState.POSITION);
-    }
+  private void setShotReef() {
+    roller.setSystemPosition(super2roller(systemPosition));
+    roller.setSystemState(RollerSystem.RollerState.SHOOT);
+  }
 
-    private void setLoad() {
-        roller.setSystemState(RollerSystem.RollerState.LOAD);
-    }
+  /* private boolean from other subsystems*/
+  private boolean isHomed() {
+    return elevator.getHomed();
+  }
 
-    private void setShotReef() {
-        roller.setSystemPosition(super2roller(systemPosition));
-        roller.setSystemState(RollerSystem.RollerState.SHOOT);
-    }
+  private boolean isLoaded() {
+    return roller.getLoaded();
+  }
 
-    /* private boolean from other subsystems*/
-    private boolean isHomed() {
-        return elevator.getHomed();
-    }
+  private boolean isShot() {
+    return roller.getShot();
+  }
 
-    private boolean isLoaded() {
-        return roller.getLoaded();
-    }
+  private boolean isAtPosition() {
+    return pivot.isAtPosition() && elevator.isAtPos();
+  }
 
-    private boolean isShot() {
-        return roller.getShot();
-    }
+  // commands when disabled
+  private void disabledCommands() {
+    systemState = superStructureState.IDLE;
+    systemPosition = superStructurePosition.NULL;
+  }
 
-    private boolean isAtPosition() {
-        return pivot.isAtPosition() && elevator.isAtPos();
-    }
+  private enum superStructureState {
+    IDLE,
+    HOMING,
+    MANUAL,
+    LOAD,
+    SHOOT,
+    POSITION
+  }
 
-    // commands when disabled
-    private void disabledCommands() {
-        systemState = superStructureState.IDLE;
-        systemPosition = superStructurePosition.NULL;
-    }
-
-    private enum superStructureState {
-        IDLE,
-        HOMING,
-        MANUAL,
-        LOAD,
-        SHOOT,
-        POSITION
-    }
-
-    public enum superStructurePosition {
-        NULL,
-        HOME,
-        L1,
-        L2,
-        L3,
-        L4,
-        LOW_ALGAE,
-        HIGH_ALGAE,
-        PROCESSOR,
-        STATION,
-        LOLIPOP
-    }
+  public enum superStructurePosition {
+    NULL,
+    HOME,
+    L1,
+    L2,
+    L3,
+    L4,
+    LOW_ALGAE,
+    HIGH_ALGAE,
+    PROCESSOR,
+    STATION,
+    LOLIPOP
+  }
 }
