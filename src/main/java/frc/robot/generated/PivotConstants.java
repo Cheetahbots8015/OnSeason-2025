@@ -7,8 +7,8 @@ public class PivotConstants {
   public static final double candiOffset = -0.7;
   public static final double candi2MechanismRatio = 1.0;
   public static final double rotor2CandiRatio = 37.33333;
-  public static final boolean forwardSoftLimitEnable = false;
-  public static final boolean reverseSoftLimitEnable = false;
+  public static final boolean forwardSoftLimitEnable = true;
+  public static final boolean reverseSoftLimitEnable = true;
   public static final double forwardSoftLimitThreshold = 0.44;
   public static final double reverseSoftLimitThreshold = 0.01;
   public static final boolean inverted = false;
@@ -25,6 +25,7 @@ public class PivotConstants {
   public static final double kV = 0.5;
   public static final double cruiseVelocity = 10.0 / rotor2CandiRatio * 4;
   public static final double cruiseAcceleration = 10.0 / rotor2CandiRatio * 4;
+  public static final double HomePosition = 0.3 / rotor2CandiRatio;
   public static final double L1Position = 1.4 / rotor2CandiRatio;
   public static final double L2Position = 1.4 / rotor2CandiRatio;
   public static final double L3Position = 1.4 / rotor2CandiRatio;
