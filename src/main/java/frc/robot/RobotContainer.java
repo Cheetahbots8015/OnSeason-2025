@@ -29,7 +29,6 @@ import frc.robot.commands.rollerCommand.RollerManualReverseCommand;
 import frc.robot.generated.JoystickConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drive.Drive;
@@ -45,7 +44,6 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 public class RobotContainer {
   private final Drive drive;
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
   private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
@@ -60,7 +58,7 @@ public class RobotContainer {
   private final CommandXboxController SysIDController =
       new CommandXboxController(JoystickConstants.sysIDControllerPort);
 
-  private final Trigger DriverL1Trigger = driverController.a();
+  // private final Trigger DriverL1Trigger = driverController.a();
   private final Trigger DriverL2Trigger = driverController.b();
   private final Trigger DriverL3Trigger = driverController.x();
   private final Trigger DriverL4Trigger = driverController.y();
@@ -141,14 +139,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is
     // pressed,
     // cancelling on release.
 
-    DriverL1Trigger.whileTrue(DriverL1Command);
+    // DriverL1Trigger.whileTrue(DriverL1Command);
     DriverL2Trigger.whileTrue(DriverL2Command);
     DriverL3Trigger.whileTrue(DriverL3Command);
     DriverL4Trigger.whileTrue(DriverL4Command);
@@ -156,7 +152,6 @@ public class RobotContainer {
     DriverStationTrigger.whileTrue(DriverStationCommand);
     DriveerReverseTrigger.whileTrue(DriverReverseCommand);
 
-    driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
     ElevatorVoltageLockTrigger.whileTrue(ElevatorHoldCommand);
     L4Trigger.whileTrue(L4Command);
@@ -212,6 +207,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+    driverController.a().whileTrue(DriveCommands.rotate2Apriltag(drive));
   }
 
   /**
@@ -221,6 +217,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return null;
   }
 }

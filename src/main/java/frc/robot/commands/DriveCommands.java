@@ -293,4 +293,9 @@ public class DriveCommands {
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
   }
+
+  public static Command rotate2Apriltag(Drive drive) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'rotate2Apriltag'");
+  }
 }
