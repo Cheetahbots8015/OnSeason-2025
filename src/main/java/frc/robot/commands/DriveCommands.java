@@ -308,9 +308,9 @@ public class DriveCommands {
           if (hasTarget) {
             if (pose.getTranslation().getZ() <= 0.8) {
               if (Math.abs(LimelightHelpers.getTX("")) < 1) {
-                SmartDashboard.putBoolean("limelight", true);
+                SmartDashboard.putBoolean("", true);
               } else {
-                SmartDashboard.putBoolean("limelight", false);
+                SmartDashboard.putBoolean("", false);
                 pidy = new PIDController(0.08, 0, 0);
                 pidyaw = new PIDController(0.05, 0, 0);
                 ChassisSpeeds drivSpeeds =
@@ -332,7 +332,12 @@ public class DriveCommands {
             ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
             drive.runVelocity(drivSpeeds);
           }
-        });
+        })
+        .until(()->Math.abs(LimelightHelpers.getTX("")) < 1&&LimelightHelpers.getTargetPose3d_RobotSpace(null).getTranslation().getZ() <= 0.8)
+        .andThen(Commands.runEnd(
+          () -> drive.runVelocity(new ChassisSpeeds(1.0, 0.0, 0.0)),
+          () -> drive.stop(),
+          drive), null);
   }
 
   public static Command rotate2Apriltagleft(Drive drive) {
@@ -351,9 +356,9 @@ public class DriveCommands {
           if (hasTarget) {
             if (pose.getTranslation().getZ() <= 0.8) {
               if (Math.abs(LimelightHelpers.getTX("")) < 1) {
-                SmartDashboard.putBoolean("limelight", true);
+                SmartDashboard.putBoolean("", true);
               } else {
-                SmartDashboard.putBoolean("limelight", false);
+                SmartDashboard.putBoolean("", false);
                 pidy = new PIDController(0.08, 0, 0);
                 pidyaw = new PIDController(0.05, 0, 0);
                 ChassisSpeeds drivSpeeds =
@@ -375,7 +380,11 @@ public class DriveCommands {
             ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
             drive.runVelocity(drivSpeeds);
           }
-        });
+        }).until(()->Math.abs(LimelightHelpers.getTX("")) < 1&&LimelightHelpers.getTargetPose3d_RobotSpace(null).getTranslation().getZ() <= 0.8)
+        .andThen(Commands.runEnd(
+          () -> drive.runVelocity(new ChassisSpeeds(1.0, 0.0, 0.0)),
+          () -> drive.stop(),
+          drive), null);
   }
 
   private static class WheelRadiusCharacterizationState {
