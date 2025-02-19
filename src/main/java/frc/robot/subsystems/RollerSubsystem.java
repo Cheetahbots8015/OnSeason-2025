@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -23,8 +22,6 @@ public class RollerSubsystem extends SubsystemBase {
   private VelocityTorqueCurrentFOC velocityFOC = new VelocityTorqueCurrentFOC(0.0);
   private NeutralOut neutralOut = new NeutralOut();
 
-  
-
   public RollerSubsystem() {
     rollerconfigs.MotorOutput.withInverted(
         RollerConstants.inverted
@@ -44,38 +41,62 @@ public class RollerSubsystem extends SubsystemBase {
   }
 
   public void manualForwardVolts() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.manualForwardVoltage));
   }
 
   public void manualReverseVolts() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.manualReverseVoltage));
   }
 
+  public void manualForwardVelocity() {
+    report();
+    roller.setControl(velocityFOC.withVelocity(RollerConstants.coralForwardVelocity));
+  }
+
+  public void manualReverseVelocity() {
+    report();
+    roller.setControl(velocityFOC.withVelocity(RollerConstants.coralReverseVelocity));
+  }
+
+  public void defaultIdelVelocity() {
+    report();
+    roller.setControl(velocityFOC.withVelocity(RollerConstants.coralIdleVelocity));
+  }
+
   public void station() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.stationVoltage));
   }
 
   public void L1Vots() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.L1Voltage));
   }
 
   public void L2Vots() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.L2Voltage));
   }
 
   public void L3Vots() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.L3Voltage));
   }
 
   public void L4Vots() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.L4Voltage));
   }
 
   public void AlgaeVolts() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.AlgaeVoltage));
   }
 
   public void setVelocity(double velocity) {
+    report();
     roller.setControl(velocityFOC.withVelocity(velocity));
   }
 
@@ -85,5 +106,8 @@ public class RollerSubsystem extends SubsystemBase {
 
   public void report() {
     SmartDashboard.putNumber("roller/velocity", roller.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("roller/torque current", roller.getTorqueCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("roller/acceleration", roller.getAcceleration().getValueAsDouble());
+    SmartDashboard.putNumber("roller/supply voltage", roller.getSupplyVoltage().getValueAsDouble());
   }
 }

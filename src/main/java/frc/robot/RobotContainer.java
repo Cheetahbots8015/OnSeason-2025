@@ -25,6 +25,7 @@ import frc.robot.commands.pivotCommand.PivotForwardCommand;
 import frc.robot.commands.pivotCommand.PivotL2Command;
 import frc.robot.commands.pivotCommand.PivotReportCommand;
 import frc.robot.commands.pivotCommand.PivotReverseCommand;
+import frc.robot.commands.rollerCommand.RollerDefaultIdleCommand;
 import frc.robot.commands.rollerCommand.RollerManualForwardCommand;
 import frc.robot.commands.rollerCommand.RollerManualReverseCommand;
 import frc.robot.generated.JoystickConstants;
@@ -98,6 +99,7 @@ public class RobotContainer {
       new ElevatorDefaultDownCommand(m_elevatorSubsystem);
   private final Command RollerManualCommand = new RollerManualForwardCommand(m_rollerSubsystem);
   private final Command RollerReverseCommand = new RollerManualReverseCommand(m_rollerSubsystem);
+  private final Command RollerDefaultIdleCommand = new RollerDefaultIdleCommand(m_rollerSubsystem);
   private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
   private final Command ElevatorResetCommand = new ElevatorResetCommand(m_elevatorSubsystem);
   private final Command ElevatorL2Command = new ElevatorL2Command(m_elevatorSubsystem);
@@ -162,6 +164,7 @@ public class RobotContainer {
     RollerReverseTrigger.whileTrue(RollerReverseCommand);
     m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultDownCommand);
     m_pivotSubsystem.setDefaultCommand(PivotDefaultBackCommand);
+    m_rollerSubsystem.setDefaultCommand(RollerDefaultIdleCommand);
     PivotManualForwardTrigger.whileTrue(PivotForwardCommand);
     PivotManualReverseTrigger.whileTrue(PivotReverseCommand);
     ElevatorHomeTrigger.whileTrue(ElevatorHomeCommand);
