@@ -25,8 +25,10 @@ import frc.robot.commands.pivotCommand.PivotForwardCommand;
 import frc.robot.commands.pivotCommand.PivotL2Command;
 import frc.robot.commands.pivotCommand.PivotReportCommand;
 import frc.robot.commands.pivotCommand.PivotReverseCommand;
+import frc.robot.commands.rollerCommand.RollerDefaultIdleCommand;
 import frc.robot.commands.rollerCommand.RollerManualForwardCommand;
 import frc.robot.commands.rollerCommand.RollerManualReverseCommand;
+import frc.robot.commands.DriveCommands;
 import frc.robot.generated.JoystickConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -35,7 +37,7 @@ import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-
+import frc.robot.commands.rotate2Apriltag;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -43,7 +45,13 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Drive drive;
+  private final Drive drive =
+  new Drive(
+      new GyroIOPigeon2(),
+      new ModuleIOTalonFX(TunerConstants.FrontLeft),
+      new ModuleIOTalonFX(TunerConstants.FrontRight),
+      new ModuleIOTalonFX(TunerConstants.BackLeft),
+      new ModuleIOTalonFX(TunerConstants.BackRight));;
   // The robot's subsystems and commands are defined here...
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
@@ -98,6 +106,7 @@ public class RobotContainer {
       new ElevatorDefaultDownCommand(m_elevatorSubsystem);
   private final Command RollerManualCommand = new RollerManualForwardCommand(m_rollerSubsystem);
   private final Command RollerReverseCommand = new RollerManualReverseCommand(m_rollerSubsystem);
+  private final Command RollerDefaultIdleCommand = new RollerDefaultIdleCommand(m_rollerSubsystem);
   private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
   private final Command ElevatorResetCommand = new ElevatorResetCommand(m_elevatorSubsystem);
   private final Command ElevatorL2Command = new ElevatorL2Command(m_elevatorSubsystem);
@@ -114,17 +123,14 @@ public class RobotContainer {
       new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command L3Command =
       new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-
+  //private final Command rotate2Apriltagleft=
+  //    new rotate2Apriltag(drive,"left");
+  //private final Command rotate2Apriltagright=
+  //    new rotate2Apriltag(drive, "right");
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Real robot, instantiate hardware IO implementations
-    drive =
-        new Drive(
-            new GyroIOPigeon2(),
-            new ModuleIOTalonFX(TunerConstants.FrontLeft),
-            new ModuleIOTalonFX(TunerConstants.FrontRight),
-            new ModuleIOTalonFX(TunerConstants.BackLeft),
-            new ModuleIOTalonFX(TunerConstants.BackRight));
+    
     // Configure the trigger bindings
     configureBindings();
   }
@@ -162,6 +168,7 @@ public class RobotContainer {
     RollerReverseTrigger.whileTrue(RollerReverseCommand);
     m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultDownCommand);
     m_pivotSubsystem.setDefaultCommand(PivotDefaultBackCommand);
+    m_rollerSubsystem.setDefaultCommand(RollerDefaultIdleCommand);
     PivotManualForwardTrigger.whileTrue(PivotForwardCommand);
     PivotManualReverseTrigger.whileTrue(PivotReverseCommand);
     ElevatorHomeTrigger.whileTrue(ElevatorHomeCommand);
@@ -211,7 +218,7 @@ public class RobotContainer {
     driverController.povRight().whileTrue(DriveCommands.rotate2Apriltagright(drive));
     driverController.povLeft().whileTrue(DriveCommands.rotate2Apriltagleft(drive));
     driverController
-        .pov(0)
+        .povUp()
         .whileTrue(
             Commands.runEnd(
                 () -> drive.runVelocity(new ChassisSpeeds(1.0, 0.0, 0.0)),

@@ -48,7 +48,7 @@ public class L3Command extends Command {
         && m_pivotSubsystem.isAtPosition(PivotConstants.L3Position)) {
       m_rollerSubsystem.L3Vots();
     } else {
-      m_rollerSubsystem.shutDown();
+      m_rollerSubsystem.defaultIdelVelocity();
     }
     m_elevatorSubsystem.report();
     m_pivotSubsystem.report();
@@ -57,7 +57,7 @@ public class L3Command extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_rollerSubsystem.shutDown();
+    m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.lockVolts();
     m_pivotSubsystem.hold();
   }

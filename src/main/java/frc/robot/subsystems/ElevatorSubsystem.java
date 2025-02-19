@@ -149,6 +149,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public boolean isAtPosition(double height) {
     height += encoderOffset;
+    if (Math.abs(leader.getPosition().getValueAsDouble() - height)
+        < ElevatorConstants.positionDeadband) {
+      SmartDashboard.putBoolean("elevator/is at position", true);
+    } else {
+      SmartDashboard.putBoolean("elevator/is at position", false);
+    }
     return Math.abs(leader.getPosition().getValueAsDouble() - height)
         < ElevatorConstants.positionDeadband;
   }

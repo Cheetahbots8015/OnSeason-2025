@@ -293,30 +293,34 @@ public class DriveCommands {
   }
 
   public static Command rotate2Apriltagright(Drive drive) {
-    LimelightHelpers.setPipelineIndex("", 0);
     return Commands.run(
         () -> {
-          LimelightHelpers.setCameraPose_RobotSpace("", 0, -0.25, 0.82, 0, -30, 0);
-          boolean hasTarget = LimelightHelpers.getTV("");
-          PIDController pidx = new PIDController(6, 0, 0);
-          PIDController pidy = new PIDController(4, 0, 0);
-          PIDController pidyaw = new PIDController(4, 0, 0);
-          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace(null);
+          LimelightHelpers.setPipelineIndex("limelight-reef", 0);
+          LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, -0.2, 0);
+          LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
+          boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
+          PIDController pidx = new PIDController(8, 0, 0);
+          PIDController pidy = new PIDController(5, 0, 0);
+          PIDController pidyaw = new PIDController(5, 0, 0);
+          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
           pidx.setSetpoint(0.8);
           pidy.setSetpoint(0);
           pidyaw.setSetpoint(0);
+          LimelightHelpers.setLEDMode_ForceOff("limelight-reef");
           if (hasTarget) {
             if (pose.getTranslation().getZ() <= 0.8) {
-              if (Math.abs(LimelightHelpers.getTX("")) < 1) {
-                SmartDashboard.putBoolean("limelight", true);
+              if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 2) {
+                SmartDashboard.putBoolean("limelight-reef", true);
+                LimelightHelpers.setLEDMode_ForceOn("limelight-reef");
+                drive.stop();
               } else {
-                SmartDashboard.putBoolean("limelight", false);
-                pidy = new PIDController(0.08, 0, 0);
+                SmartDashboard.putBoolean("limelight-reef", false);
+                pidy = new PIDController(0.06, 0, 0);
                 pidyaw = new PIDController(0.05, 0, 0);
                 ChassisSpeeds drivSpeeds =
                     new ChassisSpeeds(
                         0,
-                        pidy.calculate(LimelightHelpers.getTX("")),
+                        pidy.calculate(LimelightHelpers.getTX("limelight-reef")),
                         pidyaw.calculate(pose.getRotation().getY()));
                 drive.runVelocity(drivSpeeds);
               }
@@ -332,34 +336,39 @@ public class DriveCommands {
             ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
             drive.runVelocity(drivSpeeds);
           }
-        });
+        },
+        drive);
   }
 
   public static Command rotate2Apriltagleft(Drive drive) {
-    LimelightHelpers.setPipelineIndex("", 1);
     return Commands.run(
         () -> {
-          LimelightHelpers.setCameraPose_RobotSpace("", 0, -0.25, 0.82, 0, -30, 0);
-          boolean hasTarget = LimelightHelpers.getTV("");
-          PIDController pidx = new PIDController(6, 0, 0);
-          PIDController pidy = new PIDController(4, 0, 0);
-          PIDController pidyaw = new PIDController(4, 0, 0);
-          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace(null);
+          LimelightHelpers.setPipelineIndex("limelight-reef", 1);
+          LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, 0.2, 0);
+          LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
+          boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
+          PIDController pidx = new PIDController(8, 0, 0);
+          PIDController pidy = new PIDController(5, 0, 0);
+          PIDController pidyaw = new PIDController(5, 0, 0);
+          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
           pidx.setSetpoint(0.8);
           pidy.setSetpoint(0);
           pidyaw.setSetpoint(0);
+          LimelightHelpers.setLEDMode_ForceOff("limelight-reef");
           if (hasTarget) {
             if (pose.getTranslation().getZ() <= 0.8) {
-              if (Math.abs(LimelightHelpers.getTX("")) < 1) {
-                SmartDashboard.putBoolean("limelight", true);
+              if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 2) {
+                SmartDashboard.putBoolean("limelight-reef", true);
+                LimelightHelpers.setLEDMode_ForceOn("limelight-reef");
+                drive.stop();
               } else {
-                SmartDashboard.putBoolean("limelight", false);
-                pidy = new PIDController(0.08, 0, 0);
+                SmartDashboard.putBoolean("limelight-reef", false);
+                pidy = new PIDController(0.06, 0, 0);
                 pidyaw = new PIDController(0.05, 0, 0);
                 ChassisSpeeds drivSpeeds =
                     new ChassisSpeeds(
                         0,
-                        pidy.calculate(LimelightHelpers.getTX("")),
+                        pidy.calculate(LimelightHelpers.getTX("limelight-reef")),
                         pidyaw.calculate(pose.getRotation().getY()));
                 drive.runVelocity(drivSpeeds);
               }

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.generated.RollerConstants;
@@ -16,6 +17,7 @@ public class RollerSubsystem extends SubsystemBase {
   private final TalonFX roller = new TalonFX(RollerConstants.rollerID, RollerConstants.canName);
   private final CANrange canRange =
       new CANrange(RollerConstants.canRangeID, RollerConstants.canName);
+  private final CANrangeConfiguration canRangeConfigs = new CANrangeConfiguration();
 
   private TalonFXConfiguration rollerconfigs = new TalonFXConfiguration();
 
@@ -23,7 +25,7 @@ public class RollerSubsystem extends SubsystemBase {
   private VelocityTorqueCurrentFOC velocityFOC = new VelocityTorqueCurrentFOC(0.0);
   private NeutralOut neutralOut = new NeutralOut();
 
-  
+  private double timer = -1.0;
 
   public RollerSubsystem() {
     rollerconfigs.MotorOutput.withInverted(
@@ -36,6 +38,14 @@ public class RollerSubsystem extends SubsystemBase {
     rollerconfigs.Slot0.kA = RollerConstants.kA;
     rollerconfigs.Slot0.kS = RollerConstants.kS;
     rollerconfigs.Slot0.kV = RollerConstants.kV;
+
+    canRangeConfigs.ProximityParams.ProximityThreshold = RollerConstants.canRangeThreshold;
+    canRangeConfigs.ProximityParams.MinSignalStrengthForValidMeasurement =
+        RollerConstants.minSignalStrength;
+    canRangeConfigs.ProximityParams.ProximityHysteresis = RollerConstants.canRangeHysteresis;
+
+    canRange.getConfigurator().apply(canRangeConfigs);
+
     roller.getConfigurator().apply(rollerconfigs);
   }
 
@@ -44,46 +54,90 @@ public class RollerSubsystem extends SubsystemBase {
   }
 
   public void manualForwardVolts() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.manualForwardVoltage));
   }
 
   public void manualReverseVolts() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.manualReverseVoltage));
   }
 
+  public void manualForwardVelocity() {
+    report();
+    roller.setControl(velocityFOC.withVelocity(RollerConstants.coralForwardVelocity));
+  }
+
+  public void manualReverseVelocity() {
+    report();
+    roller.setControl(velocityFOC.withVelocity(RollerConstants.coralReverseVelocity));
+  }
+
+  public void defaultIdelVelocity() {
+    report();
+    roller.setControl(velocityFOC.withVelocity(RollerConstants.coralIdleVelocity));
+  }
+
   public void station() {
-    roller.setControl(voltageOut.withOutput(RollerConstants.stationVoltage));
+    report();
+    roller.setControl(velocityFOC.withVelocity(RollerConstants.coralForwardVelocity));
   }
 
   public void L1Vots() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.L1Voltage));
   }
 
   public void L2Vots() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.L2Voltage));
   }
 
   public void L3Vots() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.L3Voltage));
   }
 
   public void L4Vots() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.L4Voltage));
   }
 
   public void AlgaeVolts() {
+    report();
     roller.setControl(voltageOut.withOutput(RollerConstants.AlgaeVoltage));
   }
 
   public void setVelocity(double velocity) {
+    report();
     roller.setControl(velocityFOC.withVelocity(velocity));
   }
 
   public boolean intakeFinished() {
-    return false;
+    return canRange.getIsDetected().getValue();
+  }
+
+  public void stopIntaking() {
+    if (timer == -1.0) {
+      timer = Timer.getFPGATimestamp();
+    }
+
+    if (Timer.getFPGATimestamp() - timer < RollerConstants.stopIntakingTime) {
+      station();
+    } else {
+      defaultIdelVelocity();
+    }
+  }
+
+  public void resetTimer() {
+    timer = -1.0;
   }
 
   public void report() {
     SmartDashboard.putNumber("roller/velocity", roller.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("roller/torque current", roller.getTorqueCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("roller/acceleration", roller.getAcceleration().getValueAsDouble());
+    SmartDashboard.putNumber("roller/supply voltage", roller.getSupplyVoltage().getValueAsDouble());
+    SmartDashboard.putBoolean("roller/canrange", intakeFinished());
   }
 }
