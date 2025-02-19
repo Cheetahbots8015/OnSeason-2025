@@ -27,6 +27,7 @@ import frc.robot.commands.pivotCommand.PivotReportCommand;
 import frc.robot.commands.pivotCommand.PivotReverseCommand;
 import frc.robot.commands.rollerCommand.RollerManualForwardCommand;
 import frc.robot.commands.rollerCommand.RollerManualReverseCommand;
+import frc.robot.commands.DriveCommands;
 import frc.robot.generated.JoystickConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -35,7 +36,7 @@ import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-
+import frc.robot.commands.rotate2Apriltag;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -43,7 +44,13 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Drive drive;
+  private final Drive drive =
+  new Drive(
+      new GyroIOPigeon2(),
+      new ModuleIOTalonFX(TunerConstants.FrontLeft),
+      new ModuleIOTalonFX(TunerConstants.FrontRight),
+      new ModuleIOTalonFX(TunerConstants.BackLeft),
+      new ModuleIOTalonFX(TunerConstants.BackRight));;
   // The robot's subsystems and commands are defined here...
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
@@ -114,17 +121,14 @@ public class RobotContainer {
       new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command L3Command =
       new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-
+  //private final Command rotate2Apriltagleft=
+  //    new rotate2Apriltag(drive,"left");
+  //private final Command rotate2Apriltagright=
+  //    new rotate2Apriltag(drive, "right");
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Real robot, instantiate hardware IO implementations
-    drive =
-        new Drive(
-            new GyroIOPigeon2(),
-            new ModuleIOTalonFX(TunerConstants.FrontLeft),
-            new ModuleIOTalonFX(TunerConstants.FrontRight),
-            new ModuleIOTalonFX(TunerConstants.BackLeft),
-            new ModuleIOTalonFX(TunerConstants.BackRight));
+    
     // Configure the trigger bindings
     configureBindings();
   }
