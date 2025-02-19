@@ -177,6 +177,11 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition(double height) {
+    if (Math.abs(this.getPosition() - height) < PivotConstants.positionDeadband) {
+      SmartDashboard.putBoolean("pivot/is at position", true);
+    } else {
+      SmartDashboard.putBoolean("pivot/is at position", false);
+    }
     return Math.abs(this.getPosition() - height) < PivotConstants.positionDeadband;
   }
 

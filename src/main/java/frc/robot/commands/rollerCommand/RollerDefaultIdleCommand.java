@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class RollerManualReverseCommand extends Command {
+public class RollerDefaultIdleCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_subsystem;
 
@@ -17,7 +17,7 @@ public class RollerManualReverseCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public RollerManualReverseCommand(RollerSubsystem subsystem) {
+  public RollerDefaultIdleCommand(RollerSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -30,7 +30,7 @@ public class RollerManualReverseCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.manualReverseVelocity();
+    m_subsystem.defaultIdelVelocity();
   }
 
   // Called once the command ends or is interrupted.
