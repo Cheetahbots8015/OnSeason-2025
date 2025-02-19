@@ -211,7 +211,7 @@ public class RobotContainer {
     driverController.povRight().whileTrue(DriveCommands.rotate2Apriltagright(drive));
     driverController.povLeft().whileTrue(DriveCommands.rotate2Apriltagleft(drive));
     driverController
-        .pov(0)
+        .povUp()
         .whileTrue(
             Commands.runEnd(
                 () -> drive.runVelocity(new ChassisSpeeds(1.0, 0.0, 0.0)),
