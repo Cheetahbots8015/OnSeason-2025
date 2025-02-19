@@ -31,6 +31,7 @@ public class ElevatorHomeCommand extends Command {
   @Override
   public void initialize() {
     m_elevatorSubsystem.setHasHomed(false);
+    m_pivotSubsystem.setHoldAlgae(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

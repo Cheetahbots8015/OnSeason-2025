@@ -12,7 +12,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class TakeHighAlgaeCommand extends Command {
+public class HighAlgaeCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_rollerSubsystem;
 
@@ -25,7 +25,7 @@ public class TakeHighAlgaeCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public TakeHighAlgaeCommand(
+  public HighAlgaeCommand(
       RollerSubsystem rollerSubsystem,
       PivotSubsystem pivotSubsystem,
       ElevatorSubsystem elevatorSubsystem) {
@@ -46,18 +46,18 @@ public class TakeHighAlgaeCommand extends Command {
   public void execute() {
     m_elevatorSubsystem.set2HighAlgae();
     m_pivotSubsystem.set2HighAlgae();
-    if (m_pivotSubsystem.isAtPosition(PivotConstants.highAlgaePosition)) {
+    if (m_pivotSubsystem.isAtPosition(PivotConstants.highAlgaePosition)
+        && m_elevatorSubsystem.isAbovePosition(ElevatorConstants.highAlgaePosition)) {
       m_rollerSubsystem.AlgaeVolts();
     }
-    m_pivotSubsystem.report();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_pivotSubsystem.hold();
-    m_elevatorSubsystem.lockVolts();
-    m_rollerSubsystem.shutDown();
+    m_pivotSubsystem.setHoldAlgae(true);
+    m_rollerSubsystem.defaultIdelVelocity();
+    m_elevatorSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
