@@ -208,14 +208,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    driverController
-        .povRight()
-        .whileTrue(DriveCommands.rotate2Apriltagright(drive))
-        .onTrue(Commands.runOnce(()->LimelightHelpers.setPipelineIndex("", 0)));
-    driverController
-        .povLeft()
-        .whileTrue(DriveCommands.rotate2Apriltagleft(drive))
-        .onTrue(Commands.runOnce(()->LimelightHelpers.setPipelineIndex("", 1)));
+    driverController.povRight().whileTrue(DriveCommands.rotate2Apriltagright(drive));
+    driverController.povLeft().whileTrue(DriveCommands.rotate2Apriltagleft(drive));
     driverController
         .povUp()
         .whileTrue(

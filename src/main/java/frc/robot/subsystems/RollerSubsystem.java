@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -22,8 +21,6 @@ public class RollerSubsystem extends SubsystemBase {
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private VelocityTorqueCurrentFOC velocityFOC = new VelocityTorqueCurrentFOC(0.0);
   private NeutralOut neutralOut = new NeutralOut();
-
-  
 
   public RollerSubsystem() {
     rollerconfigs.MotorOutput.withInverted(
