@@ -3,7 +3,7 @@ package frc.robot.generated;
 public class RollerConstants {
   public static final int rollerID = 62;
   public static final String canName = "canivore";
-  public static final int canRangeID = 1;
+  public static final int canRangeID = 60;
   public static final double canRangeThreshold = 0.06;
   public static final double canRangeHysteresis = 0.005;
   public static final int minSignalStrength = 2500;
@@ -19,7 +19,7 @@ public class RollerConstants {
   public static final double coralForwardVelocity = 14.0;
   public static final double coralReverseVelocity = -14.0;
   public static final double coralIdleVelocity = 0.0;
-  public static final double stopIntakingTime = 0.3;
+  public static final double stopIntakingTime = 0.15;
   public static final double kP = 10.0;
   public static final double kI = 0.0;
   public static final double kD = 0.0;

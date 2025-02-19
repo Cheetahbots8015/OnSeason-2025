@@ -32,16 +32,18 @@ public class StationCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.station();
+
     if (m_subsystem.intakeFinished()) {
       m_subsystem.stopIntaking();
+    } else {
+      m_subsystem.station();
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.shutDown();
+    m_subsystem.defaultIdelVelocity();
   }
 
   // Returns true when the command should end.

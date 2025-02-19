@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -79,7 +80,7 @@ public class RollerSubsystem extends SubsystemBase {
 
   public void station() {
     report();
-    roller.setControl(voltageOut.withOutput(RollerConstants.stationVoltage));
+    roller.setControl(velocityFOC.withVelocity(RollerConstants.coralForwardVelocity));
   }
 
   public void L1Vots() {
@@ -124,7 +125,7 @@ public class RollerSubsystem extends SubsystemBase {
     if (Timer.getFPGATimestamp() - timer < RollerConstants.stopIntakingTime) {
       station();
     } else {
-      shutDown();
+      defaultIdelVelocity();
     }
   }
 
@@ -137,5 +138,6 @@ public class RollerSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("roller/torque current", roller.getTorqueCurrent().getValueAsDouble());
     SmartDashboard.putNumber("roller/acceleration", roller.getAcceleration().getValueAsDouble());
     SmartDashboard.putNumber("roller/supply voltage", roller.getSupplyVoltage().getValueAsDouble());
+    SmartDashboard.putBoolean("roller/canrange", intakeFinished());
   }
 }
