@@ -159,6 +159,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         < ElevatorConstants.positionDeadband;
   }
 
+  public boolean isAbovePosition(double height) {
+    return leader.getPosition().getValueAsDouble() > height;
+  }
+
   public void home() {
     if (timer == -1) {
       SmartDashboard.putNumber("temp", 33);

@@ -58,7 +58,7 @@ public class L1Command extends Command {
   @Override
   public void end(boolean interrupted) {
     m_rollerSubsystem.defaultIdelVelocity();
-    m_elevatorSubsystem.lockVolts();
+    m_elevatorSubsystem.shutDown();
     m_pivotSubsystem.hold();
   }
 
