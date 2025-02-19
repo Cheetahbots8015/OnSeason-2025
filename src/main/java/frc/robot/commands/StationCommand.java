@@ -25,12 +25,17 @@ public class StationCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_subsystem.resetTimer();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     m_subsystem.station();
+    if (m_subsystem.intakeFinished()) {
+      m_subsystem.stopIntaking();
+    }
   }
 
   // Called once the command ends or is interrupted.
