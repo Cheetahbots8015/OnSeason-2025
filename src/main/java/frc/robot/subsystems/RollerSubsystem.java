@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.generated.RollerConstants;
@@ -15,12 +16,15 @@ public class RollerSubsystem extends SubsystemBase {
   private final TalonFX roller = new TalonFX(RollerConstants.rollerID, RollerConstants.canName);
   private final CANrange canRange =
       new CANrange(RollerConstants.canRangeID, RollerConstants.canName);
+  private final CANrangeConfiguration canRangeConfigs = new CANrangeConfiguration();
 
   private TalonFXConfiguration rollerconfigs = new TalonFXConfiguration();
 
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private VelocityTorqueCurrentFOC velocityFOC = new VelocityTorqueCurrentFOC(0.0);
   private NeutralOut neutralOut = new NeutralOut();
+
+  private double timer = -1.0;
 
   public RollerSubsystem() {
     rollerconfigs.MotorOutput.withInverted(
@@ -33,6 +37,14 @@ public class RollerSubsystem extends SubsystemBase {
     rollerconfigs.Slot0.kA = RollerConstants.kA;
     rollerconfigs.Slot0.kS = RollerConstants.kS;
     rollerconfigs.Slot0.kV = RollerConstants.kV;
+
+    canRangeConfigs.ProximityParams.ProximityThreshold = RollerConstants.canRangeThreshold;
+    canRangeConfigs.ProximityParams.MinSignalStrengthForValidMeasurement =
+        RollerConstants.minSignalStrength;
+    canRangeConfigs.ProximityParams.ProximityHysteresis = RollerConstants.canRangeHysteresis;
+
+    canRange.getConfigurator().apply(canRangeConfigs);
+
     roller.getConfigurator().apply(rollerconfigs);
   }
 
@@ -101,7 +113,23 @@ public class RollerSubsystem extends SubsystemBase {
   }
 
   public boolean intakeFinished() {
-    return false;
+    return canRange.getIsDetected().getValue();
+  }
+
+  public void stopIntaking() {
+    if (timer == -1.0) {
+      timer = Timer.getFPGATimestamp();
+    }
+
+    if (Timer.getFPGATimestamp() - timer < RollerConstants.stopIntakingTime) {
+      station();
+    } else {
+      shutDown();
+    }
+  }
+
+  public void resetTimer() {
+    timer = -1.0;
   }
 
   public void report() {
