@@ -43,12 +43,17 @@ public class L4Command extends Command {
   @Override
   public void execute() {
     m_elevatorSubsystem.set2L4();
-    m_pivotSubsystem.set2L4();
+    if (m_elevatorSubsystem.isAbovePosition(110.0)) {
+      m_pivotSubsystem.set2L4();
+    } else {
+      m_pivotSubsystem.hold();
+    }
+
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L4Position)
         && m_pivotSubsystem.isAtPosition(PivotConstants.L4Position)) {
       m_rollerSubsystem.L4Vots();
     } else {
-      m_rollerSubsystem.shutDown();
+      m_rollerSubsystem.defaultIdelVelocity();
     }
     m_elevatorSubsystem.report();
     m_pivotSubsystem.report();
@@ -57,8 +62,8 @@ public class L4Command extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_rollerSubsystem.shutDown();
-    m_elevatorSubsystem.lockVolts();
+    m_rollerSubsystem.defaultIdelVelocity();
+    m_elevatorSubsystem.shutDown();
     m_pivotSubsystem.hold();
   }
 

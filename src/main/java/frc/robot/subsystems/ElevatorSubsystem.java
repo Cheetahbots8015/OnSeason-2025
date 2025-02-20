@@ -149,13 +149,22 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public boolean isAtPosition(double height) {
     height += encoderOffset;
+    if (Math.abs(leader.getPosition().getValueAsDouble() - height)
+        < ElevatorConstants.positionDeadband) {
+      SmartDashboard.putBoolean("elevator/is at position", true);
+    } else {
+      SmartDashboard.putBoolean("elevator/is at position", false);
+    }
     return Math.abs(leader.getPosition().getValueAsDouble() - height)
         < ElevatorConstants.positionDeadband;
   }
 
+  public boolean isAbovePosition(double height) {
+    return leader.getPosition().getValueAsDouble() > height;
+  }
+
   public void home() {
     if (timer == -1) {
-      SmartDashboard.putNumber("temp", 33);
       timer = Timer.getFPGATimestamp();
     }
 
@@ -181,6 +190,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void resetTimer() {
     timer = -1;
+  }
+
+  public void set2Home() {
+    report();
+    setHeight(ElevatorConstants.HomePosition);
   }
 
   public void set2L1() {

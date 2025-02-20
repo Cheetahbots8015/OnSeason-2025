@@ -27,6 +27,7 @@ public class PivotSubsystem extends SubsystemBase {
   private final CANdi candi = new CANdi(PivotConstants.candiID, PivotConstants.canName);
 
   private double offset;
+  private boolean holdAlgae = false;
 
   private TalonFXConfiguration pivotconfigs = new TalonFXConfiguration();
   private CANdiConfiguration candiconfigs = new CANdiConfiguration();
@@ -128,7 +129,11 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void set2Home() {
-    setHeight(PivotConstants.HomePosition);
+    if (holdAlgae) {
+      setHeight(PivotConstants.HoldAlgaePosition);
+    } else {
+      setHeight(PivotConstants.HomePosition);
+    }
   }
 
   public void set2L1() {
@@ -159,12 +164,8 @@ public class PivotSubsystem extends SubsystemBase {
     setHeight(PivotConstants.highAlgaePosition);
   }
 
-  public void home() {
-    setHeight(0.0);
-  }
-
-  public void algaeHome() {
-    setHeight(PivotConstants.algaeHome);
+  public void set2Processor() {
+    setHeight(PivotConstants.processorPosition);
   }
 
   public void hold() {
@@ -177,6 +178,11 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition(double height) {
+    if (Math.abs(this.getPosition() - height) < PivotConstants.positionDeadband) {
+      SmartDashboard.putBoolean("pivot/is at position", true);
+    } else {
+      SmartDashboard.putBoolean("pivot/is at position", false);
+    }
     return Math.abs(this.getPosition() - height) < PivotConstants.positionDeadband;
   }
 
@@ -192,6 +198,18 @@ public class PivotSubsystem extends SubsystemBase {
         "pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putNumber("pivot/s1 position", candi.getPWM1Position().getValueAsDouble());
     SmartDashboard.putNumber("pivot/offset", offset);
+  }
+
+  public boolean getHoldAlgae() {
+    return holdAlgae;
+  }
+
+  public void setHoldAlgae(boolean set) {
+    holdAlgae = set;
+  }
+
+  public void switchHoldAlgae() {
+    holdAlgae = !holdAlgae;
   }
 
   public Command PivotTestDynamic(SysIdRoutine.Direction direction) {
