@@ -27,7 +27,7 @@ public class PivotSubsystem extends SubsystemBase {
   private final CANdi candi = new CANdi(PivotConstants.candiID, PivotConstants.canName);
 
   private double offset;
-  private boolean holdAlgae = true;
+  private boolean holdAlgae = false;
 
   private TalonFXConfiguration pivotconfigs = new TalonFXConfiguration();
   private CANdiConfiguration candiconfigs = new CANdiConfiguration();
