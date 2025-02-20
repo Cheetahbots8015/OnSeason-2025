@@ -26,15 +26,15 @@ public class PivotConstants {
   public static final double cruiseVelocity = 10.0 / rotor2CandiRatio * 4;
   public static final double cruiseAcceleration = 10.0 / rotor2CandiRatio * 4;
   public static final double HomePosition = 0.2 / rotor2CandiRatio;
-  public static final double HoleAlgaePosition = 10.0 / rotor2CandiRatio;
+  public static final double HoldAlgaePosition = 10.0 / rotor2CandiRatio;
   public static final double processorPosition = 0.45;
-  public static final double L1Position = 1.4 / rotor2CandiRatio;
-  public static final double L2Position = 1.4 / rotor2CandiRatio;
-  public static final double L3Position = 1.4 / rotor2CandiRatio;
+  public static final double L1Position = 1.0 / rotor2CandiRatio;
+  public static final double L2Position = 1.0 / rotor2CandiRatio;
+  public static final double L3Position = 1.0 / rotor2CandiRatio;
   public static final double L4Position = 3.5 / rotor2CandiRatio;
-  public static final double lowAlgaePosition = 0.45; // TODO: Change This
-  public static final double highAlgaePosition = 0.45; // TODO: Change This
-  public static final double lolipopPosition = 0.4; // TODO: Change This
-  public static final double algaeHome = 0.3; // TODO: Change This
+  public static final double lowAlgaePosition = 0.45;
+  public static final double highAlgaePosition = 0.45;
+  public static final double lolipopPosition = 0.4;
+  public static final double algaeHome = 0.3;
   public static final double positionDeadband = 0.03;
 }

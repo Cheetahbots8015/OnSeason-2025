@@ -27,7 +27,7 @@ public class PivotSubsystem extends SubsystemBase {
   private final CANdi candi = new CANdi(PivotConstants.candiID, PivotConstants.canName);
 
   private double offset;
-  private boolean holdAlgae = true;
+  private boolean holdAlgae = false;
 
   private TalonFXConfiguration pivotconfigs = new TalonFXConfiguration();
   private CANdiConfiguration candiconfigs = new CANdiConfiguration();
@@ -129,11 +129,11 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void set2Home() {
-    setHeight(PivotConstants.HomePosition);
-  }
-
-  public void set2HoldAlgae() {
-    setHeight(PivotConstants.HoleAlgaePosition);
+    if (holdAlgae) {
+      setHeight(PivotConstants.HoldAlgaePosition);
+    } else {
+      setHeight(PivotConstants.HomePosition);
+    }
   }
 
   public void set2L1() {
@@ -166,14 +166,6 @@ public class PivotSubsystem extends SubsystemBase {
 
   public void set2Processor() {
     setHeight(PivotConstants.processorPosition);
-  }
-
-  public void home() {
-    setHeight(PivotConstants.HomePosition);
-  }
-
-  public void algaeHome() {
-    setHeight(PivotConstants.algaeHome);
   }
 
   public void hold() {
@@ -214,6 +206,10 @@ public class PivotSubsystem extends SubsystemBase {
 
   public void setHoldAlgae(boolean set) {
     holdAlgae = set;
+  }
+
+  public void switchHoldAlgae() {
+    holdAlgae = !holdAlgae;
   }
 
   public Command PivotTestDynamic(SysIdRoutine.Direction direction) {
