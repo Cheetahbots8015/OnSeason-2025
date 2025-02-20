@@ -148,7 +148,7 @@ public class SuperStructure extends SubsystemBase {
     testPosition = !testPosition;
   }
 
-  public superStructureState getSystemState() {
+  private superStructureState getSystemState() {
     return systemState;
   }
 
