@@ -48,7 +48,7 @@ public class PivotIOKrakenX60 implements PivotIO {
     this.candiConfiguration = new CANdiConfiguration();
 
     pivotConfiguration.MotorOutput.withInverted(
-		    inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
+        inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
     pivotConfiguration.Slot0.kP = PIVOT_KP;
     pivotConfiguration.Slot0.kI = PIVOT_KI;
     pivotConfiguration.Slot0.kD = PIVOT_KD;
@@ -62,9 +62,9 @@ public class PivotIOKrakenX60 implements PivotIO {
     pivotConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = PIVOT_FORWARD_SOFT_LIMIT_ENABLE;
     pivotConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = PIVOT_REVERSE_SOFT_LIMIT_ENABLE;
     pivotConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-		    PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD;
+        PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD;
     pivotConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-		    PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD;
+        PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD;
     pivotConfiguration.Feedback.FeedbackRemoteSensorID = CANDI_ID;
     pivotConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANdiPWM1;
     pivotConfiguration.Feedback.SensorToMechanismRatio = PIVOT_CANDI_2_MECHANISM_RATIO;
@@ -85,25 +85,25 @@ public class PivotIOKrakenX60 implements PivotIO {
     s1Position = candi.getPWM1Position();
 
     tryUntilOk(
-		    5,
-		    () ->
-				    BaseStatusSignal.setUpdateFrequencyForAll(
-						    RollerConstants.SIGNAL_UPDATE_FREQUENCY_HZ,
-						    position,
-						    velocity,
-						    acceleration,
-						    torqueCurrent,
-						    motionMagicTarget,
-						    appliedVoltage,
-						    tempCelsius,
-						    s1Position));
+        5,
+        () ->
+            BaseStatusSignal.setUpdateFrequencyForAll(
+                RollerConstants.SIGNAL_UPDATE_FREQUENCY_HZ,
+                position,
+                velocity,
+                acceleration,
+                torqueCurrent,
+                motionMagicTarget,
+                appliedVoltage,
+                tempCelsius,
+                s1Position));
     tryUntilOk(5, () -> pivot.optimizeBusUtilization(0, 1.0));
   }
 
   @Override
   public void updateInputs(PivotIOInputs inputs) {
     inputs.connected =
-		    BaseStatusSignal.refreshAll(position, velocity, appliedVoltage, tempCelsius).isOK();
+        BaseStatusSignal.refreshAll(position, velocity, appliedVoltage, tempCelsius).isOK();
     inputs.position = position.getValueAsDouble();
     inputs.velocity = velocity.getValueAsDouble();
     inputs.acceleration = acceleration.getValueAsDouble();

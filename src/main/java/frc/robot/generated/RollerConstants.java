@@ -27,4 +27,6 @@ public class RollerConstants {
   public static final double ROLLER_MANUALFORWARD_VOLTAGE = 8.0;
   public static final double ROLLER_MANUALINVERT_VOLTAGE = -2.0;
   public static final double ROLLER_PROCESSOR_VOLTAGE = 0.0;
+  public static final double MIN_SIGNAL_STRENGTH = 0.0;
+  public static final double CAN_RANGE_HYSTERESIS = 0.0;
 }

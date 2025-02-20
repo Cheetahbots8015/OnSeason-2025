@@ -7,7 +7,7 @@ import frc.robot.subsystems.rollers.RollerSystem;
 
 public class PositionUtil {
   public static ElevatorSystem.ElevatorPosition super2elevator(
-          SuperStructure.superStructurePosition pos) {
+      SuperStructure.superStructurePosition pos) {
     switch (pos) {
       case L1 -> {
         return ElevatorSystem.ElevatorPosition.L1;
@@ -43,7 +43,7 @@ public class PositionUtil {
   }
 
   public static RollerSystem.RollerPosition super2roller(
-          SuperStructure.superStructurePosition pos) {
+      SuperStructure.superStructurePosition pos) {
     switch (pos) {
       case L1 -> {
         return RollerSystem.RollerPosition.L1;

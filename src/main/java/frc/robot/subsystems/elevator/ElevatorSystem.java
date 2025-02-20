@@ -56,10 +56,10 @@ public class ElevatorSystem extends SubsystemBase {
         io.setHome();
         break;
       case MANUALUPWARD:
-        io.setVoltage(ElevatorConstants.ELEVATOR_LOW_UP_VOLTAGE);
+        io.setVoltage(ElevatorConstants.ELEVATOR_UP_VOLTAGE);
         break;
       case MANUTALDOWNWARD:
-        io.setVoltage(ElevatorConstants.ELEVATOR_LOW_DOWN_VOLTAGE);
+        io.setVoltage(ElevatorConstants.ELEVATOR_DOWN_VOLTAGE);
         break;
       case POSITION:
         switch (systemPosition) {

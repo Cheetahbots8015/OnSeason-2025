@@ -13,8 +13,7 @@ public interface PivotIO {
   /** Sets the speed of the pivot to the desired percent output */
   public default void setVoltage(double voltage) {}
 
-  public default void hold(double position) {
-  }
+  public default void hold(double position) {}
 
   @AutoLog
   public static class PivotIOInputs {

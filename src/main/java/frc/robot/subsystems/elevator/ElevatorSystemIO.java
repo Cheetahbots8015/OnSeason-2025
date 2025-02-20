@@ -10,23 +10,17 @@ package frc.robot.subsystems.elevator;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorSystemIO {
-  default void updateInputs(ElevatorSystemIOInputs inputs) {
-  }
+  default void updateInputs(ElevatorSystemIOInputs inputs) {}
 
-  default void setHome() {
-  }
+  default void setHome() {}
 
-  default void hold() {
-  }
+  default void hold() {}
 
-  default void stop() {
-  }
+  default void stop() {}
 
-  default void setVoltage(double voltage) {
-  }
+  default void setVoltage(double voltage) {}
 
-  default void setPosition(double position) {
-  }
+  default void setPosition(double position) {}
 
   default boolean isAtPosition(double pos) {
     return false;
@@ -35,7 +29,6 @@ public interface ElevatorSystemIO {
   default boolean getHomed() {
     return false;
   }
-
   ;
 
   @AutoLog
@@ -45,9 +38,9 @@ public interface ElevatorSystemIO {
     public double currentDiff = 0.0;
     public double dutyCycleDiff = 0.0;
     public double voltageDiff = 0.0;
-    public double[] position = new double[]{};
-    public double[] velocity = new double[]{};
-    public double[] acceleration = new double[]{};
+    public double[] position = new double[] {};
+    public double[] velocity = new double[] {};
+    public double[] acceleration = new double[] {};
     public double[] appliedVoltage = new double[] {}; // {leader, follower}
     public double[] motionMagicPositionTarget = new double[] {}; // {leader, follower}
     public double[] supplyCurrentAmps = new double[] {}; // {leader, follower}

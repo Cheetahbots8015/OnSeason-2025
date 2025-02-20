@@ -25,7 +25,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.SuperStructureCommands.ShootReefCommands.ShootLeftReefL2Command;
+import frc.robot.commands.SuperStructureCommands.TestCommands.TestBackwardCommand;
+import frc.robot.commands.SuperStructureCommands.TestCommands.TestForwardCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
@@ -63,7 +64,7 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
-
+  private final CommandXboxController controllerTest = new CommandXboxController(1);
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -176,8 +177,6 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-    controller.y().whileTrue(new ShootLeftReefL2Command(superStructure));
-
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
@@ -191,6 +190,15 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    controllerTest.a().whileTrue(new TestForwardCommand(superStructure));
+    controllerTest.b().whileTrue(new TestBackwardCommand(superStructure));
+    controllerTest
+        .x()
+        .onTrue(Commands.runOnce(superStructure::requestTestLoadedStateChange, superStructure));
+    controllerTest
+        .y()
+        .onTrue(Commands.runOnce(superStructure::requestTestPositionStateChange, superStructure));
   }
 
   /**
