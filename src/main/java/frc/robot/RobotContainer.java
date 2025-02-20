@@ -124,10 +124,10 @@ public class RobotContainer {
       new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command L3Command =
       new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  // private final Command rotate2Apriltagleft=
-  //    new rotate2Apriltag(drive,"left");
-  // private final Command rotate2Apriltagright=
-  //    new rotate2Apriltag(drive, "right");
+   private final Command rotate2Apriltagleft=
+      new rotate2Apriltag(drive,"left");
+   private final Command rotate2Apriltagright=
+      new rotate2Apriltag(drive, "right");
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Real robot, instantiate hardware IO implementations
@@ -216,8 +216,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    driverController.povRight().whileTrue(DriveCommands.rotate2Apriltagright(drive));
-    driverController.povLeft().whileTrue(DriveCommands.rotate2Apriltagleft(drive));
+    driverController.povRight().whileTrue(rotate2Apriltagright);
+    driverController.povLeft().whileTrue(rotate2Apriltagleft);
     driverController
         .povUp()
         .whileTrue(
