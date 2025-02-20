@@ -2,17 +2,16 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.elevatorCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class HomeCommand extends Command {
+public class ElevatorHomeCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorSubsystem m_ElevatorSystem;
+  private final ElevatorSubsystem m_elevatorSubsystem;
 
   private final PivotSubsystem m_pivotSubsystem;
 
@@ -21,46 +20,41 @@ public class HomeCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public HomeCommand(ElevatorSubsystem ElevatorSystem, PivotSubsystem pivotSubsystem) {
-    m_ElevatorSystem = ElevatorSystem;
+  public ElevatorHomeCommand(ElevatorSubsystem elevatorSubsystem, PivotSubsystem pivotSubsystem) {
+    m_elevatorSubsystem = elevatorSubsystem;
     m_pivotSubsystem = pivotSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_ElevatorSystem);
+    addRequirements(m_elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_ElevatorSystem.setHasHomed(false);
+    m_elevatorSubsystem.setHasHomed(false);
+    m_pivotSubsystem.setHoldAlgae(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_ElevatorSystem.home();
-    m_pivotSubsystem.set2Home();
+    m_elevatorSubsystem.home();
+    m_pivotSubsystem.home();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_ElevatorSystem.shutDown();
-    m_ElevatorSystem.resetTimer();
+    m_elevatorSubsystem.shutDown();
+    m_elevatorSubsystem.resetTimer();
     m_pivotSubsystem.hold();
     if (!interrupted) {
-      m_ElevatorSystem.resetOffset();
+      m_elevatorSubsystem.resetOffset();
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_pivotSubsystem.getHoldAlgae()) {
-      return m_ElevatorSystem.getHasHomed()
-          && m_pivotSubsystem.isAtPosition(PivotConstants.HoldAlgaePosition);
-    } else {
-      return m_ElevatorSystem.getHasHomed()
-          && m_pivotSubsystem.isAtPosition(PivotConstants.HomePosition);
-    }
+    return m_elevatorSubsystem.getHasHomed() && m_pivotSubsystem.isAtPosition(0.0);
   }
 }

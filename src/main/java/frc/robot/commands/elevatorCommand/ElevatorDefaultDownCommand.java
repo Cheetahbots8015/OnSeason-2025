@@ -31,11 +31,8 @@ public class ElevatorDefaultDownCommand extends Command {
   @Override
   public void execute() {
     m_subsystem.report();
-    if (m_subsystem.isAbovePosition(40)) {
-      m_subsystem.defaultDown();
-    } else {
-      m_subsystem.shutDown();
-    }
+    // m_subsystem.defaultDown();
+    m_subsystem.shutDown();
   }
 
   // Called once the command ends or is interrupted.

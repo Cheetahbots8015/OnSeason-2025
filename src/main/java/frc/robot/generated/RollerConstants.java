@@ -20,7 +20,7 @@ public class RollerConstants {
   public static final double coralForwardVelocity = 14.0;
   public static final double coralReverseVelocity = -14.0;
   public static final double coralIdleVelocity = 0.0;
-  public static final double stopIntakingTime = 0.2;
+  public static final double stopIntakingTime = 0.15;
   public static final double kP = 10.0;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
