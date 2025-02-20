@@ -4,16 +4,12 @@
 
 package frc.robot.commands;
 
-import java.text.Normalizer;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
@@ -31,7 +27,7 @@ public class rotate2Apriltag extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public rotate2Apriltag(Drive drive, String direction,CommandXboxController controller) {
+  public rotate2Apriltag(Drive drive, String direction, CommandXboxController controller) {
     m_drive = drive;
     m_direction = direction;
     m_controller = controller;
@@ -65,10 +61,11 @@ public class rotate2Apriltag extends Command {
     if (hasTarget) {
       lastPose = pose;
       if (pose.getTranslation().getZ() <= 0.8) {
-        if(Math.abs(LimelightHelpers.getTX("limelight-reef")) < 4){
-          m_controller.setRumble(RumbleType.kBothRumble, 1-(0.25*Math.abs(LimelightHelpers.getTX("limelight-reef"))));
-        }
-        else{
+        if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 4) {
+          m_controller.setRumble(
+              RumbleType.kBothRumble,
+              1 - (0.25 * Math.abs(LimelightHelpers.getTX("limelight-reef"))));
+        } else {
           m_controller.setRumble(RumbleType.kBothRumble, 0);
         }
         SmartDashboard.putBoolean("limelight-reef", false);
@@ -89,7 +86,8 @@ public class rotate2Apriltag extends Command {
         m_drive.runVelocity(drivSpeeds);
       }
     } else {
-      ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, pidyaw.calculate(lastPose.getRotation().getY()));
+      ChassisSpeeds drivSpeeds =
+          new ChassisSpeeds(0, 0, pidyaw.calculate(lastPose.getRotation().getY()));
       m_drive.runVelocity(drivSpeeds);
     }
   }
