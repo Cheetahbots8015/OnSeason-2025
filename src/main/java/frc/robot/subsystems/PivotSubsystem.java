@@ -198,6 +198,7 @@ public class PivotSubsystem extends SubsystemBase {
         "pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putNumber("pivot/s1 position", candi.getPWM1Position().getValueAsDouble());
     SmartDashboard.putNumber("pivot/offset", offset);
+    SmartDashboard.putBoolean("hold algae", holdAlgae);
   }
 
   public boolean getHoldAlgae() {

@@ -140,10 +140,8 @@ public class RobotContainer {
       new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command L3Command =
       new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-   private final Command rotate2Apriltagleft=
-      new rotate2Apriltag(drive,"left");
-   private final Command rotate2Apriltagright=
-      new rotate2Apriltag(drive, "right");
+  private final Command rotate2Apriltagleft = new rotate2Apriltag(drive, "left");
+  private final Command rotate2Apriltagright = new rotate2Apriltag(drive, "right");
   private final Command LowAlgaeCommand =
       new LowAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
   private final Command HighAlgaeCommand =
