@@ -1,7 +1,6 @@
 package frc.robot.commands.pivotCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.PivotSubsystem;
 
 /** An example command that uses an example subsystem. */
@@ -27,11 +26,7 @@ public class PivotDefaultBackCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_subsystem.getHoldAlgae()) {
-      m_subsystem.set2HoldAlgae();
-    } else {
-      m_subsystem.set2Home();
-    }
+    m_subsystem.set2Home();
   }
 
   // Called once the command ends or is interrupted.
@@ -44,10 +39,11 @@ public class PivotDefaultBackCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_subsystem.getHoldAlgae()) {
-      return m_subsystem.isAtPosition(PivotConstants.HomePosition);
-    } else {
-      return m_subsystem.isAtPosition(PivotConstants.lowAlgaePosition);
-    }
+    // if (m_subsystem.getHoldAlgae()) {
+    //   return m_subsystem.isAtPosition(PivotConstants.HomePosition);
+    // } else {
+    //   return m_subsystem.isAtPosition(PivotConstants.lowAlgaePosition);
+    // }
+    return false;
   }
 }

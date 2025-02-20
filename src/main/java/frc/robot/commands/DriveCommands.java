@@ -74,7 +74,8 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier omegaSupplier,
+      boolean slowMode) {
     return Commands.run(
         () -> {
           // Get linear velocity
@@ -90,9 +91,18 @@ public class DriveCommands {
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
+                  linearVelocity.getX()
+                      * (slowMode
+                          ? drive.getSlowLinearSpeedMetersPerSec()
+                          : drive.getMaxLinearSpeedMetersPerSec()),
+                  linearVelocity.getY()
+                      * (slowMode
+                          ? drive.getSlowLinearSpeedMetersPerSec()
+                          : drive.getMaxLinearSpeedMetersPerSec()),
+                  omega
+                      * (slowMode
+                          ? drive.getSlowAngularSpeedRadPerSec()
+                          : drive.getMaxAngularSpeedRadPerSec()));
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;

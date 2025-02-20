@@ -43,10 +43,10 @@ public class L4Command extends Command {
   @Override
   public void execute() {
     m_elevatorSubsystem.set2L4();
-    if (m_elevatorSubsystem.isAbovePosition(110.0)) {
+    if (m_elevatorSubsystem.isAbovePosition(80.0)) {
       m_pivotSubsystem.set2L4();
     } else {
-      m_pivotSubsystem.hold();
+      m_pivotSubsystem.set2L2();
     }
 
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L4Position)

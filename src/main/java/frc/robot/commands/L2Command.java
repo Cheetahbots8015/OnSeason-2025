@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.generated.PivotConstants;
@@ -44,6 +45,10 @@ public class L2Command extends Command {
   public void execute() {
     m_elevatorSubsystem.set2L2();
     m_pivotSubsystem.set2L2();
+    SmartDashboard.putBoolean(
+        "elevator at pos", m_elevatorSubsystem.isAtPosition(ElevatorConstants.L2Position));
+    SmartDashboard.putBoolean(
+        "pivot at pos", m_pivotSubsystem.isAtPosition(PivotConstants.L2Position));
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L2Position)
         && m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
       m_rollerSubsystem.L2Vots();

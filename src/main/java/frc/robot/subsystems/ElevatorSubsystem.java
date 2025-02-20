@@ -32,6 +32,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double encoderOffset = 0.0;
   private double timer = -1.0;
+  private double initialPosition = -1.0;
   private boolean hasHomed = false;
 
   public ElevatorSubsystem() {
@@ -85,6 +86,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     follower.setControl(neutralOut);
   }
 
+  public void motionMagicianVoltage(double volts) {
+    leader.setControl(voltageOut.withOutput(volts));
+    follower.setControl(new DifferentialVoltage(volts, 0.0).withDifferentialSlot(1));
+  }
+
   public void manualUpVolts() {
     leader.setControl(voltageOut.withOutput(ElevatorConstants.manualUpVoltage));
     follower.setControl(
@@ -132,18 +138,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (Math.abs(leader.getPosition().getValueAsDouble() - height)
         < ElevatorConstants.positionDeadband) {
       lockVolts();
-    } else if (Math.abs(leader.getPosition().getValueAsDouble() - height)
-            < ElevatorConstants.closePositionDeadband
-        && leader.getPosition().getValueAsDouble() > height) {
-      lowManualDownVolts();
-    } else if (Math.abs(leader.getPosition().getValueAsDouble() - height)
-            < ElevatorConstants.closePositionDeadband
-        && leader.getPosition().getValueAsDouble() <= height) {
-      lowManualUpVolts();
-    } else if (leader.getPosition().getValueAsDouble() > height) {
+    } else if (leader.getPosition().getValueAsDouble()
+        > height + ElevatorConstants.closePositionDeadband) {
       manualDownVolts();
-    } else {
+    } else if (leader.getPosition().getValueAsDouble()
+        < height - ElevatorConstants.closePositionDeadband) {
       manualUpVolts();
+    } else if (leader.getPosition().getValueAsDouble() > height) {
+      lowManualDownVolts();
+    } else {
+      lowManualUpVolts();
     }
   }
 

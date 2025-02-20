@@ -129,11 +129,11 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void set2Home() {
-    setHeight(PivotConstants.HomePosition);
-  }
-
-  public void set2HoldAlgae() {
-    setHeight(PivotConstants.HoleAlgaePosition);
+    if (holdAlgae) {
+      setHeight(PivotConstants.HoldAlgaePosition);
+    } else {
+      setHeight(PivotConstants.HomePosition);
+    }
   }
 
   public void set2L1() {
@@ -168,14 +168,6 @@ public class PivotSubsystem extends SubsystemBase {
     setHeight(PivotConstants.processorPosition);
   }
 
-  public void home() {
-    setHeight(PivotConstants.HomePosition);
-  }
-
-  public void algaeHome() {
-    setHeight(PivotConstants.algaeHome);
-  }
-
   public void hold() {
     report();
     pivot.setControl(
@@ -206,6 +198,7 @@ public class PivotSubsystem extends SubsystemBase {
         "pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putNumber("pivot/s1 position", candi.getPWM1Position().getValueAsDouble());
     SmartDashboard.putNumber("pivot/offset", offset);
+    SmartDashboard.putBoolean("hold algae", holdAlgae);
   }
 
   public boolean getHoldAlgae() {
@@ -214,6 +207,10 @@ public class PivotSubsystem extends SubsystemBase {
 
   public void setHoldAlgae(boolean set) {
     holdAlgae = set;
+  }
+
+  public void switchHoldAlgae() {
+    holdAlgae = !holdAlgae;
   }
 
   public Command PivotTestDynamic(SysIdRoutine.Direction direction) {

@@ -9,9 +9,12 @@ public class ElevatorConstants {
   public static final boolean opposeMaster = true;
   public static final double manualUpVoltage = 4.0;
   public static final double manualDownVoltage = -6.0;
-  public static final double defaultDownVoltage = -6.0;
+  public static final double defaultDownVoltage = -7.0;
   public static final double lowManualUpVoltage = 1.0;
-  public static final double lowManualDownVoltage = -0.8;
+  public static final double lowManualDownVoltage = -1.0;
+  public static final double motionMagicianInitialVoltage = 3.0;
+  public static final double motionMagicianRateVoltsPerRot = 0.166;
+  public static final double motionMagicianVoltageLimit = 7.0;
   public static final double lockVoltage = 0.3;
   public static final double forwardDutyCycleLimit = 0.7;
   public static final double reverseDutyCycleLimit = -0.7;
@@ -27,11 +30,11 @@ public class ElevatorConstants {
   public static final double HomePosition = 0.2;
   public static final double L1Position = 21.68;
   public static final double L2Position = 21.68;
-  public static final double lowAlgaePosition = 40.0; // TODO: Change This
-  public static final double highAlgaePosition = 80.0; // TODO: Change This
+  public static final double lowAlgaePosition = 40.0;
+  public static final double highAlgaePosition = 80.0;
   public static final double L4Position = 118.0;
-  public static final double L3Position = 63.0;
-  public static final double positionDeadband = 0.5;
-  public static final double closePositionDeadband = 5.0;
-  public static final double homeUpTime = 0.1;
+  public static final double L3Position = 59.0;
+  public static final double positionDeadband = 1.2;
+  public static final double closePositionDeadband = 12.0;
+  public static final double homeUpTime = 0.3;
 }
