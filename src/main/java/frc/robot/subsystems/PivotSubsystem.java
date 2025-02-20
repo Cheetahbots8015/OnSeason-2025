@@ -27,6 +27,7 @@ public class PivotSubsystem extends SubsystemBase {
   private final CANdi candi = new CANdi(PivotConstants.candiID, PivotConstants.canName);
 
   private double offset;
+  private boolean holdAlgae = true;
 
   private TalonFXConfiguration pivotconfigs = new TalonFXConfiguration();
   private CANdiConfiguration candiconfigs = new CANdiConfiguration();
@@ -131,6 +132,10 @@ public class PivotSubsystem extends SubsystemBase {
     setHeight(PivotConstants.HomePosition);
   }
 
+  public void set2HoldAlgae() {
+    setHeight(PivotConstants.HoleAlgaePosition);
+  }
+
   public void set2L1() {
     setHeight(PivotConstants.L1Position);
   }
@@ -159,8 +164,12 @@ public class PivotSubsystem extends SubsystemBase {
     setHeight(PivotConstants.highAlgaePosition);
   }
 
+  public void set2Processor() {
+    setHeight(PivotConstants.processorPosition);
+  }
+
   public void home() {
-    setHeight(0.0);
+    setHeight(PivotConstants.HomePosition);
   }
 
   public void algaeHome() {
@@ -197,6 +206,14 @@ public class PivotSubsystem extends SubsystemBase {
         "pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putNumber("pivot/s1 position", candi.getPWM1Position().getValueAsDouble());
     SmartDashboard.putNumber("pivot/offset", offset);
+  }
+
+  public boolean getHoldAlgae() {
+    return holdAlgae;
+  }
+
+  public void setHoldAlgae(boolean set) {
+    holdAlgae = set;
   }
 
   public Command PivotTestDynamic(SysIdRoutine.Direction direction) {

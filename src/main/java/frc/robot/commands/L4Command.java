@@ -46,7 +46,7 @@ public class L4Command extends Command {
     if (m_elevatorSubsystem.isAbovePosition(110.0)) {
       m_pivotSubsystem.set2L4();
     } else {
-      m_pivotSubsystem.set2L2();
+      m_pivotSubsystem.hold();
     }
 
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L4Position)

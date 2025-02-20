@@ -165,7 +165,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void home() {
     if (timer == -1) {
-      SmartDashboard.putNumber("temp", 33);
       timer = Timer.getFPGATimestamp();
     }
 
@@ -191,6 +190,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void resetTimer() {
     timer = -1;
+  }
+
+  public void set2Home() {
+    report();
+    setHeight(ElevatorConstants.HomePosition);
   }
 
   public void set2L1() {

@@ -5,35 +5,34 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.*;
+import frc.robot.generated.ElevatorConstants;
+import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class TakeAlgaeHomeCommand extends Command {
+public class LowAlgaeCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final RollerSubsystem m_rollerSubsystem;
+  private final ElevatorSubsystem m_elevatorSubsystem;
 
   private final PivotSubsystem m_pivotSubsystem;
-
-  private final ElevatorSubsystem m_elevatorSubsystem;
+  private final RollerSubsystem m_rollerSubsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public TakeAlgaeHomeCommand(
+  public LowAlgaeCommand(
       RollerSubsystem rollerSubsystem,
       PivotSubsystem pivotSubsystem,
       ElevatorSubsystem elevatorSubsystem) {
-    this.m_rollerSubsystem = rollerSubsystem;
-    this.m_pivotSubsystem = pivotSubsystem;
-    this.m_elevatorSubsystem = elevatorSubsystem;
-
+    m_elevatorSubsystem = elevatorSubsystem;
+    m_pivotSubsystem = pivotSubsystem;
+    m_rollerSubsystem = rollerSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(rollerSubsystem, pivotSubsystem, elevatorSubsystem);
+    addRequirements(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -43,24 +42,25 @@ public class TakeAlgaeHomeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.home();
-    m_pivotSubsystem.algaeHome();
-    m_rollerSubsystem.shutDown();
-    m_pivotSubsystem.report();
+    m_elevatorSubsystem.set2LowAlgae();
+    m_pivotSubsystem.set2LowAlgae();
+    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.lowAlgaePosition)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.lowAlgaePosition)) {
+      m_rollerSubsystem.AlgaeVolts();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_pivotSubsystem.hold();
-    m_elevatorSubsystem.lockVolts();
-    m_rollerSubsystem.shutDown();
+    m_pivotSubsystem.setHoldAlgae(true);
+    m_rollerSubsystem.defaultIdelVelocity();
+    m_elevatorSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevatorSubsystem.isAtPosition(0.0)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.algaeHome);
+    return false;
   }
 }

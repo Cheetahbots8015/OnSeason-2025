@@ -108,6 +108,11 @@ public class RollerSubsystem extends SubsystemBase {
     roller.setControl(voltageOut.withOutput(RollerConstants.AlgaeVoltage));
   }
 
+  public void ProcessorVolts() {
+    report();
+    roller.setControl(voltageOut.withOutput(RollerConstants.ProcessorVoltage));
+  }
+
   public void setVelocity(double velocity) {
     report();
     roller.setControl(velocityFOC.withVelocity(velocity));

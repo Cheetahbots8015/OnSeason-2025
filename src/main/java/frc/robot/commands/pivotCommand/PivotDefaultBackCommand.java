@@ -27,7 +27,11 @@ public class PivotDefaultBackCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.set2Home();
+    if (m_subsystem.getHoldAlgae()) {
+      m_subsystem.set2HoldAlgae();
+    } else {
+      m_subsystem.set2Home();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -36,9 +40,14 @@ public class PivotDefaultBackCommand extends Command {
     // m_subsystem.shutDown();
     m_subsystem.hold();
   }
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_subsystem.isAtPosition(PivotConstants.HomePosition);
+    if (m_subsystem.getHoldAlgae()) {
+      return m_subsystem.isAtPosition(PivotConstants.HomePosition);
+    } else {
+      return m_subsystem.isAtPosition(PivotConstants.lowAlgaePosition);
+    }
   }
 }

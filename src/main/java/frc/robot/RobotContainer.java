@@ -78,9 +78,9 @@ public class RobotContainer {
 
   private final Trigger ElevatorManualTrigger = testController.a();
   private final Trigger ElevatorVoltageLockTrigger = testController.b();
-  private final Trigger L4Trigger = testController.x();
-  private final Trigger L2Trigger = testController.y();
-  private final Trigger L3Trigger = testController.povRight();
+  private final Trigger LowAlgaeTrigger = testController.x();
+  private final Trigger HighAlgaeTrigger = testController.y();
+  private final Trigger ProcessorTrigger = testController.povRight();
   private final Trigger RollerManualTrigger = testController.leftBumper();
   private final Trigger RollerReverseTrigger = testController.rightBumper();
   private final Trigger PivotManualForwardTrigger = testController.rightTrigger();
@@ -128,6 +128,17 @@ public class RobotContainer {
       new rotate2Apriltag(drive,"left");
    private final Command rotate2Apriltagright=
       new rotate2Apriltag(drive, "right");
+  private final Command LowAlgaeCommand =
+      new LowAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
+  private final Command HighAlgaeCommand =
+      new HighAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
+  private final Command ProcessorCommand =
+      new ProcessorCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
+
+  // private final Command rotate2Apriltagleft=
+  // new rotate2Apriltag(drive,"left");
+  // private final Command rotate2Apriltagright=
+  // new rotate2Apriltag(drive, "right");
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Real robot, instantiate hardware IO implementations
@@ -162,9 +173,9 @@ public class RobotContainer {
 
     ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
     ElevatorVoltageLockTrigger.whileTrue(ElevatorHoldCommand);
-    L4Trigger.whileTrue(L4Command);
-    L2Trigger.whileTrue(L2Command);
-    L3Trigger.whileTrue(L3Command);
+    LowAlgaeTrigger.whileTrue(LowAlgaeCommand);
+    HighAlgaeTrigger.whileTrue(HighAlgaeCommand);
+    ProcessorTrigger.whileTrue(ProcessorCommand);
     RollerManualTrigger.whileTrue(RollerManualCommand);
     RollerReverseTrigger.whileTrue(RollerReverseCommand);
     m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultDownCommand);
@@ -193,15 +204,15 @@ public class RobotContainer {
 
     // Lock to 0° when A button is held
     /*
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
-    */
+     * driverController
+     * .a()
+     * .whileTrue(
+     * DriveCommands.joystickDriveAtAngle(
+     * drive,
+     * () -> -driverController.getLeftY(),
+     * () -> -driverController.getLeftX(),
+     * () -> new Rotation2d()));
+     */
 
     // Switch to X pattern when X button is pressed
     // driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

@@ -5,13 +5,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.PivotConstants;
+import frc.robot.generated.*;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class TakeLowAlgaeCommand extends Command {
+public class ProcessorCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_rollerSubsystem;
 
@@ -24,7 +24,7 @@ public class TakeLowAlgaeCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public TakeLowAlgaeCommand(
+  public ProcessorCommand(
       RollerSubsystem rollerSubsystem,
       PivotSubsystem pivotSubsystem,
       ElevatorSubsystem elevatorSubsystem) {
@@ -43,25 +43,25 @@ public class TakeLowAlgaeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2LowAlgae();
-    m_pivotSubsystem.set2LowAlgae();
-    if (m_pivotSubsystem.isAtPosition(PivotConstants.lowAlgaePosition)) {
-      m_rollerSubsystem.AlgaeVolts();
+    m_elevatorSubsystem.set2Home();
+    m_pivotSubsystem.set2Processor();
+    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.HomePosition)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.processorPosition)) {
+      m_rollerSubsystem.ProcessorVolts();
     }
-    m_pivotSubsystem.report();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_pivotSubsystem.hold();
-    m_elevatorSubsystem.lockVolts();
+    m_elevatorSubsystem.shutDown();
     m_rollerSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return !m_pivotSubsystem.getHoldAlgae();
   }
 }
