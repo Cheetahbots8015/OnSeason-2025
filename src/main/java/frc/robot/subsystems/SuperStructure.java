@@ -17,8 +17,6 @@ public class SuperStructure extends SubsystemBase {
   private PivotSystem pivot;
 
   private boolean isLeft = true;
-  private boolean testLoaded = false;
-  private boolean testPosition = false;
 
   private superStructureState systemState = superStructureState.IDLE;
   private superStructureState nextSystemState = superStructureState.IDLE;
@@ -36,8 +34,8 @@ public class SuperStructure extends SubsystemBase {
   @Override
   public void periodic() {
     Logger.recordOutput("Super Structure", this.getSystemState());
-    Logger.recordOutput("isLoaded", this.testLoaded);
-    Logger.recordOutput("isPosition", this.testPosition);
+    Logger.recordOutput("isLoaded", this.isCoralLoaded());
+    Logger.recordOutput("isPosition", this.isAtPosition());
     updateStateMachine();
 
     if (DriverStation.isDisabled()) {
@@ -95,7 +93,7 @@ public class SuperStructure extends SubsystemBase {
   public void requestShootReef(superStructurePosition pos, boolean isLeft) {
     systemPosition = pos;
     this.isLeft = isLeft;
-    if (!isLoaded()) {
+    if (!isCoralLoaded()) {
       nextSystemState = superStructureState.IDLE;
     } else if (!isAtPosition()) {
       nextSystemState = superStructureState.POSITION;
@@ -106,7 +104,7 @@ public class SuperStructure extends SubsystemBase {
 
   public void requestLoad() {
     systemPosition = superStructurePosition.STATION;
-    if (isLoaded()) {
+    if (isCoralLoaded()) {
       nextSystemState = superStructureState.IDLE;
     } else if (!isAtPosition()) {
       nextSystemState = superStructureState.POSITION;
@@ -126,9 +124,7 @@ public class SuperStructure extends SubsystemBase {
 
   public void requestLoadAlgae(superStructurePosition pos) {
     systemPosition = pos;
-    if (isLoaded()) {
-      nextSystemState = superStructureState.IDLE;
-    } else if (!isAtPosition()) {
+    if (!isAtPosition()) {
       nextSystemState = superStructureState.POSITION;
     } else {
       nextSystemState = superStructureState.LOAD;
@@ -138,14 +134,6 @@ public class SuperStructure extends SubsystemBase {
   public void requestEnd() {
     nextSystemState = superStructureState.IDLE;
     systemPosition = superStructurePosition.NULL;
-  }
-
-  public void requestTestLoadedStateChange() {
-    testLoaded = !testLoaded;
-  }
-
-  public void requestTestPositionStateChange() {
-    testPosition = !testPosition;
   }
 
   private superStructureState getSystemState() {
@@ -193,14 +181,12 @@ public class SuperStructure extends SubsystemBase {
     return elevator.getHomed();
   }
 
-  private boolean isLoaded() {
-    //        return roller.getLoaded();
-    return testLoaded;
+  private boolean isCoralLoaded() {
+    return roller.getLoaded();
   }
 
   private boolean isAtPosition() {
-    //        return pivot.isAtPosition() && elevator.isAtPos();
-    return testPosition;
+    return elevator.isAtPos(); // pivot.isAtPosition() &&
   }
 
   // commands when disabled

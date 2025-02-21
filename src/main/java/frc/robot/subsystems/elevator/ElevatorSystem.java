@@ -121,18 +121,23 @@ public class ElevatorSystem extends SubsystemBase {
   }
 
   public boolean isAtPos() {
-    return switch (systemPosition) {
-      case L1 -> io.isAtPosition(ElevatorConstants.ELEVATOR_L1_POSITION);
-      case L2 -> io.isAtPosition(ElevatorConstants.ELEVATOR_L2_POSITION);
-      case L3 -> io.isAtPosition(ElevatorConstants.ELEVATOR_L3_POSITION);
-      case L4 -> io.isAtPosition(ElevatorConstants.ELEVATOR_L4_POSITION);
-      case LOW_ALGAE -> io.isAtPosition(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION);
-      case HIGH_ALGAE -> io.isAtPosition(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION);
-      case PROCESSOR -> io.isAtPosition(ElevatorConstants.ELEVATOR_PROCESSOR_POSITION);
-      case STATION -> io.isAtPosition(ElevatorConstants.ELEVATOR_STATION_POSITION);
-      case LOLIPOP -> io.isAtPosition(ElevatorConstants.ELEVATOR_LOLIPOP_POSITION);
-      default -> false;
-    };
+    if (systemState == ElevatorState.POSITION) {
+      return switch (systemPosition) {
+        case L1 -> io.isAtPosition(ElevatorConstants.ELEVATOR_L1_POSITION);
+        case L2 -> io.isAtPosition(ElevatorConstants.ELEVATOR_L2_POSITION);
+        case L3 -> io.isAtPosition(ElevatorConstants.ELEVATOR_L3_POSITION);
+        case L4 -> io.isAtPosition(ElevatorConstants.ELEVATOR_L4_POSITION);
+        case LOW_ALGAE -> io.isAtPosition(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION);
+        case HIGH_ALGAE -> io.isAtPosition(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION);
+        case PROCESSOR -> io.isAtPosition(ElevatorConstants.ELEVATOR_PROCESSOR_POSITION);
+        case STATION -> io.isAtPosition(ElevatorConstants.ELEVATOR_STATION_POSITION);
+        case LOLIPOP -> io.isAtPosition(ElevatorConstants.ELEVATOR_LOLIPOP_POSITION);
+        default -> false;
+      };
+    } else {
+      systemPosition = ElevatorPosition.NULL;
+      return false;
+    }
   }
 
   /* System States */

@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.SuperStructureCommands.TestCommands.TestBackwardCommand;
-import frc.robot.commands.SuperStructureCommands.TestCommands.TestForwardCommand;
+import frc.robot.commands.SuperStructureCommands.LoadAlgaeCommands.LoadHighAlgaeCommand;
+import frc.robot.commands.SuperStructureCommands.ShootReefCommands.ShootLeftReefL4Command;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
@@ -191,14 +191,8 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controllerTest.a().whileTrue(new TestForwardCommand(superStructure));
-    controllerTest.b().whileTrue(new TestBackwardCommand(superStructure));
-    controllerTest
-        .x()
-        .onTrue(Commands.runOnce(superStructure::requestTestLoadedStateChange, superStructure));
-    controllerTest
-        .y()
-        .onTrue(Commands.runOnce(superStructure::requestTestPositionStateChange, superStructure));
+    controllerTest.a().whileTrue(new ShootLeftReefL4Command(superStructure));
+    controllerTest.b().whileTrue(new LoadHighAlgaeCommand(superStructure));
   }
 
   /**

@@ -2,7 +2,7 @@ package frc.robot.generated;
 
 public class RollerConstants {
   public static final int ROLLER_ID = 62;
-  public static final int ROLLER_CANRANGE_ID = 1;
+  public static final int ROLLER_CANRANGE_ID = 60;
   public static final String ROLLER_CANNAME = "canivore";
 
   public static final boolean ROLLER_INVERSION = false;

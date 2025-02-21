@@ -26,6 +26,8 @@ public class ShootLeftReefL4Command extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    m_superStructure.requestEnd();
+    if (interrupted) {
+      m_superStructure.requestEnd();
+    }
   }
 }
