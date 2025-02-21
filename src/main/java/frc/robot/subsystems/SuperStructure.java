@@ -37,10 +37,6 @@ public class SuperStructure extends SubsystemBase {
 		Logger.recordOutput("isLoaded", this.isCoralLoaded());
 		Logger.recordOutput("isPosition", this.isAtPosition());
 		updateStateMachine();
-
-		if (DriverStation.isDisabled()) {
-			disabledCommands();
-		}
 	}
 
 	public void updateStateMachine() {
@@ -51,9 +47,6 @@ public class SuperStructure extends SubsystemBase {
 		switch (systemState) {
 			case IDLE:
 				setIdle();
-				break;
-			case FALL:
-				setFall();
 				break;
 			case HOMING:
 				setHome();
@@ -148,11 +141,6 @@ public class SuperStructure extends SubsystemBase {
 		roller.setRollerState(RollerSystem.RollerState.IDLE);
 	}
 
-	private void setFall(){
-		elevator.setElevatorState(ElevatorSystem.ElevatorState.HOLD);
-		pivot.setPivotState(PivotSystem.PivotState.HOLD);
-	}
-
 	private void setManualForward() {
 		elevator.setElevatorState(ElevatorSystem.ElevatorState.MANUALUPWARD);
 	}
@@ -173,7 +161,7 @@ public class SuperStructure extends SubsystemBase {
 		if (systemPosition == superStructurePosition.STATION) {
 			roller.setRollerState(RollerSystem.RollerState.LOADCORAL);
 		} else {
-			roller.setRollerState(RollerSystem.RollerState.LOADCORAL);
+			roller.setRollerState(RollerSystem.RollerState.LOADALGAE);
 		}
 	}
 
@@ -191,15 +179,8 @@ public class SuperStructure extends SubsystemBase {
 		return elevator.isAtPos(); // pivot.isAtPosition() &&
 	}
 
-	// commands when disabled
-	private void disabledCommands() {
-		systemState = superStructureState.IDLE;
-		systemPosition = superStructurePosition.NULL;
-	}
-
 	private enum superStructureState {
 		IDLE,
-		FALL,
 		HOMING,
 		MANUALFORWARD,
 		MANUALBACKWARD,
