@@ -46,8 +46,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private final StatusSignal<Voltage> rightAppliedVoltage;
   private final StatusSignal<Current> rightSupplyCurrent;
   private final StatusSignal<Current> rightTorqueCurrent;
-  private final StatusSignal<Temperature> leftTempCelsius;
-  private final StatusSignal<Temperature> rightTempCelsius;
   private final StatusSignal<Double> leftReference;
   private final StatusSignal<Double> rightReference;
   // Single shot for voltage mode, robot loop will call continuously
@@ -95,9 +93,9 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     leaderConfigs.MotorOutput.withPeakReverseDutyCycle(
         ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE);
     followerConfigs.MotorOutput.withPeakForwardDutyCycle(
-        ElevatorConstants.ELEVATOR_PEAK_FORWARD_DUTY_CYCLE);
+        ElevatorConstants.ELEVATOR_PEAK_FOLLOWER_FORWARD_DUTY_CYCLE);
     followerConfigs.MotorOutput.withPeakReverseDutyCycle(
-        ElevatorConstants.ELEVATOR_PEAK_REVERSE_DUTY_CYCLE);
+        ElevatorConstants.ELEVATOR_PEAK_FOLLOWER_REVERSE_DUTY_CYCLE);
     leaderConfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.9;
 
     // follower differential control
@@ -123,8 +121,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     rightAppliedVoltage = follower.getMotorVoltage();
     rightSupplyCurrent = follower.getSupplyCurrent();
     rightTorqueCurrent = follower.getTorqueCurrent();
-    leftTempCelsius = leader.getDeviceTemp();
-    rightTempCelsius = follower.getDeviceTemp();
     leftReference = leader.getClosedLoopReference();
     rightReference = follower.getClosedLoopReference();
 
@@ -145,8 +141,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
                 rightAppliedVoltage,
                 rightSupplyCurrent,
                 rightTorqueCurrent,
-                leftTempCelsius,
-                rightTempCelsius,
                 leftReference,
                 rightReference));
     leader.optimizeBusUtilization(ElevatorConstants.SIGNAL_UPDATE_FREQUENCY_HZ, 0.1);
@@ -169,8 +163,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
                 rightAppliedVoltage,
                 rightSupplyCurrent,
                 rightTorqueCurrent,
-                leftTempCelsius,
-                rightTempCelsius,
                 leftReference,
                 rightReference)
             .isOK();
@@ -201,8 +193,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         new double[] {leftSupplyCurrent.getValueAsDouble(), rightSupplyCurrent.getValueAsDouble()};
     inputs.torqueCurrentAmps =
         new double[] {leftTorqueCurrent.getValueAsDouble(), rightTorqueCurrent.getValueAsDouble()};
-    inputs.tempCelcius =
-        new double[] {leftTempCelsius.getValueAsDouble(), rightTempCelsius.getValueAsDouble()};
     inputs.encoderOffset = encoderOffset;
   }
 

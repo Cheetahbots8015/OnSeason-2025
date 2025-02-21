@@ -10,6 +10,8 @@ public class ElevatorConstants {
 
   public static final double ELEVATOR_PEAK_FORWARD_DUTY_CYCLE = 0.6;
   public static final double ELEVATOR_PEAK_REVERSE_DUTY_CYCLE = -0.6;
+  public static final double ELEVATOR_PEAK_FOLLOWER_FORWARD_DUTY_CYCLE = 0.8;
+  public static final double ELEVATOR_PEAK_FOLLOWER_REVERSE_DUTY_CYCLE = -0.8;
   public static final double ELEVATOR_MOTION_MAGIC_ACCELERATION = 30.0;
   public static final double ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY = 50.0;
 

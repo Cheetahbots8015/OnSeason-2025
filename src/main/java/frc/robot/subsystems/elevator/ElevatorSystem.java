@@ -46,11 +46,16 @@ public class ElevatorSystem extends SubsystemBase {
   public void updateStateMachine() {
     if (systemState != nextSystemState) {
       systemState = nextSystemState;
+      // TODO: change of state sanity check
     }
 
     switch (systemState) {
       case IDLE:
-        io.setPosition(inputs.position[0]);
+        io.stop();
+        break;
+      case HOLD:
+        io.hold();
+        ;
         break;
       case HOMING:
         io.setHome();
@@ -133,6 +138,7 @@ public class ElevatorSystem extends SubsystemBase {
   /* System States */
   public enum ElevatorState {
     IDLE,
+    HOLD,
     HOMING,
     MANUALUPWARD,
     MANUTALDOWNWARD,

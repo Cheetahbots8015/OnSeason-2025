@@ -45,7 +45,6 @@ public interface ElevatorSystemIO {
     public double[] motionMagicPositionTarget = new double[] {}; // {leader, follower}
     public double[] supplyCurrentAmps = new double[] {}; // {leader, follower}
     public double[] torqueCurrentAmps = new double[] {}; // {leader, follower}
-    public double[] tempCelcius = new double[] {}; // {leader, follower}
     public double encoderOffset = 0.0; // {leader, follower}
   }
 }
