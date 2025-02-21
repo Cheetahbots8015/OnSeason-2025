@@ -51,7 +51,10 @@ public class ElevatorSystem extends SubsystemBase {
 
 		switch (systemState) {
 			case IDLE:
-				io.hold(); // TODO: fall to buttom, wait for LEO
+				io.setPosition(ElevatorConstants.ELEVATOR_IDLE_POSITION);
+				break;
+			case HOLD:
+				io.hold();
 				break;
 			case HOMING:
 				io.setHome();
@@ -140,6 +143,7 @@ public class ElevatorSystem extends SubsystemBase {
 	public enum ElevatorState {
 		IDLE,
 		HOMING,
+		HOLD,
 		MANUALUPWARD,
 		MANUTALDOWNWARD,
 		POSITION

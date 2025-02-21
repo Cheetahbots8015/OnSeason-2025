@@ -5,6 +5,7 @@ import static frc.robot.util.PositionUtil.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.ElevatorSystem;
+import frc.robot.subsystems.elevator.ElevatorSystem.ElevatorState;
 import frc.robot.subsystems.pivot.PivotSystem;
 import frc.robot.subsystems.rollers.RollerSystem;
 import frc.robot.subsystems.vision.Vision;
@@ -159,13 +160,16 @@ public class SuperStructure extends SubsystemBase {
 
 	private void setLoad() {
 		if (systemPosition == superStructurePosition.STATION) {
+			elevator.setElevatorState(ElevatorState.HOLD);
 			roller.setRollerState(RollerSystem.RollerState.LOADCORAL);
 		} else {
+			elevator.setElevatorState(ElevatorState.HOLD);
 			roller.setRollerState(RollerSystem.RollerState.LOADALGAE);
 		}
 	}
 
 	private void setShotReef() {
+		elevator.setElevatorState(ElevatorState.HOLD);
 		roller.setRollerPosition(super2roller(systemPosition));
 		roller.setRollerState(RollerSystem.RollerState.SHOOT);
 	}
