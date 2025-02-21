@@ -1,6 +1,6 @@
 package frc.robot.subsystems.pivot;
 
-import static frc.robot.generated.PivotConstants.*;
+import static frc.robot.constants.PivotConstants.*;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -14,7 +14,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.units.measure.*;
-import frc.robot.generated.RollerConstants;
+import frc.robot.constants.RollerConstants;
 
 public class PivotIOKrakenX60 implements PivotIO {
 
@@ -48,7 +48,7 @@ public class PivotIOKrakenX60 implements PivotIO {
     this.candiConfiguration = new CANdiConfiguration();
 
     pivotConfiguration.MotorOutput.withInverted(
-        inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
+        PIVOT_INVERSION ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
     pivotConfiguration.Slot0.kP = PIVOT_KP;
     pivotConfiguration.Slot0.kI = PIVOT_KI;
     pivotConfiguration.Slot0.kD = PIVOT_KD;

@@ -10,7 +10,7 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.generated.ElevatorConstants;
+import frc.robot.constants.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSystem extends SubsystemBase {

@@ -95,7 +95,7 @@ public class SuperStructure extends SubsystemBase {
 	public void requestLoad() {
 		systemPosition = superStructurePosition.STATION;
 		if (isCoralLoaded()) {
-			nextSystemState = superStructureState.FALL;
+			nextSystemState = superStructureState.IDLE;
 		} else if (!isAtPosition()) {
 			nextSystemState = superStructureState.POSITION;
 		} else {
@@ -122,7 +122,7 @@ public class SuperStructure extends SubsystemBase {
 	}
 
 	public void requestEnd() {
-		nextSystemState = superStructureState.FALL;
+		nextSystemState = superStructureState.IDLE;
 		systemPosition = superStructurePosition.NULL;
 	}
 

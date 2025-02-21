@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.generated.RollerConstants;
+import frc.robot.constants.RollerConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class RollerSystem extends SubsystemBase {
@@ -55,15 +55,13 @@ public class RollerSystem extends SubsystemBase {
 
 		switch (systemState) {
 			case IDLE:
-				break;
-			case HOLDALGAE:
-				io.runVolts(RollerConstants.ROLLER_HOLD_VOLTAGE);
+				io.runVelocity(RollerConstants.ROLLER_IDLE_VELOCITY);
 				break;
 			case LOADCORAL:
-				io.runVolts(RollerConstants.ROLLER_LOAD_CORAL_VOLTAGE);
+				io.runVelocity(RollerConstants.ROLLER_LOAD_CORAL_VELOCITY);
 				break;
 			case LOADALGAE:
-				io.runVolts(RollerConstants.ROLLER_LOAD_ALGAE_VOLTAGE);
+				io.runVelocity(RollerConstants.ROLLER_LOAD_ALGAE_VELOCITY);
 				break;
 			case SHOOT:
 				switch (systemPosition) {
@@ -107,7 +105,6 @@ public class RollerSystem extends SubsystemBase {
 
 	public enum RollerState {
 		IDLE,
-		HOLDALGAE,
 		LOADCORAL,
 		LOADALGAE,
 		SHOOT,

@@ -2,10 +2,9 @@ package frc.robot.subsystems.pivot;
 
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.generated.PivotConstants.*;
+import static frc.robot.constants.PivotConstants.*;
 
 import com.ctre.phoenix6.SignalLogger;
-import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -98,9 +97,6 @@ public class PivotSystem extends SubsystemBase {
 			case IDLE:
 				io.hold(inputs.position);
 				break;
-			case FALL:
-				io.hold(inputs.position);
-				break;
 			case POSITION:
 				double offset = inputs.s1Position - (inputs.s1Position % 1.0);
 				switch (pivotPosition) {
@@ -145,7 +141,6 @@ public class PivotSystem extends SubsystemBase {
 	public enum PivotState {
 		IDLE,
 		POSITION,
-		FALL,
 		MANUALFORWARD,
 		MANUALREVERSE
 	}

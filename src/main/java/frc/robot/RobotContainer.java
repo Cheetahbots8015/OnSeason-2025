@@ -13,7 +13,7 @@
 
 package frc.robot;
 
-import static frc.robot.generated.VisionConstants.*;
+import static frc.robot.constants.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.SuperStructureCommands.LoadFromStationCommands.LoadFromStationCommand;
 import frc.robot.commands.SuperStructureCommands.ShootReefCommands.ShootLeftReefL4Command;
-import frc.robot.generated.TunerConstants;
+import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
