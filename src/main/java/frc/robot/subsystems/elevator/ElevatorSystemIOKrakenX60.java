@@ -54,6 +54,7 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
           .withEnableFOC(true)
           .withUpdateFreqHz(ElevatorConstants.CONTROL_UPDATE_FREQUENCY_HZ);
   private final NeutralOut neutralOut = new NeutralOut();
+  MedianFilter filter;
   private TalonFXConfiguration leaderConfigs = new TalonFXConfiguration();
   private TalonFXConfiguration followerConfigs = new TalonFXConfiguration();
 
@@ -62,8 +63,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
   private double encoderOffset = 0.0;
   private double lastPosition = -100.0; // -100.0 for empty value to start
   private double motionMagicianVoltage = 0.0;
-
-  MedianFilter filter;
 
   public ElevatorSystemIOKrakenX60() {
     filter = new MedianFilter(5); /* Instantiate motors and configurators */
@@ -114,13 +113,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
     leaderAppliedVoltage = leader.getMotorVoltage();
     leaderSupplyCurrent = leader.getSupplyCurrent();
     leaderTorqueCurrent = leader.getTorqueCurrent();
+    leaderReference = leader.getClosedLoopReference();
     followerPosition = follower.getPosition();
     followerVelocity = follower.getVelocity();
     followerAcceleration = follower.getAcceleration();
     followerAppliedVoltage = follower.getMotorVoltage();
     followerSupplyCurrent = follower.getSupplyCurrent();
     followerTorqueCurrent = follower.getTorqueCurrent();
-    leaderReference = leader.getClosedLoopReference();
     followerReference = follower.getClosedLoopReference();
 
     tryUntilOk(
@@ -134,13 +133,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
                 leaderAppliedVoltage,
                 leaderSupplyCurrent,
                 leaderTorqueCurrent,
+                leaderReference,
                 followerPosition,
                 followerVelocity,
                 followerAcceleration,
                 followerAppliedVoltage,
                 followerSupplyCurrent,
                 followerTorqueCurrent,
-                leaderReference,
                 followerReference));
     leader.optimizeBusUtilization(ElevatorConstants.SIGNAL_UPDATE_FREQUENCY_HZ, 0.1);
     follower.optimizeBusUtilization(ElevatorConstants.SIGNAL_UPDATE_FREQUENCY_HZ, 0.1);
@@ -156,13 +155,13 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
                 leaderAppliedVoltage,
                 leaderSupplyCurrent,
                 leaderTorqueCurrent,
+                leaderReference,
                 followerPosition,
                 followerVelocity,
                 followerAcceleration,
                 followerAppliedVoltage,
                 followerSupplyCurrent,
                 followerTorqueCurrent,
-                leaderReference,
                 followerReference)
             .isOK();
 
@@ -209,6 +208,27 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
   @Override
   public void setPosition(double position) {
+    position += encoderOffset;
+    if (Math.abs(leader.getPosition().getValueAsDouble() - position)
+        < ElevatorConstants.ELEVATOR_POSITION_DEADBAND) {
+      hold();
+    } else if (Math.abs(leader.getPosition().getValueAsDouble() - position)
+            < ElevatorConstants.ELEVATOR_CLOSE_POSITION_DEADBAND
+        && leader.getPosition().getValueAsDouble() > position) {
+      setVoltage(ElevatorConstants.ELEVATOR_LOW_DOWN_VOLTAGE);
+    } else if (Math.abs(leader.getPosition().getValueAsDouble() - position)
+            < ElevatorConstants.ELEVATOR_CLOSE_POSITION_DEADBAND
+        && leader.getPosition().getValueAsDouble() <= position) {
+      setVoltage(ElevatorConstants.ELEVATOR_LOW_UP_VOLTAGE);
+    } else if (leader.getPosition().getValueAsDouble() > position) {
+      setVoltage(ElevatorConstants.ELEVATOR_DOWN_VOLTAGE);
+    } else {
+      setVoltage(ElevatorConstants.ELEVATOR_UP_VOLTAGE);
+    }
+  }
+
+  @Override
+  public void setPositionMotionMagic(double position) {
     if ((lastPosition < (position + encoderOffset)
             && leader.getPosition().getValueAsDouble() > (position + encoderOffset))
         || (lastPosition > (position + encoderOffset)
@@ -240,7 +260,9 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         motionMagicianVoltage = ElevatorConstants.ELEVATOR_MOTION_MAGICIAN_DOWN_MAXIMUM;
       }
     }
-    setVoltage(filter.calculate(motionMagicianVoltage));
+    leader.setControl(voltageOut.withOutput(motionMagicianVoltage));
+    follower.setControl(
+        new DifferentialVoltage(motionMagicianVoltage, 0.0).withDifferentialSlot(1));
   }
 
   @Override

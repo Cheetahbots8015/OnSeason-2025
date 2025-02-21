@@ -51,7 +51,7 @@ public class ElevatorSystem extends SubsystemBase {
 
     switch (systemState) {
       case IDLE:
-        io.setPosition(ElevatorConstants.ELEVATOR_IDLE_POSITION);
+        io.stop(); // TODO: change to idle quick fall
         break;
       case HOLD:
         io.hold();

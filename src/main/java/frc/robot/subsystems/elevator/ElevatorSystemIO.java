@@ -22,6 +22,8 @@ public interface ElevatorSystemIO {
 
   default void setPosition(double position) {}
 
+  default void setPositionMotionMagic(double position) {}
+
   default boolean isAtPosition(double pos) {
     return false;
   }
