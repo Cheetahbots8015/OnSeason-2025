@@ -12,19 +12,18 @@ public class ElevatorConstants {
   public static final double ELEVATOR_PEAK_REVERSE_DUTY_CYCLE = -0.6;
   public static final double ELEVATOR_PEAK_FOLLOWER_FORWARD_DUTY_CYCLE = 0.8;
   public static final double ELEVATOR_PEAK_FOLLOWER_REVERSE_DUTY_CYCLE = -0.8;
-  public static final double ELEVATOR_MOTION_MAGIC_ACCELERATION = 30.0;
-  public static final double ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY = 50.0;
+  public static final double ELEVATOR_MOTION_MAGICIAN_UP_RATE = 10.0/40.0;
+  public static final double ELEVATOR_MOTION_MAGICIAN_UP_MAXIMUM = 10.0;
+  public static final double ELEVATOR_MOTION_MAGICIAN_DOWN_RATE = -6.0/40.0;
+  public static final double ELEVATOR_MOTION_MAGICIAN_DOWN_MAXIMUM = -6.0;
 
   public static final double SIGNAL_UPDATE_FREQUENCY_HZ = 500.0;
   public static final double CONTROL_UPDATE_FREQUENCY_HZ = 500.0;
 
   public static final double ELEVATOR_UP_VOLTAGE = 4.0;
   public static final double ELEVATOR_DOWN_VOLTAGE = -4.0;
-  public static final double ELEVATOR_LOW_UP_VOLTAGE = 1.0;
-  public static final double ELEVATOR_LOW_DOWN_VOLTAGE = -0.8;
   public static final double ELEVATOR_HOLD_VOLTAGE = 0.3;
   public static final double ELEVATOR_POSITION_DEADBAND = 0.5;
-  public static final double ELEVATOR_CLOSE_POSITION_DEADBAND = 5.0;
 
   public static final double ELEVATOR_L1_POSITION = 21.68;
   public static final double ELEVATOR_L2_POSITION = 21.68;
