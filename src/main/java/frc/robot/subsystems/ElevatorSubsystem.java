@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.DifferentialSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,15 +26,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFXConfiguration leaderconfigs = new TalonFXConfiguration();
   private TalonFXConfiguration followerconfigs = new TalonFXConfiguration();
 
-  private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
+  private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(10);
   private MotionMagicTorqueCurrentFOC motionMagic =
       new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(0);
   private NeutralOut neutralOut = new NeutralOut();
 
   private double encoderOffset = 0.0;
   private double timer = -1.0;
-  private double initialPosition = -1.0;
   private boolean hasHomed = false;
+
+  MedianFilter filter = new MedianFilter(30);
 
   public ElevatorSubsystem() {
     leaderconfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -61,6 +63,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leaderconfigs.MotorOutput.withPeakReverseDutyCycle(ElevatorConstants.reverseDutyCycleLimit);
     followerconfigs.MotorOutput.withPeakForwardDutyCycle(ElevatorConstants.forwardDutyCycleLimit);
     followerconfigs.MotorOutput.withPeakReverseDutyCycle(ElevatorConstants.reverseDutyCycleLimit);
+    followerconfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.2;
     leaderconfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.9;
     leader.getTorqueCurrent().setUpdateFrequency(50);
     leader.getClosedLoopReference().setUpdateFrequency(50);
@@ -86,34 +89,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     follower.setControl(neutralOut);
   }
 
-  public void motionMagicianVoltage(double volts) {
+  public void setVolts(double volts) {
     leader.setControl(voltageOut.withOutput(volts));
-    follower.setControl(new DifferentialVoltage(volts, 0.0).withDifferentialSlot(1));
-  }
-
-  public void manualUpVolts() {
-    leader.setControl(voltageOut.withOutput(ElevatorConstants.manualUpVoltage));
     follower.setControl(
-        new DifferentialVoltage(ElevatorConstants.manualUpVoltage, 0.0).withDifferentialSlot(1));
-  }
-
-  public void manualDownVolts() {
-    leader.setControl(voltageOut.withOutput(ElevatorConstants.manualDownVoltage));
-    follower.setControl(
-        new DifferentialVoltage(ElevatorConstants.manualDownVoltage, 0.0).withDifferentialSlot(1));
-  }
-
-  public void lowManualUpVolts() {
-    leader.setControl(voltageOut.withOutput(ElevatorConstants.lowManualUpVoltage));
-    follower.setControl(
-        new DifferentialVoltage(ElevatorConstants.lowManualUpVoltage, 0.0).withDifferentialSlot(1));
-  }
-
-  public void lowManualDownVolts() {
-    leader.setControl(voltageOut.withOutput(ElevatorConstants.lowManualDownVoltage));
-    follower.setControl(
-        new DifferentialVoltage(ElevatorConstants.lowManualDownVoltage, 0.0)
-            .withDifferentialSlot(1));
+        new DifferentialVoltage(volts, 0.0).withDifferentialSlot(1).withUpdateFreqHz(50.0));
   }
 
   public void lockVolts() {
@@ -137,29 +116,52 @@ public class ElevatorSubsystem extends SubsystemBase {
     height += encoderOffset;
     if (Math.abs(leader.getPosition().getValueAsDouble() - height)
         < ElevatorConstants.positionDeadband) {
-      lockVolts();
+      setVolts(ElevatorConstants.lockVoltage);
+      // resetFilter();
     } else if (leader.getPosition().getValueAsDouble()
         > height + ElevatorConstants.closePositionDeadband) {
-      manualDownVolts();
+      setVolts(filter.calculate(ElevatorConstants.motionmagicianHighDownVoltage));
     } else if (leader.getPosition().getValueAsDouble()
         < height - ElevatorConstants.closePositionDeadband) {
-      manualUpVolts();
+      setVolts(filter.calculate(ElevatorConstants.motionmagicianHighUpVoltage));
     } else if (leader.getPosition().getValueAsDouble() > height) {
-      lowManualDownVolts();
+      setVolts(filter.calculate(ElevatorConstants.motionmagicianLowDownVoltage));
     } else {
-      lowManualUpVolts();
+      setVolts(filter.calculate(ElevatorConstants.motionmagicianLowUpVoltage));
     }
+  }
+
+  public void setLowHeight(double height) {
+    height += encoderOffset;
+    if (Math.abs(leader.getPosition().getValueAsDouble() - height)
+        < ElevatorConstants.positionDeadband) {
+      setVolts(ElevatorConstants.lockVoltage);
+    } else if (Math.abs(leader.getPosition().getValueAsDouble() - height) < 5.0
+        && leader.getPosition().getValueAsDouble() > height) {
+      setVolts(-0.8);
+    } else if (Math.abs(leader.getPosition().getValueAsDouble() - height) < 5.0
+        && leader.getPosition().getValueAsDouble() <= height) {
+      setVolts(1.0);
+    } else if (leader.getPosition().getValueAsDouble() > height) {
+      setVolts(-4.0);
+    } else {
+      setVolts(4.0);
+    }
+  }
+
+  public void resetFilter() {
+    filter.reset();
   }
 
   public boolean isAtPosition(double height) {
     height += encoderOffset;
-    if (Math.abs(leader.getPosition().getValueAsDouble() - height)
+    if (Math.abs(follower.getPosition().getValueAsDouble() - height)
         < ElevatorConstants.positionDeadband) {
       SmartDashboard.putBoolean("elevator/is at position", true);
     } else {
       SmartDashboard.putBoolean("elevator/is at position", false);
     }
-    return Math.abs(leader.getPosition().getValueAsDouble() - height)
+    return Math.abs(follower.getPosition().getValueAsDouble() - height)
         < ElevatorConstants.positionDeadband;
   }
 
@@ -173,9 +175,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     if (Timer.getFPGATimestamp() - timer < ElevatorConstants.homeUpTime) {
-      manualUpVolts();
+      setVolts(ElevatorConstants.homeUpVoltage);
     } else {
-      manualDownVolts();
+      setVolts(ElevatorConstants.homeDownVoltage);
       if (getHallSensorActive()) {
         resetOffset();
         shutDown();
@@ -203,12 +205,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void set2L1() {
     report();
-    setHeight(ElevatorConstants.L1Position);
+    setLowHeight(ElevatorConstants.L1Position);
   }
 
   public void set2L2() {
     report();
-    setHeight(ElevatorConstants.L2Position);
+    setLowHeight(ElevatorConstants.L2Position);
   }
 
   public void set2LowAlgae() {

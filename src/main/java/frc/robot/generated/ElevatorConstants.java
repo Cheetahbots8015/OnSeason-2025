@@ -7,15 +7,12 @@ public class ElevatorConstants {
   public static final boolean inverted = false;
   public static final String canName = "canivore";
   public static final boolean opposeMaster = true;
-  public static final double manualUpVoltage = 4.0;
-  public static final double manualDownVoltage = -6.0;
+  public static final double motionmagicianHighUpVoltage = 5.0;
+  public static final double motionmagicianHighDownVoltage = -4.0;
+  public static final double motionmagicianLowUpVoltage = 0.1;
+  public static final double motionmagicianLowDownVoltage = 0.1;
   public static final double defaultDownVoltage = -7.0;
-  public static final double lowManualUpVoltage = 1.0;
-  public static final double lowManualDownVoltage = -1.0;
-  public static final double motionMagicianInitialVoltage = 3.0;
-  public static final double motionMagicianRateVoltsPerRot = 0.166;
-  public static final double motionMagicianVoltageLimit = 7.0;
-  public static final double lockVoltage = 0.3;
+  public static final double lockVoltage = 0.27;
   public static final double forwardDutyCycleLimit = 0.7;
   public static final double reverseDutyCycleLimit = -0.7;
   public static final double kP = 50.0;
@@ -35,6 +32,8 @@ public class ElevatorConstants {
   public static final double L4Position = 118.0;
   public static final double L3Position = 59.0;
   public static final double positionDeadband = 1.2;
-  public static final double closePositionDeadband = 12.0;
+  public static final double closePositionDeadband = 20.0;
   public static final double homeUpTime = 0.3;
+  public static final double homeUpVoltage = 3.0;
+  public static final double homeDownVoltage = -2.0;
 }
