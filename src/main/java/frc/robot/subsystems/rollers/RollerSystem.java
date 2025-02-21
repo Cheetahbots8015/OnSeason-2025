@@ -9,98 +9,119 @@ package frc.robot.subsystems.rollers;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.generated.RollerConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class RollerSystem extends SubsystemBase {
-  protected final RollerSystemIOInputsAutoLogged inputs = new RollerSystemIOInputsAutoLogged();
-  private final String name;
-  private final RollerSystemIO io;
-  private final Alert disconnected;
+	protected final RollerSystemIOInputsAutoLogged inputs = new RollerSystemIOInputsAutoLogged();
+	private final String name;
+	private final RollerSystemIO io;
+	private final Alert disconnected;
 
-  private RollerState systemState = RollerState.IDLE;
-  private RollerPosition systemPosition = RollerPosition.NULL;
-  private RollerState nextSystemState = RollerState.IDLE;
+	private RollerState systemState = RollerState.IDLE;
+	private RollerPosition systemPosition = RollerPosition.NULL;
+	private RollerState nextSystemState = RollerState.IDLE;
 
-  public RollerSystem(String name, RollerSystemIO io) {
-    this.name = name;
-    this.io = io;
-    disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
-  }
+	private double timer = -1;
 
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs(name, inputs);
-    Logger.recordOutput(name, this.getSystemState());
-    disconnected.set(!inputs.connected);
+	public RollerSystem(String name, RollerSystemIO io) {
+		this.name = name;
+		this.io = io;
+		disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
+	}
 
-    if (DriverStation.isDisabled()) {
-      nextSystemState = RollerState.IDLE;
-    }
-    updateStateMachine();
-  }
+	public void periodic() {
+		io.updateInputs(inputs);
+		Logger.processInputs(name, inputs);
+		Logger.recordOutput(name, this.getSystemState());
+		disconnected.set(!inputs.connected);
 
-  public RollerState getSystemState() {
-    return systemState;
-  }
+		if (DriverStation.isDisabled()) {
+			nextSystemState = RollerState.IDLE;
+		}
+		updateStateMachine();
+	}
 
-  public void setSystemState(RollerState state) {
-    nextSystemState = state;
-  }
+	public RollerState getSystemState() {
+		return systemState;
+	}
 
-  private void updateStateMachine() {
-    if (systemState != nextSystemState) {
-      systemState = nextSystemState;
-    }
+	private void updateStateMachine() {
+		if (systemState != nextSystemState) {
+			systemState = nextSystemState;
+		}
 
-    switch (systemState) {
-      case IDLE:
-        break;
-      case LOAD:
-        io.runVolts(RollerConstants.ROLLER_LOAD_VOLTAGE);
-        break;
-      case SHOOT:
-        switch (systemPosition) {
-          case L1 -> io.runVolts(RollerConstants.ROLLER_L1_VOLTAGE);
-          case L2 -> io.runVolts(RollerConstants.ROLLER_L2_VOLTAGE);
-          case L3 -> io.runVolts(RollerConstants.ROLLER_L3_VOLTAGE);
-          case L4 -> io.runVolts(RollerConstants.ROLLER_L4_VOLTAGE);
-          case LOLIPOP -> io.runVolts(RollerConstants.ROLLER_LOLIPOP_VOLTAGE);
-          case NULL -> io.runVolts(0);
-        }
-        break;
-      case MANUALFORWARD:
-        io.runVolts(RollerConstants.ROLLER_MANUALFORWARD_VOLTAGE);
-        break;
-      case MANUALINVERT:
-        io.runVolts(RollerConstants.ROLLER_MANUALINVERT_VOLTAGE);
-        break;
-    }
-  }
+		switch (systemState) {
+			case IDLE:
+				break;
+			case HOLDALGAE:
+				io.runVolts(RollerConstants.ROLLER_HOLD_VOLTAGE);
+				break;
+			case LOADCORAL:
+				io.runVolts(RollerConstants.ROLLER_LOAD_CORAL_VOLTAGE);
+				break;
+			case LOADALGAE:
+				io.runVolts(RollerConstants.ROLLER_LOAD_ALGAE_VOLTAGE);
+				break;
+			case SHOOT:
+				switch (systemPosition) {
+					case L1 -> io.runVolts(RollerConstants.ROLLER_L1_VOLTAGE);
+					case L2 -> io.runVolts(RollerConstants.ROLLER_L2_VOLTAGE);
+					case L3 -> io.runVolts(RollerConstants.ROLLER_L3_VOLTAGE);
+					case L4 -> io.runVolts(RollerConstants.ROLLER_L4_VOLTAGE);
+					case LOLIPOP -> io.runVolts(RollerConstants.ROLLER_LOLIPOP_VOLTAGE);
+					case PROCESSOR -> io.runVolts(RollerConstants.ROLLER_PROCESSOR_VOLTAGE);
+					case NULL -> io.runVolts(0);
+				}
+				break;
+			case MANUALFORWARD:
+				io.runVolts(RollerConstants.ROLLER_MANUALFORWARD_VOLTAGE);
+				break;
+			case MANUALINVERT:
+				io.runVolts(RollerConstants.ROLLER_MANUALINVERT_VOLTAGE);
+				break;
+		}
+	}
 
-  public void setSystemPosition(RollerPosition position) {
-    systemPosition = position;
-  }
+	public void setRollerState(RollerState state) {
+		nextSystemState = state;
+	}
 
-  public boolean getLoaded() {
-    return io.isCanRangeTriggered();
-  }
+	public void setRollerPosition(RollerPosition position) {
+		systemPosition = position;
+	}
 
-  public enum RollerState {
-    IDLE,
-    LOAD,
-    SHOOT,
-    MANUALINVERT,
-    MANUALFORWARD,
-  }
+	public boolean getLoaded() {
+		if (io.isCanRangeTriggered()) {
+			if (timer == -1) {
+				timer = Timer.getFPGATimestamp();
+			}
+			return !(Timer.getFPGATimestamp() - timer < RollerConstants.ROLLER_EXTRA_TIME);
+		} else {
+			timer = -1;
+			return false;
+		}
+	}
 
-  public enum RollerPosition {
-    NULL,
-    L1,
-    L2,
-    L3,
-    L4,
-    LOLIPOP,
-  }
+	public enum RollerState {
+		IDLE,
+		HOLDALGAE,
+		LOADCORAL,
+		LOADALGAE,
+		SHOOT,
+		MANUALINVERT,
+		MANUALFORWARD,
+	}
+
+	public enum RollerPosition {
+		NULL,
+		L1,
+		L2,
+		L3,
+		L4,
+		LOLIPOP,
+		PROCESSOR,
+	}
 }

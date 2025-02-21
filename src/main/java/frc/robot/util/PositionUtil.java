@@ -60,6 +60,9 @@ public class PositionUtil {
       case LOLIPOP -> {
         return RollerSystem.RollerPosition.LOLIPOP;
       }
+      case PROCESSOR -> {
+        return RollerSystem.RollerPosition.PROCESSOR;
+      }
       default -> {
         return RollerSystem.RollerPosition.NULL;
       }

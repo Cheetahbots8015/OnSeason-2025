@@ -245,7 +245,7 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
         timer = Timer.getFPGATimestamp();
       }
 
-      if (Timer.getFPGATimestamp() - timer < ElevatorConstants.HOME_UP_TIME) {
+      if (Timer.getFPGATimestamp() - timer < ElevatorConstants.ELEVATOR_HOME_UP_TIME) {
         setVoltage(ElevatorConstants.ELEVATOR_UP_VOLTAGE);
       } else {
         setVoltage(ElevatorConstants.ELEVATOR_DOWN_VOLTAGE);

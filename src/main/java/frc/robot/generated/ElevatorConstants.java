@@ -26,7 +26,6 @@ public class ElevatorConstants {
   public static final double ELEVATOR_POSITION_DEADBAND = 0.5;
   public static final double ELEVATOR_CLOSE_POSITION_DEADBAND = 5.0;
 
-  public static final double HOME_UP_TIME = 0.1;
   public static final double ELEVATOR_L1_POSITION = 21.68;
   public static final double ELEVATOR_L2_POSITION = 21.68;
   public static final double ELEVATOR_L3_POSITION = 63.0;
@@ -36,4 +35,5 @@ public class ElevatorConstants {
   public static final double ELEVATOR_PROCESSOR_POSITION = 0.0;
   public static final double ELEVATOR_STATION_POSITION = 0.0;
   public static final double ELEVATOR_LOLIPOP_POSITION = 0.0;
+  public static final double ELEVATOR_HOME_UP_TIME = 0.1;
 }

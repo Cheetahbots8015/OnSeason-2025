@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.SuperStructureCommands.LoadAlgaeCommands.LoadHighAlgaeCommand;
+import frc.robot.commands.SuperStructureCommands.LoadFromStationCommands.LoadFromStationCommand;
 import frc.robot.commands.SuperStructureCommands.ShootReefCommands.ShootLeftReefL4Command;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SuperStructure;
@@ -192,7 +192,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controllerTest.a().whileTrue(new ShootLeftReefL4Command(superStructure));
-    controllerTest.b().whileTrue(new LoadHighAlgaeCommand(superStructure));
+    controllerTest.b().whileTrue(new LoadFromStationCommand(superStructure));
   }
 
   /**

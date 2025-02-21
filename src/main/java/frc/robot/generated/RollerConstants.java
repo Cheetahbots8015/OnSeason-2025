@@ -18,7 +18,8 @@ public class RollerConstants {
 
   public static final double CANRANGE_DISTANCE_THRESHOLD = 0.1;
 
-  public static final double ROLLER_LOAD_VOLTAGE = -2.0;
+  public static final double ROLLER_LOAD_CORAL_VOLTAGE = -2.0;
+  public static final double ROLLER_LOAD_ALGAE_VOLTAGE = 2.0;
   public static final double ROLLER_L1_VOLTAGE = 6.0;
   public static final double ROLLER_L2_VOLTAGE = 8.0;
   public static final double ROLLER_L3_VOLTAGE = 8.0;
@@ -29,4 +30,6 @@ public class RollerConstants {
   public static final double ROLLER_PROCESSOR_VOLTAGE = 0.0;
   public static final double MIN_SIGNAL_STRENGTH = 0.0;
   public static final double CAN_RANGE_HYSTERESIS = 0.0;
+  public static final double ROLLER_EXTRA_TIME = 2.0;
+	public static final double ROLLER_HOLD_VOLTAGE = 2.0;
 }
