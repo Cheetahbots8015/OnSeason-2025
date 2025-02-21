@@ -48,7 +48,9 @@ public class PivotIOKrakenX60 implements PivotIO {
     this.candiConfiguration = new CANdiConfiguration();
 
     pivotConfiguration.MotorOutput.withInverted(
-        PIVOT_INVERSION ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
+        PIVOT_INVERSION
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive);
     pivotConfiguration.Slot0.kP = PIVOT_KP;
     pivotConfiguration.Slot0.kI = PIVOT_KI;
     pivotConfiguration.Slot0.kD = PIVOT_KD;
