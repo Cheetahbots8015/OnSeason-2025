@@ -86,13 +86,11 @@ public class DriveCommands {
             if (Math.abs(pose.getTranslation().getX()) < 1) {
               if (pose.getTranslation().getX() < -0.1) {
                 controller.setRumble(
-                    RumbleType.kLeftRumble,
-                    1 - Math.abs(pose.getTranslation().getX()));
+                    RumbleType.kLeftRumble, 1 - Math.abs(pose.getTranslation().getX()));
                 controller.setRumble(RumbleType.kRightRumble, 0);
-              } else if (pose.getTranslation().getX()>0.1) {
+              } else if (pose.getTranslation().getX() > 0.1) {
                 controller.setRumble(
-                    RumbleType.kRightRumble,
-                    1 - Math.abs(pose.getTranslation().getX()));
+                    RumbleType.kRightRumble, 1 - Math.abs(pose.getTranslation().getX()));
                 controller.setRumble(RumbleType.kLeftRumble, 0);
               } else {
                 controller.setRumble(RumbleType.kBothRumble, 1);
