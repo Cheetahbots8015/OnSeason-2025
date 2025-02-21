@@ -13,8 +13,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
+import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevatorCommand.ElevatorDefaultDownCommand;
 import frc.robot.commands.elevatorCommand.ElevatorHoldCommand;
+import frc.robot.commands.elevatorCommand.ElevatorHomeCommand;
 import frc.robot.commands.elevatorCommand.ElevatorL2Command;
 import frc.robot.commands.elevatorCommand.ElevatorReportCommand;
 import frc.robot.commands.elevatorCommand.ElevatorResetCommand;
@@ -66,27 +68,13 @@ public class RobotContainer {
   private final CommandXboxController SysIDController =
       new CommandXboxController(JoystickConstants.sysIDControllerPort);
 
-  private final CommandXboxController operatorController =
-      new CommandXboxController(JoystickConstants.operatorControllerPort);
-
-  private final Trigger DriverL1Trigger =
-      driverController.a().and(driverController.rightBumper().negate());
-  private final Trigger DriverL2Trigger =
-      driverController.b().and(driverController.rightBumper().negate());
-  private final Trigger DriverL3Trigger =
-      driverController.x().and(driverController.rightBumper().negate());
+  // private final Trigger DriverL1Trigger = driverController.a();
+  private final Trigger DriverL2Trigger = driverController.b();
+  private final Trigger DriverL3Trigger = driverController.x();
   private final Trigger DriverL4Trigger = driverController.y();
+  private final Trigger DriverHomeTrigger = driverController.rightBumper();
   private final Trigger DriverStationTrigger = driverController.leftTrigger();
   private final Trigger DriveerReverseTrigger = driverController.rightTrigger();
-  private final Trigger DriverLowAlgaeTrigger =
-      driverController.a().and(driverController.rightBumper());
-  private final Trigger DriverHighAlgaeTrigger =
-      driverController.b().and(driverController.rightBumper());
-  private final Trigger DriverProcessorTrigger =
-      driverController.x().and(driverController.rightBumper());
-
-  private final Trigger OperatorHomeTrigger = operatorController.rightBumper();
-  private final Trigger OperatorSetHoldAlgaeTrigger = operatorController.leftBumper();
 
   private final Trigger ElevatorManualTrigger = testController.a();
   private final Trigger ElevatorVoltageLockTrigger = testController.b();
@@ -98,6 +86,7 @@ public class RobotContainer {
   private final Trigger PivotManualForwardTrigger = testController.rightTrigger();
   private final Trigger PivotManualReverseTrigger = testController.leftTrigger();
   private final Trigger PivotL2Trigger = testController.povUp();
+  private final Trigger ElevatorHomeTrigger = testController.povDown();
 
   private final Command DriverL1Command =
       new L1Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
@@ -107,17 +96,10 @@ public class RobotContainer {
       new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command DriverL4Command =
       new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command DriverHomeCommand =
+      new ElevatorHomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
   private final Command DriverStationCommand = new StationCommand(m_rollerSubsystem);
   private final Command DriverReverseCommand = new RollerManualReverseCommand(m_rollerSubsystem);
-  private final Command DriverLowAlgaeCommand =
-      new LowAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
-  private final Command DriverHighAlgaeCommand =
-      new HighAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
-  private final Command DriverProcessorCommand =
-      new ProcessorCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
-
-  private final Command OperatorHomeCommand =
-      new HomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
 
   private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
   private final Command ElevatorHoldCommand = new ElevatorHoldCommand(m_elevatorSubsystem);
@@ -134,14 +116,17 @@ public class RobotContainer {
   private final Command PivotForwardCommand = new PivotForwardCommand(m_pivotSubsystem);
   private final Command PivotReverseCommand = new PivotReverseCommand(m_pivotSubsystem);
   private final Command PivotL2Command = new PivotL2Command(m_pivotSubsystem);
+  private final Command ElevatorHomeCommand =
+      new ElevatorHomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
   private final Command L2Command =
       new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command L4Command =
       new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command L3Command =
       new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command rotate2Apriltagleft = new rotate2Apriltag(drive, "left");
-  private final Command rotate2Apriltagright = new rotate2Apriltag(drive, "right");
+  private final Command rotate2Apriltagleft = new rotate2Apriltag(drive, "left", driverController);
+  private final Command rotate2Apriltagright =
+      new rotate2Apriltag(drive, "right", driverController);
   private final Command LowAlgaeCommand =
       new LowAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
   private final Command HighAlgaeCommand =
@@ -177,19 +162,13 @@ public class RobotContainer {
     // pressed,
     // cancelling on release.
 
-    DriverL1Trigger.whileTrue(DriverL1Command);
+    // DriverL1Trigger.whileTrue(DriverL1Command);
     DriverL2Trigger.whileTrue(DriverL2Command);
     DriverL3Trigger.whileTrue(DriverL3Command);
     DriverL4Trigger.whileTrue(DriverL4Command);
+    DriverHomeTrigger.whileTrue(DriverHomeCommand);
     DriverStationTrigger.whileTrue(DriverStationCommand);
     DriveerReverseTrigger.whileTrue(DriverReverseCommand);
-    DriverLowAlgaeTrigger.whileTrue(DriverLowAlgaeCommand);
-    DriverHighAlgaeTrigger.whileTrue(DriverHighAlgaeCommand);
-    DriverProcessorTrigger.whileTrue(DriverProcessorCommand);
-
-    OperatorHomeTrigger.whileTrue(OperatorHomeCommand);
-    OperatorSetHoldAlgaeTrigger.onTrue(
-        Commands.runOnce(() -> m_pivotSubsystem.switchHoldAlgae(), m_pivotSubsystem));
 
     ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
     ElevatorVoltageLockTrigger.whileTrue(ElevatorHoldCommand);
@@ -198,8 +177,12 @@ public class RobotContainer {
     ProcessorTrigger.whileTrue(ProcessorCommand);
     RollerManualTrigger.whileTrue(RollerManualCommand);
     RollerReverseTrigger.whileTrue(RollerReverseCommand);
+    m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultDownCommand);
+    m_pivotSubsystem.setDefaultCommand(PivotDefaultBackCommand);
+    m_rollerSubsystem.setDefaultCommand(RollerDefaultIdleCommand);
     PivotManualForwardTrigger.whileTrue(PivotForwardCommand);
     PivotManualReverseTrigger.whileTrue(PivotReverseCommand);
+    ElevatorHomeTrigger.whileTrue(ElevatorHomeCommand);
     PivotL2Trigger.whileTrue(PivotL2Command);
 
     SysIDController.a()
@@ -216,11 +199,7 @@ public class RobotContainer {
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX(),
-            operatorController.a().getAsBoolean()));
-    m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultDownCommand);
-    m_pivotSubsystem.setDefaultCommand(PivotDefaultBackCommand);
-    m_rollerSubsystem.setDefaultCommand(RollerDefaultIdleCommand);
+            () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
     /*

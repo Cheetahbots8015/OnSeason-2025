@@ -7,15 +7,18 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 
 public class rotate2Apriltag extends Command {
   private final Drive m_drive;
   private final String m_direction;
+  private final CommandXboxController m_controller;
+  private Pose3d lastPose;
   PIDController pidx = new PIDController(8, 0, 0);
   PIDController pidy = new PIDController(5, 0, 0);
   PIDController pidyaw = new PIDController(5, 0, 0);
@@ -24,9 +27,10 @@ public class rotate2Apriltag extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public rotate2Apriltag(Drive drive, String direction) {
+  public rotate2Apriltag(Drive drive, String direction, CommandXboxController controller) {
     m_drive = drive;
     m_direction = direction;
+    m_controller = controller;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
   }
@@ -55,7 +59,15 @@ public class rotate2Apriltag extends Command {
     boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
     Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
     if (hasTarget) {
+      lastPose = pose;
       if (pose.getTranslation().getZ() <= 0.8) {
+        if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 4) {
+          m_controller.setRumble(
+              RumbleType.kBothRumble,
+              1 - (0.25 * Math.abs(LimelightHelpers.getTX("limelight-reef"))));
+        } else {
+          m_controller.setRumble(RumbleType.kBothRumble, 0);
+        }
         SmartDashboard.putBoolean("limelight-reef", false);
         pidy = new PIDController(0.07, 0, 0);
         pidyaw = new PIDController(0.05, 0, 0);
@@ -74,7 +86,8 @@ public class rotate2Apriltag extends Command {
         m_drive.runVelocity(drivSpeeds);
       }
     } else {
-      ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
+      ChassisSpeeds drivSpeeds =
+          new ChassisSpeeds(0, 0, pidyaw.calculate(lastPose.getRotation().getY()));
       m_drive.runVelocity(drivSpeeds);
     }
   }
@@ -82,8 +95,7 @@ public class rotate2Apriltag extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Commands.runEnd(
-        () -> m_drive.runVelocity(new ChassisSpeeds(1.0, 0.0, 0.0)), () -> m_drive.stop(), m_drive);
+    m_drive.stop();
   }
 
   // Returns true when the command should end.

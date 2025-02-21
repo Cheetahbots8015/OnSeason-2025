@@ -27,8 +27,8 @@ public class ElevatorConstants {
   public static final double HomePosition = 0.2;
   public static final double L1Position = 21.68;
   public static final double L2Position = 21.68;
-  public static final double lowAlgaePosition = 40.0;
-  public static final double highAlgaePosition = 80.0;
+  public static final double lowAlgaePosition = 40.0; // TODO: Change This
+  public static final double highAlgaePosition = 80.0; // TODO: Change This
   public static final double L4Position = 118.0;
   public static final double L3Position = 59.0;
   public static final double positionDeadband = 1.2;
