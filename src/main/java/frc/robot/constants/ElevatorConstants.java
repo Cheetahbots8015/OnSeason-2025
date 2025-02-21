@@ -28,6 +28,7 @@ public class ElevatorConstants {
 	public static final double ELEVATOR_POSITION_DEADBAND = 0.5;
 	public static final double ELEVATOR_CLOSE_POSITION_DEADBAND = 5.0;
 
+	public static final double ELEVATOR_IDLE_POSITION = 0.5;
 	public static final double ELEVATOR_L1_POSITION = 21.68;
 	public static final double ELEVATOR_L2_POSITION = 21.68;
 	public static final double ELEVATOR_L3_POSITION = 63.0;
