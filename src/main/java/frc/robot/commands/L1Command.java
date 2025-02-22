@@ -61,7 +61,7 @@ public class L1Command extends Command {
   public void end(boolean interrupted) {
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.shutDown();
-    m_pivotSubsystem.hold();
+    m_pivotSubsystem.shutDown();
   }
 
   // Returns true when the command should end.

@@ -7,7 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "First Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCommand"
           }
         }
       ]

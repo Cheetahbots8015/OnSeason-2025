@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.9060227272727275,
-        "y": 4.95734375
+        "x": 4.965852272727273,
+        "y": 5.346235795454545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.317698863636364,
-        "y": 5.276434659090907
+        "x": 4.3775284090909095,
+        "y": 5.6653267045454525
       },
       "isLocked": false,
       "linkedName": "FirstCoral"
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeCommand",
+      "waypointRelativePos": 0.7986501687289109,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

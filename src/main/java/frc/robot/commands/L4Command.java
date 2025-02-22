@@ -48,7 +48,7 @@ public class L4Command extends Command {
     if (m_elevatorSubsystem.isAbovePosition(110.0)) {
       m_pivotSubsystem.set2L4();
     } else {
-      m_pivotSubsystem.hold();
+      m_pivotSubsystem.set2L2();
     }
 
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L4Position)
@@ -66,7 +66,7 @@ public class L4Command extends Command {
   public void end(boolean interrupted) {
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.shutDown();
-    m_pivotSubsystem.hold();
+    m_pivotSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
