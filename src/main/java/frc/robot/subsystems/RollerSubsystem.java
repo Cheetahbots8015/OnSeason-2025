@@ -26,6 +26,7 @@ public class RollerSubsystem extends SubsystemBase {
   private NeutralOut neutralOut = new NeutralOut();
 
   private double timer = -1.0;
+  private boolean holdAlgae = false;
 
   public RollerSubsystem() {
     rollerconfigs.MotorOutput.withInverted(
@@ -108,6 +109,11 @@ public class RollerSubsystem extends SubsystemBase {
     roller.setControl(voltageOut.withOutput(RollerConstants.AlgaeVoltage));
   }
 
+  public void HoldAlgaeVolts() {
+    report();
+    roller.setControl(voltageOut.withOutput(-3.0));
+  }
+
   public void ProcessorVolts() {
     report();
     roller.setControl(voltageOut.withOutput(RollerConstants.ProcessorVoltage));
@@ -136,6 +142,18 @@ public class RollerSubsystem extends SubsystemBase {
 
   public void resetTimer() {
     timer = -1.0;
+  }
+
+  public boolean getHoldAlgae() {
+    return holdAlgae;
+  }
+
+  public void setHoldAlgae(boolean set) {
+    holdAlgae = set;
+  }
+
+  public void switchHoldAlgae() {
+    holdAlgae = !holdAlgae;
   }
 
   public void report() {

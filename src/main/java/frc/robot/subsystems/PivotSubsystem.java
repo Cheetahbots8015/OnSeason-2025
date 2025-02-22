@@ -169,11 +169,15 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void home() {
-    setHeight(PivotConstants.HomePosition);
+    if (holdAlgae) {
+      setHeight(PivotConstants.algaeHome);
+    } else {
+      setHeight(PivotConstants.HomePosition);
+    }
   }
 
-  public void algaeHome() {
-    setHeight(PivotConstants.algaeHome);
+  public void switchHoldAlgae() {
+    holdAlgae = !holdAlgae;
   }
 
   public void hold() {

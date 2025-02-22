@@ -9,8 +9,10 @@ public class ElevatorConstants {
   public static final boolean opposeMaster = true;
   public static final double motionmagicianHighUpVoltage = 5.0;
   public static final double motionmagicianHighDownVoltage = -4.0;
-  public static final double motionmagicianLowUpVoltage = 0.1;
+  public static final double motionmagicianLowUpVoltage = 0.15;
   public static final double motionmagicianLowDownVoltage = 0.1;
+  public static final double manualUpVoltage = 4.0;
+  public static final double manualDownVoltage = -2.0;
   public static final double defaultDownVoltage = -7.0;
   public static final double lockVoltage = 0.27;
   public static final double forwardDutyCycleLimit = 0.7;

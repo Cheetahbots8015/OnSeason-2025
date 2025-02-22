@@ -5,64 +5,55 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.ElevatorConstants;
-import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class LowAlgaeCommand extends Command {
+public class HomeCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_elevatorSubsystem;
 
   private final PivotSubsystem m_pivotSubsystem;
-  private final RollerSubsystem m_rollerSubsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public LowAlgaeCommand(
-      RollerSubsystem rollerSubsystem,
-      PivotSubsystem pivotSubsystem,
-      ElevatorSubsystem elevatorSubsystem) {
+  public HomeCommand(ElevatorSubsystem elevatorSubsystem, PivotSubsystem pivotSubsystem) {
     m_elevatorSubsystem = elevatorSubsystem;
     m_pivotSubsystem = pivotSubsystem;
-    m_rollerSubsystem = rollerSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+    addRequirements(m_elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_elevatorSubsystem.resetFilter();
+    m_elevatorSubsystem.setHasHomed(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2LowAlgae();
-    m_pivotSubsystem.set2LowAlgae();
-    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.lowAlgaePosition)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.lowAlgaePosition)) {
-      m_rollerSubsystem.AlgaeVolts();
-    }
+    m_elevatorSubsystem.home();
+    m_pivotSubsystem.home();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_pivotSubsystem.setHoldAlgae(true);
-    m_rollerSubsystem.setHoldAlgae(true);
     m_elevatorSubsystem.shutDown();
+    m_elevatorSubsystem.resetTimer();
+    m_pivotSubsystem.hold();
+    if (!interrupted) {
+      m_elevatorSubsystem.resetOffset();
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_elevatorSubsystem.getHasHomed() && m_pivotSubsystem.isAtPosition(0.0);
   }
 }

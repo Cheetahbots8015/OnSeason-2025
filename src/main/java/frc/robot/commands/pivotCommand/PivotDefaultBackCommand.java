@@ -27,11 +27,7 @@ public class PivotDefaultBackCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_subsystem.getHoldAlgae()) {
-      m_subsystem.set2HoldAlgae();
-    } else {
-      m_subsystem.set2Home();
-    }
+    m_subsystem.home();
   }
 
   // Called once the command ends or is interrupted.
