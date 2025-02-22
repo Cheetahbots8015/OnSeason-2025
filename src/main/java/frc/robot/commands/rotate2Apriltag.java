@@ -18,10 +18,10 @@ public class rotate2Apriltag extends Command {
   private final Drive m_drive;
   private final String m_direction;
   private final CommandXboxController m_controller;
-  private Pose3d lastPose;
-  PIDController pidx = new PIDController(8, 0, 0);
-  PIDController pidy = new PIDController(5, 0, 0);
-  PIDController pidyaw = new PIDController(5, 0, 0);
+  private Pose3d lastPose = new Pose3d();
+  private PIDController pidx;
+  private PIDController pidy;
+  private PIDController pidyaw;
   /**
    * Creates a new ExampleCommand.
    *
@@ -38,13 +38,16 @@ public class rotate2Apriltag extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    pidx = new PIDController(2, 0, 0);
+    pidy = new PIDController(4, 0, 0);
+    pidyaw = new PIDController(4, 0, 0);
     if (m_direction == "right") {
       LimelightHelpers.setPipelineIndex("limelight-reef", 0);
-      LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, -0.2, 0);
+      LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, 0.2, 0);
       LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
     } else {
       LimelightHelpers.setPipelineIndex("limelight-reef", 0);
-      LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, 0.2, 0);
+      LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, -0.2, 0);
       LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
     }
     LimelightHelpers.setLEDMode_ForceOff("limelight-reef");
@@ -60,7 +63,7 @@ public class rotate2Apriltag extends Command {
     Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
     if (hasTarget) {
       lastPose = pose;
-      if (pose.getTranslation().getZ() <= 0.8) {
+      if (pose.getTranslation().getZ() <= 1.2) {
         if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 4) {
           m_controller.setRumble(
               RumbleType.kBothRumble,
@@ -70,7 +73,7 @@ public class rotate2Apriltag extends Command {
         }
         SmartDashboard.putBoolean("limelight-reef", false);
         pidy = new PIDController(0.07, 0, 0);
-        pidyaw = new PIDController(0.05, 0, 0);
+        pidyaw = new PIDController(2, 0, 0);
         ChassisSpeeds drivSpeeds =
             new ChassisSpeeds(
                 0,
