@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -145,9 +146,16 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Real robot, instantiate hardware IO implementations
-    autoChooser = AutoBuilder.buildAutoChooser();
+    NamedCommands.registerCommand(
+        "L2 Command",
+        new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(2.0));
+    NamedCommands.registerCommand(
+        "IntakeCommand", new StationCommand(m_rollerSubsystem).withTimeout(2.0));
+
+    autoChooser = AutoBuilder.buildAutoChooser("test");
     SmartDashboard.putData("Auto Chooser", autoChooser);
     // Configure the trigger bindings
+
     configureBindings();
   }
 

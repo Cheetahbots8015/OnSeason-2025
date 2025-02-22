@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3439189189189187,
-        "y": 7.157516891891891
+        "x": 1.455852272727273,
+        "y": 7.240838068181818
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.5929054054054053,
-        "y": 6.722719594594594
+        "x": 0.7048387592137595,
+        "y": 6.80604077088452
       },
       "isLocked": false,
       "linkedName": "station"
     },
     {
       "anchor": {
-        "x": 4.198039772727273,
-        "y": 5.39609375
+        "x": 3.799176136363636,
+        "y": 5.256491477272728
       },
       "prevControl": {
-        "x": 3.713833691646193,
-        "y": 5.0502322635135135
+        "x": 3.314970055282556,
+        "y": 4.910629990786241
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "RaisingElevator2L4",
-      "waypointRelativePos": 0.7041619797525277,
-      "endWaypointRelativePos": 1.0,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -55,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 125.88213724620421
+    "rotation": -54.117999999999995
   },
   "useDefaultConstraints": true
 }

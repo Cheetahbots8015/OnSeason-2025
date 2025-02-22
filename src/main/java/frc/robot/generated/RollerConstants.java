@@ -6,7 +6,7 @@ public class RollerConstants {
   public static final int canRangeID = 60;
   public static final double canRangeThreshold = 0.06;
   public static final double canRangeHysteresis = 0.005;
-  public static final int minSignalStrength = 2500;
+  public static final int minSignalStrength = 15000;
   public static boolean inverted = false;
   public static final double manualForwardVoltage = 8.0;
   public static final double manualReverseVoltage = -2.0;
