@@ -83,7 +83,7 @@ public class DriveCommands {
           boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
           Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
           if (hasTarget) {
-            if (Math.abs(pose.getTranslation().getX()) < 1) {
+            if (pose.getTranslation().getZ() < 1.5 && Math.abs(pose.getTranslation().getX()) < 1) {
               if (pose.getTranslation().getX() < -0.1) {
                 controller.setRumble(
                     RumbleType.kLeftRumble, 1 - Math.abs(pose.getTranslation().getX()));
