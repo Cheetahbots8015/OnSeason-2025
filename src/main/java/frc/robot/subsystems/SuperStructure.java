@@ -138,7 +138,15 @@ public class SuperStructure extends SubsystemBase {
   private void setIdle() {
     elevator.setElevatorState(ElevatorSystem.ElevatorState.IDLE);
     pivot.setPivotState(PivotSystem.PivotState.IDLE);
-    roller.setRollerState(RollerSystem.RollerState.IDLE);
+    if (systemPosition == superStructurePosition.STATION) {
+
+      roller.setRollerState(RollerSystem.RollerState.HOLDCORAL);
+    } else if (systemPosition == superStructurePosition.LOW_ALGAE
+        || systemPosition == superStructurePosition.HIGH_ALGAE) {
+      roller.setRollerState(RollerSystem.RollerState.HOLDALGAE);
+    } else {
+      roller.setRollerState(RollerSystem.RollerState.IDLE);
+    }
   }
 
   private void setManualForward() {
@@ -203,6 +211,5 @@ public class SuperStructure extends SubsystemBase {
     HIGH_ALGAE,
     PROCESSOR,
     STATION,
-    LOLIPOP
   }
 }

@@ -33,9 +33,6 @@ public class PositionUtil {
       case STATION -> {
         return ElevatorSystem.ElevatorPosition.STATION;
       }
-      case LOLIPOP -> {
-        return ElevatorSystem.ElevatorPosition.LOLIPOP;
-      }
       default -> {
         return ElevatorSystem.ElevatorPosition.NULL;
       }
@@ -56,9 +53,6 @@ public class PositionUtil {
       }
       case L4 -> {
         return RollerSystem.RollerPosition.L4;
-      }
-      case LOLIPOP -> {
-        return RollerSystem.RollerPosition.LOLIPOP;
       }
       case PROCESSOR -> {
         return RollerSystem.RollerPosition.PROCESSOR;
@@ -88,9 +82,6 @@ public class PositionUtil {
       }
       case HIGH_ALGAE -> {
         return PivotSystem.PivotPosition.HIGHALGAE;
-      }
-      case LOLIPOP -> {
-        return PivotSystem.PivotPosition.LOLIPOP;
       }
       case PROCESSOR -> {
         return PivotSystem.PivotPosition.PROCESSOR;

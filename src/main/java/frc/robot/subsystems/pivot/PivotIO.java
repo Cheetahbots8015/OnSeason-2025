@@ -8,12 +8,16 @@ public interface PivotIO {
   public default void updateInputs(PivotIOInputs inputs) {}
 
   /** Sets the desired angle of the pivot */
-  public default void setAngle(double height, double offset) {}
+  public default void setAngle(double position) {}
 
   /** Sets the speed of the pivot to the desired percent output */
   public default void setVoltage(double voltage) {}
 
-  public default void hold(double position) {}
+  public default void hold() {}
+
+  public default boolean isAtPosition(double position) {
+    return false;
+  }
 
   @AutoLog
   public static class PivotIOInputs {

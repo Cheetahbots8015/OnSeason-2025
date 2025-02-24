@@ -2,13 +2,13 @@ package frc.robot.subsystems.pivot;
 
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.constants.PivotConstants.*;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.constants.PivotConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class PivotSystem extends SubsystemBase {
@@ -72,18 +72,13 @@ public class PivotSystem extends SubsystemBase {
 
   public boolean isAtPosition() {
     return switch (pivotPosition) {
-      case L1 -> Math.abs((inputs.position % 1.0) - PIVOT_L1_HEIGHT) < PIVOT_POSITION_TOLERANCE;
-      case L2 -> Math.abs((inputs.position % 1.0) - PIVOT_L2_HEIGHT) < PIVOT_POSITION_TOLERANCE;
-      case L3 -> Math.abs((inputs.position % 1.0) - PIVOT_L3_HEIGHT) < PIVOT_POSITION_TOLERANCE;
-      case L4 -> Math.abs((inputs.position % 1.0) - PIVOT_L4_HEIGHT) < PIVOT_POSITION_TOLERANCE;
-      case HIGHALGAE -> Math.abs((inputs.position % 1.0) - PIVOT_HIGHALGAE_HEIGHT)
-          < PIVOT_POSITION_TOLERANCE;
-      case LOWALGAE -> Math.abs((inputs.position % 1.0) - PIVOT_LOWALGAE_HEIGHT)
-          < PIVOT_POSITION_TOLERANCE;
-      case LOLIPOP -> Math.abs((inputs.position % 1.0) - PIVOT_LOLIPOP_HEIGHT)
-          < PIVOT_POSITION_TOLERANCE;
-      case PROCESSOR -> Math.abs((inputs.position % 1.0) - PIVOT_PROCESSOR_HEIGHT)
-          < PIVOT_POSITION_TOLERANCE;
+      case L1 -> io.isAtPosition(PivotConstants.PIVOT_L1_HEIGHT);
+      case L2 -> io.isAtPosition(PivotConstants.PIVOT_L2_HEIGHT);
+      case L3 -> io.isAtPosition(PivotConstants.PIVOT_L3_HEIGHT);
+      case L4 -> io.isAtPosition(PivotConstants.PIVOT_L4_HEIGHT);
+      case HIGHALGAE -> io.isAtPosition(PivotConstants.PIVOT_HIGHALGAE_HEIGHT);
+      case LOWALGAE -> io.isAtPosition(PivotConstants.PIVOT_LOWALGAE_HEIGHT);
+      case PROCESSOR -> io.isAtPosition(PivotConstants.PIVOT_PROCESSOR_HEIGHT);
       default -> false;
     };
   }
@@ -95,45 +90,41 @@ public class PivotSystem extends SubsystemBase {
 
     switch (pivotState) {
       case IDLE:
-        io.hold(inputs.position);
+        io.hold();
         break;
       case POSITION:
-        double offset = inputs.s1Position - (inputs.s1Position % 1.0);
         switch (pivotPosition) {
           case NULL:
-            io.hold(inputs.position);
+            io.hold();
             break;
           case L1:
-            io.setAngle(PIVOT_L1_HEIGHT, offset);
+            io.setAngle(PivotConstants.PIVOT_L1_HEIGHT);
             break;
           case L2:
-            io.setAngle(PIVOT_L2_HEIGHT, offset);
+            io.setAngle(PivotConstants.PIVOT_L2_HEIGHT);
             break;
           case L3:
-            io.setAngle(PIVOT_L3_HEIGHT, offset);
+            io.setAngle(PivotConstants.PIVOT_L3_HEIGHT);
             break;
           case L4:
-            io.setAngle(PIVOT_L4_HEIGHT, offset);
+            io.setAngle(PivotConstants.PIVOT_L4_HEIGHT);
             break;
           case HIGHALGAE:
-            io.setAngle(PIVOT_HIGHALGAE_HEIGHT, offset);
+            io.setAngle(PivotConstants.PIVOT_HIGHALGAE_HEIGHT);
             break;
           case LOWALGAE:
-            io.setAngle(PIVOT_LOWALGAE_HEIGHT, offset);
-            break;
-          case LOLIPOP:
-            io.setAngle(PIVOT_LOLIPOP_HEIGHT, offset);
+            io.setAngle(PivotConstants.PIVOT_LOWALGAE_HEIGHT);
             break;
           case PROCESSOR:
-            io.setAngle(PIVOT_PROCESSOR_HEIGHT, offset);
+            io.setAngle(PivotConstants.PIVOT_PROCESSOR_HEIGHT);
             break;
         }
         break;
       case MANUALFORWARD:
-        io.setVoltage(PIVOT_MANUAL_FORWARD_VOLTAGE);
+        io.setVoltage(PivotConstants.PIVOT_MANUAL_FORWARD_VOLTAGE);
         break;
       case MANUALREVERSE:
-        io.setVoltage(PIVOT_MANUAL_REVERSE_VOLTAGE);
+        io.setVoltage(PivotConstants.PIVOT_MANUAL_REVERSE_VOLTAGE);
         break;
     }
   }
@@ -153,7 +144,6 @@ public class PivotSystem extends SubsystemBase {
     L4,
     HIGHALGAE,
     LOWALGAE,
-    LOLIPOP,
     PROCESSOR,
   }
 }

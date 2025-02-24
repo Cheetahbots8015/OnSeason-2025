@@ -1,6 +1,5 @@
 package frc.robot.subsystems.pivot;
 
-import static frc.robot.constants.PivotConstants.*;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -13,14 +12,15 @@ import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.*;
-import frc.robot.constants.RollerConstants;
+import frc.robot.constants.PivotConstants;
 
 public class PivotIOKrakenX60 implements PivotIO {
 
   /* Hardware */
-  private final TalonFX pivot;
-  private final CANdi candi;
+  private final TalonFX pivot = new TalonFX(PivotConstants.PIVOT_ID, PivotConstants.PIVOT_CANNAME);
+  private final CANdi candi = new CANdi(PivotConstants.CANDI_ID, PivotConstants.PIVOT_CANNAME);
 
   /* Signals */
   private final StatusSignal<Angle> position;
@@ -33,49 +33,56 @@ public class PivotIOKrakenX60 implements PivotIO {
   private final StatusSignal<Angle> s1Position;
 
   /* Configurators */
-  private TalonFXConfiguration pivotConfiguration;
-  private CANdiConfiguration candiConfiguration;
+  private TalonFXConfiguration pivotConfiguration = new TalonFXConfiguration();
+  private CANdiConfiguration candiConfiguration = new CANdiConfiguration();
 
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private MotionMagicVoltage motionMagic = new MotionMagicVoltage(0.0).withEnableFOC(true);
   private NeutralOut neutralOut = new NeutralOut();
 
+  private double offset = 0.0;
+
   public PivotIOKrakenX60() {
-    this.pivot = new TalonFX(PIVOT_ID, PIVOT_CANNAME);
-    this.candi = new CANdi(CANDI_ID, PIVOT_CANNAME);
-
-    this.pivotConfiguration = new TalonFXConfiguration();
-    this.candiConfiguration = new CANdiConfiguration();
-
+    pivotConfiguration.MotorOutput.withNeutralMode(
+        PivotConstants.PIVOT_NEUTRAL_MODE_COAST ? NeutralModeValue.Coast : NeutralModeValue.Brake);
     pivotConfiguration.MotorOutput.withInverted(
-        PIVOT_INVERSION
+        PivotConstants.PIVOT_INVERSION
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive);
-    pivotConfiguration.Slot0.kP = PIVOT_KP;
-    pivotConfiguration.Slot0.kI = PIVOT_KI;
-    pivotConfiguration.Slot0.kD = PIVOT_KD;
-    pivotConfiguration.Slot0.kA = PIVOT_KA;
-    pivotConfiguration.Slot0.kS = PIVOT_KS;
-    pivotConfiguration.Slot0.kV = PIVOT_KV;
-    pivotConfiguration.MotionMagic.MotionMagicCruiseVelocity = PIVOT_MOTION_MAGIC_CRUISE_VELOCITY;
-    pivotConfiguration.MotionMagic.MotionMagicAcceleration = PIVOT_MOTION_MAGIC_ACCELERATION;
-    pivotConfiguration.MotorOutput.withPeakForwardDutyCycle(PIVOT_FORWARD_DUTY_CYCLE_LIMIT);
-    pivotConfiguration.MotorOutput.withPeakReverseDutyCycle(PIVOT_REVERSE_SOFT_LIMIT_THRESHOLD);
-    pivotConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = PIVOT_FORWARD_SOFT_LIMIT_ENABLE;
-    pivotConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = PIVOT_REVERSE_SOFT_LIMIT_ENABLE;
+    pivotConfiguration.Slot0.kP = PivotConstants.PIVOT_KP;
+    pivotConfiguration.Slot0.kI = PivotConstants.PIVOT_KI;
+    pivotConfiguration.Slot0.kD = PivotConstants.PIVOT_KD;
+    pivotConfiguration.Slot0.kA = PivotConstants.PIVOT_KA;
+    pivotConfiguration.Slot0.kS = PivotConstants.PIVOT_KS;
+    pivotConfiguration.Slot0.kV = PivotConstants.PIVOT_KV;
+    pivotConfiguration.MotionMagic.MotionMagicCruiseVelocity =
+        PivotConstants.PIVOT_MOTION_MAGIC_CRUISE_VELOCITY;
+    pivotConfiguration.MotionMagic.MotionMagicAcceleration =
+        PivotConstants.PIVOT_MOTION_MAGIC_ACCELERATION;
+    pivotConfiguration.MotorOutput.withPeakForwardDutyCycle(
+        PivotConstants.PIVOT_FORWARD_DUTY_CYCLE_LIMIT);
+    pivotConfiguration.MotorOutput.withPeakReverseDutyCycle(
+        PivotConstants.PIVOT_REVERSE_DUTY_CYCLE_LIMIT);
+    pivotConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable =
+        PivotConstants.PIVOT_FORWARD_SOFT_LIMIT_ENABLE;
+    pivotConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable =
+        PivotConstants.PIVOT_REVERSE_SOFT_LIMIT_ENABLE;
     pivotConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD;
+        PivotConstants.PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD;
     pivotConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD;
-    pivotConfiguration.Feedback.FeedbackRemoteSensorID = CANDI_ID;
+        PivotConstants.PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD;
+    pivotConfiguration.Feedback.FeedbackRemoteSensorID = PivotConstants.CANDI_ID;
     pivotConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANdiPWM1;
-    pivotConfiguration.Feedback.SensorToMechanismRatio = PIVOT_CANDI_2_MECHANISM_RATIO;
-    pivotConfiguration.Feedback.RotorToSensorRatio = PIVOT_ROTOR_2_CANDI_RATIO;
+    pivotConfiguration.Feedback.SensorToMechanismRatio =
+        PivotConstants.PIVOT_CANDI_2_MECHANISM_RATIO;
+    pivotConfiguration.Feedback.RotorToSensorRatio = PivotConstants.PIVOT_ROTOR_2_CANDI_RATIO;
     pivot.getConfigurator().apply(pivotConfiguration);
 
-    candiConfiguration.PWM1.SensorDirection = CANDI_DIRECTION;
-    candiConfiguration.PWM1.AbsoluteSensorOffset = CANDI_OFFSET;
+    candiConfiguration.PWM1.SensorDirection = PivotConstants.CANDI_DIRECTION;
+    candiConfiguration.PWM1.AbsoluteSensorOffset = PivotConstants.CANDI_OFFSET;
     candi.getConfigurator().apply(candiConfiguration);
+
+    offset = candi.getPWM1Position().getValueAsDouble();
 
     position = pivot.getPosition();
     velocity = pivot.getVelocity();
@@ -90,7 +97,7 @@ public class PivotIOKrakenX60 implements PivotIO {
         5,
         () ->
             BaseStatusSignal.setUpdateFrequencyForAll(
-                RollerConstants.SIGNAL_UPDATE_FREQUENCY_HZ,
+                PivotConstants.PIVOT_SIGNAL_UPDATE_FREQUENCY_HZ,
                 position,
                 velocity,
                 acceleration,
@@ -100,6 +107,10 @@ public class PivotIOKrakenX60 implements PivotIO {
                 tempCelsius,
                 s1Position));
     tryUntilOk(5, () -> pivot.optimizeBusUtilization(0, 1.0));
+  }
+
+  private double getPositionwithoutOffset() {
+    return candi.getPWM1Position().getValueAsDouble() - offset;
   }
 
   @Override
@@ -118,16 +129,34 @@ public class PivotIOKrakenX60 implements PivotIO {
 
   @Override
   public void setVoltage(double volts) {
-    pivot.setControl(voltageOut.withOutput(volts));
+    pivot.setControl(
+        voltageOut
+            .withOutput(volts)
+            .withLimitForwardMotion(
+                getPositionwithoutOffset() > PivotConstants.PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD)
+            .withLimitReverseMotion(
+                getPositionwithoutOffset() < PivotConstants.PIVOT_REVERSE_SOFT_LIMIT_THRESHOLD));
   }
 
   @Override
-  public void setAngle(double height, double offset) {
-    pivot.setControl(motionMagic.withPosition(height + offset));
+  public void setAngle(double position) {
+    pivot.setControl(
+        motionMagic
+            .withPosition(position + offset)
+            .withLimitForwardMotion(
+                getPositionwithoutOffset() > PivotConstants.PIVOT_FORWARD_SOFT_LIMIT_THRESHOLD)
+            .withLimitReverseMotion(
+                getPositionwithoutOffset() < PivotConstants.PIVOT_REVERSE_SOFT_LIMIT_THRESHOLD));
   }
 
   @Override
-  public void hold(double position) {
-    pivot.setControl(motionMagic.withPosition(position));
+  public void hold() {
+    setAngle(this.getPositionwithoutOffset());
+  }
+
+  @Override
+  public boolean isAtPosition(double position) {
+    return Math.abs(this.getPositionwithoutOffset() - position)
+        < PivotConstants.PIVOT_POSITION_TOLERANCE;
   }
 }

@@ -9,9 +9,9 @@ package frc.robot.subsystems.rollers;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.RollerConstants;
+import frc.robot.util.MagicTimer;
 import org.littletonrobotics.junction.Logger;
 
 public class RollerSystem extends SubsystemBase {
@@ -24,7 +24,8 @@ public class RollerSystem extends SubsystemBase {
   private RollerPosition systemPosition = RollerPosition.NULL;
   private RollerState nextSystemState = RollerState.IDLE;
 
-  private double timer = -1;
+  private MagicTimer rollerTimer = new MagicTimer();
+  private boolean loadFinsihed = false;
 
   public RollerSystem(String name, RollerSystemIO io) {
     this.name = name;
@@ -55,23 +56,42 @@ public class RollerSystem extends SubsystemBase {
 
     switch (systemState) {
       case IDLE:
-        io.runVelocity(RollerConstants.ROLLER_IDLE_VELOCITY);
+        io.stop();
+        break;
+      case HOLDCORAL:
+        io.runVelocity(RollerConstants.ROLLER_CORAL_IDLE_VELOCITY);
+        break;
+      case HOLDALGAE:
+        io.runVelocity(RollerConstants.ROLLER_ALGAE_IDLE_VELOCITY);
         break;
       case LOADCORAL:
-        io.runVelocity(RollerConstants.ROLLER_LOAD_CORAL_VELOCITY);
+        if (io.isCanRangeTriggered()) {
+          rollerTimer.startTimer();
+          if (rollerTimer.getTimePassedSec() > RollerConstants.ROLLER_STATION_TIME) {
+            loadFinsihed = true;
+            io.runVelocity(RollerConstants.ROLLER_CORAL_IDLE_VELOCITY);
+          } else {
+            loadFinsihed = false;
+            io.runVelocity(RollerConstants.ROLLER_LOAD_CORAL_VELOCITY);
+          }
+        } else {
+          loadFinsihed = false;
+          rollerTimer.resetTimer();
+          io.runVelocity(RollerConstants.ROLLER_LOAD_CORAL_VELOCITY);
+        }
         break;
       case LOADALGAE:
         io.runVelocity(RollerConstants.ROLLER_LOAD_ALGAE_VELOCITY);
         break;
       case SHOOT:
+        loadFinsihed = false;
         switch (systemPosition) {
-          case L1 -> io.runVolts(RollerConstants.ROLLER_L1_VOLTAGE);
-          case L2 -> io.runVolts(RollerConstants.ROLLER_L2_VOLTAGE);
-          case L3 -> io.runVolts(RollerConstants.ROLLER_L3_VOLTAGE);
-          case L4 -> io.runVolts(RollerConstants.ROLLER_L4_VOLTAGE);
-          case LOLIPOP -> io.runVolts(RollerConstants.ROLLER_LOLIPOP_VOLTAGE);
-          case PROCESSOR -> io.runVolts(RollerConstants.ROLLER_PROCESSOR_VOLTAGE);
-          case NULL -> io.runVolts(0);
+          case L1 -> io.runVelocity(RollerConstants.ROLLER_L1_VELOCITY);
+          case L2 -> io.runVelocity(RollerConstants.ROLLER_L2_VELOCITY);
+          case L3 -> io.runVelocity(RollerConstants.ROLLER_L3_VELOCITY);
+          case L4 -> io.runVelocity(RollerConstants.ROLLER_L4_VELOCITY);
+          case PROCESSOR -> io.runVelocity(RollerConstants.ROLLER_PROCESSOR_VELOCITY);
+          case NULL -> io.runVelocity(0);
         }
         break;
       case MANUALFORWARD:
@@ -92,21 +112,15 @@ public class RollerSystem extends SubsystemBase {
   }
 
   public boolean getLoaded() {
-    if (io.isCanRangeTriggered()) {
-      if (timer == -1) {
-        timer = Timer.getFPGATimestamp();
-      }
-      return !(Timer.getFPGATimestamp() - timer < RollerConstants.ROLLER_EXTRA_TIME);
-    } else {
-      timer = -1;
-      return false;
-    }
+    return io.isCanRangeTriggered() && loadFinsihed;
   }
 
   public enum RollerState {
     IDLE,
     LOADCORAL,
     LOADALGAE,
+    HOLDCORAL,
+    HOLDALGAE,
     SHOOT,
     MANUALINVERT,
     MANUALFORWARD,
@@ -118,7 +132,6 @@ public class RollerSystem extends SubsystemBase {
     L2,
     L3,
     L4,
-    LOLIPOP,
     PROCESSOR,
   }
 }
