@@ -5,7 +5,7 @@
 package frc.robot.commands.operatorCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
