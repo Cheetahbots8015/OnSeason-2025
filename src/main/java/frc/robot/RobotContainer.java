@@ -4,9 +4,13 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -61,6 +65,8 @@ public class RobotContainer {
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
   private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
+
+  private final SendableChooser<Command> autoChooser;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -156,8 +162,35 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Real robot, instantiate hardware IO implementations
+    NamedCommands.registerCommand(
+        "L2 Command",
+        new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(2.0));
+    NamedCommands.registerCommand(
+        "IntakeCommand", new StationCommand(m_rollerSubsystem).withTimeout(5.0));
+    NamedCommands.registerCommand(
+        "L4 Command",
+        new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
 
+    autoChooser = AutoBuilder.buildAutoChooser("test");
+
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
     // Configure the trigger bindings
+
     configureBindings();
   }
 
@@ -177,6 +210,7 @@ public class RobotContainer {
     // pressed,
     // cancelling on release.
 
+    DriverL1Trigger.whileTrue(DriverL1Command);
     DriverL1Trigger.whileTrue(DriverL1Command);
     DriverL2Trigger.whileTrue(DriverL2Command);
     DriverL3Trigger.whileTrue(DriverL3Command);
@@ -214,6 +248,7 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
+            driverController,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX(),
@@ -262,6 +297,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return autoChooser.getSelected();
   }
 }

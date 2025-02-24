@@ -2,22 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.rollerCommand;
+package frc.robot.commands.pivotCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.PivotSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class RollerDefaultIdleCommand extends Command {
+public class PivotForwardCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final RollerSubsystem m_subsystem;
+  private final PivotSubsystem m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public RollerDefaultIdleCommand(RollerSubsystem subsystem) {
+  public PivotForwardCommand(PivotSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -30,17 +30,15 @@ public class RollerDefaultIdleCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_subsystem.getHoldAlgae()) {
-      m_subsystem.HoldAlgaeVolts();
-    } else {
-      m_subsystem.defaultIdelVelocity();
-    }
+    m_subsystem.manualVoltsForward();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.shutDown();
+    // m_subsystem.shutDown();
+    m_subsystem.hold();
+    // m_subsystem.report();
   }
 
   // Returns true when the command should end.
@@ -49,3 +47,4 @@ public class RollerDefaultIdleCommand extends Command {
     return false;
   }
 }
+

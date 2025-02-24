@@ -145,6 +145,11 @@ public class RollerSubsystem extends SubsystemBase {
     setVelocity(RollerConstants.L4Velocity);
   }
 
+  public void HoldAlgaeVolts() {
+    report();
+    roller.setControl(voltageOut.withOutput(-3.0));
+  }
+
   public void intakeAlgaefromReef() {
     setVelocity(RollerConstants.intakeAlgaefromReefVelocity);
   }

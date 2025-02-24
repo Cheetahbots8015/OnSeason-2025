@@ -27,10 +27,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
@@ -72,12 +74,32 @@ public class DriveCommands {
    */
   public static Command joystickDrive(
       Drive drive,
+      CommandXboxController controller,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
       boolean slowMode) {
     return Commands.run(
         () -> {
+          boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
+          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
+          if (hasTarget) {
+            if (Math.abs(pose.getTranslation().getX()) < 1) {
+              if (pose.getTranslation().getX() < -0.1) {
+                controller.setRumble(
+                    RumbleType.kLeftRumble, 1 - Math.abs(pose.getTranslation().getX()));
+                controller.setRumble(RumbleType.kRightRumble, 0);
+              } else if (pose.getTranslation().getX() > 0.1) {
+                controller.setRumble(
+                    RumbleType.kRightRumble, 1 - Math.abs(pose.getTranslation().getX()));
+                controller.setRumble(RumbleType.kLeftRumble, 0);
+              } else {
+                controller.setRumble(RumbleType.kBothRumble, 1);
+              }
+            }
+          } else {
+            controller.setRumble(RumbleType.kBothRumble, 0);
+          }
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());

@@ -337,6 +337,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void report() {
+    SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
     SmartDashboard.putNumber("elevator/leader position", leader.getPosition().getValueAsDouble());
     SmartDashboard.putNumber(
         "elevator/follower position", follower.getPosition().getValueAsDouble());
