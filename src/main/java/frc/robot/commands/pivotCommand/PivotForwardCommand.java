@@ -47,4 +47,3 @@ public class PivotForwardCommand extends Command {
     return false;
   }
 }
-
