@@ -10,43 +10,57 @@ package frc.robot.subsystems.elevator;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorSystemIO {
-  default void updateInputs(ElevatorSystemIOInputs inputs) {}
+	default void updateInputs(ElevatorSystemIOInputs inputs) {
+	}
 
-  default void setHome() {}
+	default void setHome() {
+	}
 
-  default void hold() {}
+	default void hold() {
+	}
 
-  default void stop() {}
+	default void stop() {
+	}
 
-  default void setVoltage(double voltage) {}
+	default void setVoltage(double voltage) {
+	}
 
-  default void setPosition(double position) {}
+	default void defaultFall(){}
 
-  default void setPositionMotionMagic(double position) {}
+	default void setPosition_MotionMagic(double position) {
+	}
 
-  default boolean isAtPosition(double pos) {
-    return false;
-  }
+	default void setPosition_MotionMagician(double position) {
+	}
 
-  default boolean getHomed() {
-    return false;
-  }
-  ;
+	default void setPosition_MotionMagicianLow(double position) {
+	}
 
-  @AutoLog
-  static class ElevatorSystemIOInputs {
-    public boolean connected = false;
-    public double positionDiff = 0.0;
-    public double currentDiff = 0.0;
-    public double dutyCycleDiff = 0.0;
-    public double voltageDiff = 0.0;
-    public double[] position = new double[] {};
-    public double[] velocity = new double[] {};
-    public double[] acceleration = new double[] {};
-    public double[] appliedVoltage = new double[] {}; // {leader, follower}
-    public double[] motionMagicPositionTarget = new double[] {}; // {leader, follower}
-    public double[] supplyCurrentAmps = new double[] {}; // {leader, follower}
-    public double[] torqueCurrentAmps = new double[] {}; // {leader, follower}
-    public double encoderOffset = 0.0; // {leader, follower}
-  }
+
+	default boolean isAtPosition(double pos) {
+		return false;
+	}
+
+	default boolean getHomed() {
+		return false;
+	}
+
+	;
+
+	@AutoLog
+	static class ElevatorSystemIOInputs {
+		public boolean connected = false;
+		public double positionDiff = 0.0;
+		public double currentDiff = 0.0;
+		public double dutyCycleDiff = 0.0;
+		public double voltageDiff = 0.0;
+		public double[] position = new double[]{};
+		public double[] velocity = new double[]{};
+		public double[] acceleration = new double[]{};
+		public double[] appliedVoltage = new double[]{}; // {leader, follower}
+		public double[] motionMagicPositionTarget = new double[]{}; // {leader, follower}
+		public double[] supplyCurrentAmps = new double[]{}; // {leader, follower}
+		public double[] torqueCurrentAmps = new double[]{}; // {leader, follower}
+		public double[] encoderOffset = new double[]{}; // {leader, follower}
+	}
 }
