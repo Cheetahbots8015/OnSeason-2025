@@ -3,32 +3,7 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "First Coral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4 Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Go Station"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeCommand"
-          }
-        }
-      ]
+      "commands": []
     }
   },
   "resetOdom": true,
