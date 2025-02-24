@@ -13,22 +13,26 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.elevatorCommand.ElevatorDefaultDownCommand;
-import frc.robot.commands.elevatorCommand.ElevatorHoldCommand;
+import frc.robot.commands.driverCommand.DriveCommands;
+import frc.robot.commands.driverCommand.HighAlgaeCommand;
+import frc.robot.commands.driverCommand.L1Command;
+import frc.robot.commands.driverCommand.L2Command;
+import frc.robot.commands.driverCommand.L3Command;
+import frc.robot.commands.driverCommand.L4Command;
+import frc.robot.commands.driverCommand.LowAlgaeCommand;
+import frc.robot.commands.driverCommand.ProcessorCommand;
+import frc.robot.commands.driverCommand.StationCommand;
+import frc.robot.commands.elevatorCommand.ElevatorDefaultIdleCommand;
 import frc.robot.commands.elevatorCommand.ElevatorHomeCommand;
-import frc.robot.commands.elevatorCommand.ElevatorL2Command;
-import frc.robot.commands.elevatorCommand.ElevatorReportCommand;
-import frc.robot.commands.elevatorCommand.ElevatorResetCommand;
-import frc.robot.commands.elevatorCommand.ElevatorVoltageOutCommand;
-import frc.robot.commands.pivotCommand.PivotDefaultBackCommand;
-import frc.robot.commands.pivotCommand.PivotForwardCommand;
-import frc.robot.commands.pivotCommand.PivotL2Command;
-import frc.robot.commands.pivotCommand.PivotReportCommand;
-import frc.robot.commands.pivotCommand.PivotReverseCommand;
+import frc.robot.commands.operatorCommand.ElevatorManualDownCommand;
+import frc.robot.commands.operatorCommand.ElevatorManualUpCommand;
+import frc.robot.commands.operatorCommand.FreezeCommand;
+import frc.robot.commands.operatorCommand.PivotManualForwardCommand;
+import frc.robot.commands.operatorCommand.PivotManualReverseCommand;
+import frc.robot.commands.operatorCommand.RollerManualForwardCommand;
+import frc.robot.commands.operatorCommand.RollerManualReverseCommand;
+import frc.robot.commands.pivotCommand.PivotDefaultIdleCommand;
 import frc.robot.commands.rollerCommand.RollerDefaultIdleCommand;
-import frc.robot.commands.rollerCommand.RollerManualForwardCommand;
-import frc.robot.commands.rollerCommand.RollerManualReverseCommand;
 import frc.robot.generated.JoystickConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -68,26 +72,41 @@ public class RobotContainer {
   private final CommandXboxController SysIDController =
       new CommandXboxController(JoystickConstants.sysIDControllerPort);
 
-  // private final Trigger DriverL1Trigger = driverController.a();
-  private final Trigger DriverL2Trigger = driverController.b();
-  private final Trigger DriverL3Trigger = driverController.x();
+  private final CommandXboxController operatorController =
+      new CommandXboxController(JoystickConstants.operatorControllerPort);
+
+  // driver triggers
+  private final Trigger DriverL1Trigger =
+      driverController.a().and(driverController.rightBumper().negate());
+  private final Trigger DriverL2Trigger =
+      driverController.b().and(driverController.rightBumper().negate());
+  private final Trigger DriverL3Trigger =
+      driverController.x().and(driverController.rightBumper().negate());
   private final Trigger DriverL4Trigger = driverController.y();
-  private final Trigger DriverHomeTrigger = driverController.rightBumper();
   private final Trigger DriverStationTrigger = driverController.leftTrigger();
-  private final Trigger DriveerReverseTrigger = driverController.rightTrigger();
+  private final Trigger DriverLowAlgaeTrigger =
+      driverController.a().and(driverController.rightBumper());
+  private final Trigger DriverHighAlgaeTrigger =
+      driverController.b().and(driverController.rightBumper());
+  private final Trigger DriverProcessorTrigger =
+      driverController.x().and(driverController.rightBumper());
 
-  private final Trigger ElevatorManualTrigger = testController.a();
-  private final Trigger ElevatorVoltageLockTrigger = testController.b();
-  private final Trigger LowAlgaeTrigger = testController.x();
-  private final Trigger HighAlgaeTrigger = testController.y();
-  private final Trigger ProcessorTrigger = testController.povRight();
-  private final Trigger RollerManualTrigger = testController.leftBumper();
-  private final Trigger RollerReverseTrigger = testController.rightBumper();
-  private final Trigger PivotManualForwardTrigger = testController.rightTrigger();
-  private final Trigger PivotManualReverseTrigger = testController.leftTrigger();
-  private final Trigger PivotL2Trigger = testController.povUp();
-  private final Trigger ElevatorHomeTrigger = testController.povDown();
+  // operator triggers
+  private final Trigger OperatorSwitchTrigger = operatorController.leftBumper();
+  private final Trigger OperatorHomeTrigger = operatorController.rightBumper();
+  private final Trigger OperatorFreezeTrigger = operatorController.leftTrigger();
+  private final Trigger OperatorElevatorUpTrigger =
+      new Trigger(() -> operatorController.getLeftX() > 0.4);
+  private final Trigger OperatorElevatorDownTrigger =
+      new Trigger(() -> operatorController.getLeftX() < -0.4);
+  private final Trigger OperatorPivotForwardTrigger =
+      new Trigger(() -> operatorController.getRightX() > 0.4);
+  private final Trigger OperatorPivotReverseTrigger =
+      new Trigger(() -> operatorController.getRightX() < -0.4);
+  private final Trigger OperatorRollerForwardTrigger = operatorController.x();
+  private final Trigger OperatorRollerReverseTrigger = operatorController.y();
 
+  // driver commands
   private final Command DriverL1Command =
       new L1Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command DriverL2Command =
@@ -96,43 +115,39 @@ public class RobotContainer {
       new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command DriverL4Command =
       new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command DriverHomeCommand =
-      new ElevatorHomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
+  private final Command DriverLowAlgaeCommand =
+      new LowAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
+  private final Command DriverHighAlgaeCommand =
+      new HighAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
+  private final Command DriverProcessorCommand =
+      new ProcessorCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
   private final Command DriverStationCommand = new StationCommand(m_rollerSubsystem);
-  private final Command DriverReverseCommand = new RollerManualReverseCommand(m_rollerSubsystem);
 
-  private final Command ElevatorManualCommand = new ElevatorVoltageOutCommand(m_elevatorSubsystem);
-  private final Command ElevatorHoldCommand = new ElevatorHoldCommand(m_elevatorSubsystem);
-  private final Command ElevatorDefaultDownCommand =
-      new ElevatorDefaultDownCommand(m_elevatorSubsystem);
-  private final Command RollerManualCommand = new RollerManualForwardCommand(m_rollerSubsystem);
-  private final Command RollerReverseCommand = new RollerManualReverseCommand(m_rollerSubsystem);
+  // operator commands
+  private final Command OperatorHomeCommand = new ElevatorHomeCommand(m_elevatorSubsystem);
+  private final Command operatorFreezeCommand =
+      new FreezeCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorElevatorUpCommand =
+      new ElevatorManualUpCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorElevatorDownCommand =
+      new ElevatorManualDownCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorPivotForwardCommand =
+      new PivotManualForwardCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorPivotReverseCommand =
+      new PivotManualReverseCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorRollerForwardCommand =
+      new RollerManualForwardCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorRollerReverseCommand =
+      new RollerManualReverseCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+
+  // default commandfs
+  private final Command ElevatorDefaultIdleCommand =
+      new ElevatorDefaultIdleCommand(m_elevatorSubsystem);
   private final Command RollerDefaultIdleCommand = new RollerDefaultIdleCommand(m_rollerSubsystem);
-  private final Command ElevatorReportCommand = new ElevatorReportCommand(m_elevatorSubsystem);
-  private final Command ElevatorResetCommand = new ElevatorResetCommand(m_elevatorSubsystem);
-  private final Command ElevatorL2Command = new ElevatorL2Command(m_elevatorSubsystem);
-  private final Command PivotDefaultBackCommand = new PivotDefaultBackCommand(m_pivotSubsystem);
-  private final Command PivotReportCommand = new PivotReportCommand(m_pivotSubsystem);
-  private final Command PivotForwardCommand = new PivotForwardCommand(m_pivotSubsystem);
-  private final Command PivotReverseCommand = new PivotReverseCommand(m_pivotSubsystem);
-  private final Command PivotL2Command = new PivotL2Command(m_pivotSubsystem);
-  private final Command ElevatorHomeCommand =
-      new ElevatorHomeCommand(m_elevatorSubsystem, m_pivotSubsystem);
-  private final Command L2Command =
-      new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command L4Command =
-      new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command L3Command =
-      new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command PivotDefaultIdleCommand = new PivotDefaultIdleCommand(m_pivotSubsystem);
   private final Command rotate2Apriltagleft = new rotate2Apriltag(drive, "left", driverController);
   private final Command rotate2Apriltagright =
       new rotate2Apriltag(drive, "right", driverController);
-  private final Command LowAlgaeCommand =
-      new LowAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
-  private final Command HighAlgaeCommand =
-      new HighAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
-  private final Command ProcessorCommand =
-      new ProcessorCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
 
   // private final Command rotate2Apriltagleft=
   // new rotate2Apriltag(drive,"left");
@@ -162,28 +177,27 @@ public class RobotContainer {
     // pressed,
     // cancelling on release.
 
-    // DriverL1Trigger.whileTrue(DriverL1Command);
+    DriverL1Trigger.whileTrue(DriverL1Command);
     DriverL2Trigger.whileTrue(DriverL2Command);
     DriverL3Trigger.whileTrue(DriverL3Command);
     DriverL4Trigger.whileTrue(DriverL4Command);
-    DriverHomeTrigger.whileTrue(DriverHomeCommand);
     DriverStationTrigger.whileTrue(DriverStationCommand);
-    DriveerReverseTrigger.whileTrue(DriverReverseCommand);
+    DriverHighAlgaeTrigger.whileTrue(DriverHighAlgaeCommand);
+    DriverLowAlgaeTrigger.whileTrue(DriverLowAlgaeCommand);
+    DriverProcessorTrigger.whileTrue(DriverProcessorCommand);
 
-    ElevatorManualTrigger.whileTrue(ElevatorManualCommand);
-    ElevatorVoltageLockTrigger.whileTrue(ElevatorHoldCommand);
-    LowAlgaeTrigger.whileTrue(LowAlgaeCommand);
-    HighAlgaeTrigger.whileTrue(HighAlgaeCommand);
-    ProcessorTrigger.whileTrue(ProcessorCommand);
-    RollerManualTrigger.whileTrue(RollerManualCommand);
-    RollerReverseTrigger.whileTrue(RollerReverseCommand);
-    m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultDownCommand);
-    m_pivotSubsystem.setDefaultCommand(PivotDefaultBackCommand);
-    m_rollerSubsystem.setDefaultCommand(RollerDefaultIdleCommand);
-    PivotManualForwardTrigger.whileTrue(PivotForwardCommand);
-    PivotManualReverseTrigger.whileTrue(PivotReverseCommand);
-    ElevatorHomeTrigger.whileTrue(ElevatorHomeCommand);
-    PivotL2Trigger.whileTrue(PivotL2Command);
+    OperatorHomeTrigger.whileTrue(OperatorHomeCommand);
+    OperatorSwitchTrigger.onTrue(
+        Commands.runOnce(() -> m_pivotSubsystem.switchHoldAlgae(), m_pivotSubsystem)
+            .alongWith(
+                Commands.runOnce(() -> m_rollerSubsystem.switchHoldAlgae(), m_rollerSubsystem)));
+    OperatorFreezeTrigger.whileTrue(operatorFreezeCommand);
+    OperatorElevatorUpTrigger.whileTrue(OperatorElevatorUpCommand);
+    OperatorElevatorDownTrigger.whileTrue(OperatorElevatorDownCommand);
+    OperatorPivotForwardTrigger.whileTrue(OperatorPivotForwardCommand);
+    OperatorPivotReverseTrigger.whileTrue(OperatorPivotReverseCommand);
+    OperatorRollerForwardTrigger.whileTrue(OperatorRollerForwardCommand);
+    OperatorRollerReverseTrigger.whileTrue(OperatorRollerReverseCommand);
 
     SysIDController.a()
         .whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kForward));
@@ -194,12 +208,16 @@ public class RobotContainer {
     SysIDController.y()
         .whileTrue(m_pivotSubsystem.PivotTestQuasistatic(SysIdRoutine.Direction.kReverse));
 
+    m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultIdleCommand);
+    m_pivotSubsystem.setDefaultCommand(PivotDefaultIdleCommand);
+    m_rollerSubsystem.setDefaultCommand(RollerDefaultIdleCommand);
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> -driverController.getRightX(),
+            operatorController.a().getAsBoolean()));
 
     // Lock to 0° when A button is held
     /*

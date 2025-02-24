@@ -2,47 +2,57 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.pivotCommand;
+package frc.robot.commands.operatorCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class PivotForwardCommand extends Command {
+public class PivotManualReverseCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final PivotSubsystem m_subsystem;
+  private final ElevatorSubsystem m_elevatorSubsystem;
 
-  private double target;
+  private final PivotSubsystem m_pivotSubsystem;
+  private final RollerSubsystem m_rollerSubsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public PivotForwardCommand(PivotSubsystem subsystem) {
-    m_subsystem = subsystem;
+  public PivotManualReverseCommand(
+      ElevatorSubsystem elevatorSubsystem,
+      PivotSubsystem pivotSubsystem,
+      RollerSubsystem rollerSubsystem) {
+    m_elevatorSubsystem = elevatorSubsystem;
+    m_pivotSubsystem = pivotSubsystem;
+    m_rollerSubsystem = rollerSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    addRequirements(m_elevatorSubsystem);
+    addRequirements(m_pivotSubsystem);
+    addRequirements(m_rollerSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    target = m_subsystem.getPosition();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.manualVoltsForward();
+    m_elevatorSubsystem.hold();
+    m_pivotSubsystem.manualVoltsReverse();
+    m_rollerSubsystem.shutDown();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // m_subsystem.shutDown();
-    m_subsystem.hold();
-    // m_subsystem.report();
+    m_elevatorSubsystem.shutDown();
+    m_pivotSubsystem.shutDown();
+    m_rollerSubsystem.shutDown();
   }
 
   // Returns true when the command should end.

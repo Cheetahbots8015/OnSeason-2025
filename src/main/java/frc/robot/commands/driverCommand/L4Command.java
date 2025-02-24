@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.ElevatorConstants;
@@ -12,7 +12,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class L2Command extends Command {
+public class L4Command extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_elevatorSubsystem;
 
@@ -24,7 +24,7 @@ public class L2Command extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public L2Command(
+  public L4Command(
       ElevatorSubsystem elevatorSubsystem,
       PivotSubsystem pivotSubsystem,
       RollerSubsystem rollerSubsystem) {
@@ -44,16 +44,19 @@ public class L2Command extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2L2();
-    m_pivotSubsystem.set2L2();
-    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L2Position)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
-      m_rollerSubsystem.L2Vots();
+    m_elevatorSubsystem.L4();
+    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.L4PivotFurtherOutPosition)) {
+      m_pivotSubsystem.L4();
+    } else {
+      m_pivotSubsystem.L2();
+    }
+
+    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L4Position)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.L4Position)) {
+      m_rollerSubsystem.L4();
     } else {
       m_rollerSubsystem.defaultIdelVelocity();
     }
-    m_elevatorSubsystem.report();
-    m_pivotSubsystem.report();
   }
 
   // Called once the command ends or is interrupted.

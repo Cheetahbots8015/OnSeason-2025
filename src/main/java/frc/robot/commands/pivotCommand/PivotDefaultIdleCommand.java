@@ -1,10 +1,11 @@
 package frc.robot.commands.pivotCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.PivotSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class PivotL2Command extends Command {
+public class PivotDefaultIdleCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final PivotSubsystem m_subsystem;
 
@@ -13,7 +14,7 @@ public class PivotL2Command extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public PivotL2Command(PivotSubsystem subsystem) {
+  public PivotDefaultIdleCommand(PivotSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -26,17 +27,23 @@ public class PivotL2Command extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.set2L2();
+    m_subsystem.idle();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // m_subsystem.shutDown();
     m_subsystem.hold();
   }
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (m_subsystem.getHoldAlgae()) {
+      return m_subsystem.isAtPosition(PivotConstants.algaeHomePosition);
+    } else {
+      return m_subsystem.isAtPosition(PivotConstants.coralHomePosition);
+    }
   }
 }

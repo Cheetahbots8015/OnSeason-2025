@@ -2,17 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.operatorCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.ElevatorConstants;
-import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
-/** An example command that uses an example subsystem. */
-public class L3Command extends Command {
+// whenever the operator wants to take any option, this command must be executed
+// this command freezes the current position of elevator and pivot to prevent default command from
+// setting them back to default positions
+// this command also shutsdown the roller
+// before operate solves the problem, he or she SHOULD ALWAYS make the trigger binding to this
+// command active
+// before operate solves the problem, he or she MUST ALWAYS make the trigger binding to this command
+// active
+public class FreezeCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_elevatorSubsystem;
 
@@ -24,7 +29,7 @@ public class L3Command extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public L3Command(
+  public FreezeCommand(
       ElevatorSubsystem elevatorSubsystem,
       PivotSubsystem pivotSubsystem,
       RollerSubsystem rollerSubsystem) {
@@ -44,24 +49,17 @@ public class L3Command extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2L3();
-    m_pivotSubsystem.set2L3();
-    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L3Position)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.L3Position)) {
-      m_rollerSubsystem.L3Vots();
-    } else {
-      m_rollerSubsystem.defaultIdelVelocity();
-    }
-    m_elevatorSubsystem.report();
-    m_pivotSubsystem.report();
+    m_elevatorSubsystem.hold();
+    m_pivotSubsystem.hold();
+    m_rollerSubsystem.shutDown();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_rollerSubsystem.defaultIdelVelocity();
+    m_rollerSubsystem.shutDown();
     m_elevatorSubsystem.shutDown();
-    m_pivotSubsystem.hold();
+    m_pivotSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
