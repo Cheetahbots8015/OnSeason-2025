@@ -61,6 +61,8 @@ public class SuperStructure extends SubsystemBase {
 
 			case HOMING:
 				elevator.setElevatorState(ElevatorSystem.ElevatorState.HOMING);
+				pivot.setPivotState(PivotSystem.PivotState.IDLE);
+				roller.setRollerState(RollerSystem.RollerState.IDLE);
 				break;
 
 			case MANUALFORWARD:
@@ -159,6 +161,10 @@ public class SuperStructure extends SubsystemBase {
 	public void requestEnd() {
 		nextSystemState = superStructureState.IDLE;
 		systemPosition = superStructurePosition.NULL;
+	}
+
+	public void requestHomeInit(){
+		elevator.setHomeInit();
 	}
 
 	private superStructureState getSystemState() {
