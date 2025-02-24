@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Choreo First Coral Other Side"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Choreo Go To Station Other Side"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCommand"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Choreo Second Coral Other Side"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Choreo Take From Station Other Side"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCommand"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Choreo Third Coral Other Side"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}

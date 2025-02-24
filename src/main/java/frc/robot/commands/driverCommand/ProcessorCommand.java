@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.*;
@@ -11,7 +11,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class HighAlgaeCommand extends Command {
+public class ProcessorCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_rollerSubsystem;
 
@@ -24,7 +24,7 @@ public class HighAlgaeCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public HighAlgaeCommand(
+  public ProcessorCommand(
       RollerSubsystem rollerSubsystem,
       PivotSubsystem pivotSubsystem,
       ElevatorSubsystem elevatorSubsystem) {
@@ -45,25 +45,25 @@ public class HighAlgaeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2HighAlgae();
-    m_pivotSubsystem.set2HighAlgae();
-    if (m_pivotSubsystem.isAtPosition(PivotConstants.highAlgaePosition)
-        && m_elevatorSubsystem.isAbovePosition(ElevatorConstants.highAlgaePosition)) {
-      m_rollerSubsystem.AlgaeVolts();
+    m_elevatorSubsystem.defaultDown();
+    m_pivotSubsystem.processor();
+    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.homePosition)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.processorPosition)) {
+      m_rollerSubsystem.processor();
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_pivotSubsystem.setHoldAlgae(true);
-    m_rollerSubsystem.defaultIdelVelocity();
+    m_pivotSubsystem.shutDown();
     m_elevatorSubsystem.shutDown();
+    m_rollerSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return !m_pivotSubsystem.getHoldAlgae();
   }
 }

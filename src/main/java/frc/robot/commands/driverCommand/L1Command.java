@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.ElevatorConstants;
@@ -12,7 +12,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class L2Command extends Command {
+public class L1Command extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_elevatorSubsystem;
 
@@ -24,7 +24,7 @@ public class L2Command extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public L2Command(
+  public L1Command(
       ElevatorSubsystem elevatorSubsystem,
       PivotSubsystem pivotSubsystem,
       RollerSubsystem rollerSubsystem) {
@@ -44,16 +44,14 @@ public class L2Command extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2L2();
-    m_pivotSubsystem.set2L2();
-    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L2Position)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
-      m_rollerSubsystem.L2Vots();
+    m_elevatorSubsystem.L1();
+    m_pivotSubsystem.L1();
+    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L1Position)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.L1Position)) {
+      m_rollerSubsystem.L1();
     } else {
       m_rollerSubsystem.defaultIdelVelocity();
     }
-    m_elevatorSubsystem.report();
-    m_pivotSubsystem.report();
   }
 
   // Called once the command ends or is interrupted.
@@ -61,7 +59,7 @@ public class L2Command extends Command {
   public void end(boolean interrupted) {
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.shutDown();
-    m_pivotSubsystem.hold();
+    m_pivotSubsystem.shutDown();
   }
 
   // Returns true when the command should end.

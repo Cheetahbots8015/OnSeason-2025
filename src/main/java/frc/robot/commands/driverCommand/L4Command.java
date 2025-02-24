@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.ElevatorConstants;
@@ -44,21 +44,19 @@ public class L4Command extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2L4();
-    if (m_elevatorSubsystem.isAbovePosition(110.0)) {
-      m_pivotSubsystem.set2L4();
+    m_elevatorSubsystem.L4();
+    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.L4PivotFurtherOutPosition)) {
+      m_pivotSubsystem.L4();
     } else {
-      m_pivotSubsystem.hold();
+      m_pivotSubsystem.L2();
     }
 
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L4Position)
         && m_pivotSubsystem.isAtPosition(PivotConstants.L4Position)) {
-      m_rollerSubsystem.L4Vots();
+      m_rollerSubsystem.L4();
     } else {
       m_rollerSubsystem.defaultIdelVelocity();
     }
-    m_elevatorSubsystem.report();
-    m_pivotSubsystem.report();
   }
 
   // Called once the command ends or is interrupted.
@@ -66,7 +64,7 @@ public class L4Command extends Command {
   public void end(boolean interrupted) {
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.shutDown();
-    m_pivotSubsystem.hold();
+    m_pivotSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
