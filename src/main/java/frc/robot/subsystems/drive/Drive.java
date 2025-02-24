@@ -365,9 +365,17 @@ public class Drive extends SubsystemBase {
     return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   }
 
+  public double getSlowLinearSpeedMetersPerSec() {
+    return TunerConstants.kSlowSpeed.in(MetersPerSecond);
+  }
+
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
+  }
+
+  public double getSlowAngularSpeedRadPerSec() {
+    return getSlowLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
   }
 
   /** Returns an array of module translations. */

@@ -2,17 +2,15 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.operatorCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.ElevatorConstants;
-import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class LowAlgaeCommand extends Command {
+public class RollerManualReverseCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_elevatorSubsystem;
 
@@ -24,40 +22,37 @@ public class LowAlgaeCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public LowAlgaeCommand(
-      RollerSubsystem rollerSubsystem,
+  public RollerManualReverseCommand(
+      ElevatorSubsystem elevatorSubsystem,
       PivotSubsystem pivotSubsystem,
-      ElevatorSubsystem elevatorSubsystem) {
+      RollerSubsystem rollerSubsystem) {
     m_elevatorSubsystem = elevatorSubsystem;
     m_pivotSubsystem = pivotSubsystem;
     m_rollerSubsystem = rollerSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+    addRequirements(m_elevatorSubsystem);
+    addRequirements(m_pivotSubsystem);
+    addRequirements(m_rollerSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_elevatorSubsystem.resetFilter();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2LowAlgae();
-    m_pivotSubsystem.set2LowAlgae();
-    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.lowAlgaePosition)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.lowAlgaePosition)) {
-      m_rollerSubsystem.AlgaeVolts();
-    }
+    m_elevatorSubsystem.hold();
+    m_pivotSubsystem.hold();
+    m_rollerSubsystem.manualReverseVelocity();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_pivotSubsystem.setHoldAlgae(true);
-    m_rollerSubsystem.setHoldAlgae(true);
     m_elevatorSubsystem.shutDown();
+    m_pivotSubsystem.shutDown();
+    m_rollerSubsystem.shutDown();
   }
 
   // Returns true when the command should end.

@@ -2,37 +2,38 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.ElevatorConstants;
-import frc.robot.generated.PivotConstants;
+import frc.robot.generated.*;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class L1Command extends Command {
+public class ProcessorCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorSubsystem m_elevatorSubsystem;
+  private final RollerSubsystem m_rollerSubsystem;
 
   private final PivotSubsystem m_pivotSubsystem;
-  private final RollerSubsystem m_rollerSubsystem;
+
+  private final ElevatorSubsystem m_elevatorSubsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public L1Command(
-      ElevatorSubsystem elevatorSubsystem,
+  public ProcessorCommand(
+      RollerSubsystem rollerSubsystem,
       PivotSubsystem pivotSubsystem,
-      RollerSubsystem rollerSubsystem) {
-    m_elevatorSubsystem = elevatorSubsystem;
-    m_pivotSubsystem = pivotSubsystem;
-    m_rollerSubsystem = rollerSubsystem;
+      ElevatorSubsystem elevatorSubsystem) {
+    this.m_rollerSubsystem = rollerSubsystem;
+    this.m_pivotSubsystem = pivotSubsystem;
+    this.m_elevatorSubsystem = elevatorSubsystem;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+    addRequirements(rollerSubsystem, pivotSubsystem, elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -44,29 +45,25 @@ public class L1Command extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set2L1();
-    m_pivotSubsystem.set2L1();
-    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L1Position)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.L1Position)) {
-      m_rollerSubsystem.L1Vots();
-    } else {
-      m_rollerSubsystem.defaultIdelVelocity();
+    m_elevatorSubsystem.defaultDown();
+    m_pivotSubsystem.processor();
+    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.homePosition)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.processorPosition)) {
+      m_rollerSubsystem.processor();
     }
-    m_elevatorSubsystem.report();
-    m_pivotSubsystem.report();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_rollerSubsystem.defaultIdelVelocity();
-    m_elevatorSubsystem.shutDown();
     m_pivotSubsystem.shutDown();
+    m_elevatorSubsystem.shutDown();
+    m_rollerSubsystem.shutDown();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return !m_pivotSubsystem.getHoldAlgae();
   }
 }

@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.commands;
+package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -77,7 +77,8 @@ public class DriveCommands {
       CommandXboxController controller,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier omegaSupplier,
+      boolean slowMode) {
     return Commands.run(
         () -> {
           boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
@@ -112,9 +113,18 @@ public class DriveCommands {
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
+                  linearVelocity.getX()
+                      * (slowMode
+                          ? drive.getSlowLinearSpeedMetersPerSec()
+                          : drive.getMaxLinearSpeedMetersPerSec()),
+                  linearVelocity.getY()
+                      * (slowMode
+                          ? drive.getSlowLinearSpeedMetersPerSec()
+                          : drive.getMaxLinearSpeedMetersPerSec()),
+                  omega
+                      * (slowMode
+                          ? drive.getSlowAngularSpeedRadPerSec()
+                          : drive.getMaxAngularSpeedRadPerSec()));
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
