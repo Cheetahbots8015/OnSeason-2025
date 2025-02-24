@@ -45,6 +45,7 @@ public interface ElevatorSystemIO {
     public double dutyCycleDiff = 0.0;
     public double voltageDiff = 0.0;
     public double[] position = new double[] {};
+    public double[] positionWithoutOffset = new double[] {};
     public double[] velocity = new double[] {};
     public double[] acceleration = new double[] {};
     public double[] appliedVoltage = new double[] {}; // {leader, follower}

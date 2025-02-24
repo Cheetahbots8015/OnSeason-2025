@@ -2,7 +2,7 @@ package frc.robot.commands.pivotCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.PivotConstants;
-import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.pivot.PivotSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class PivotDefaultIdleCommand extends Command {

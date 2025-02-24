@@ -1,22 +1,10 @@
 package frc.robot.subsystems.elevator;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DifferentialVoltage;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.DifferentialSensorSourceValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.generated.ElevatorConstants;
-import frc.robot.util.MagicTimer;
+import frc.robot.constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 	protected final ElevatorSystemIOInputsAutoLogged inputs = new ElevatorSystemIOInputsAutoLogged();
@@ -35,7 +23,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	}
 
 	public boolean isAbovePosition(double height) {
-		return this.getLeaderPositionWithoutOffset() > height;
+		return inputs.positionWithoutOffset[0] > height;
 	}
 
 	public void home() {
@@ -43,70 +31,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 	}
 
 	public void L1() {
-		setPosition_MotionMagicianLow(ElevatorConstants.L1Position);
+		io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L1_POSITION);
 	}
 
 	public void L2() {
-		setPosition_MotionMagicianLow(ElevatorConstants.L2Position);
+		io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L2_POSITION);
 	}
 
 	public void L3() {
-		setPosition_MotionMagicianLow(ElevatorConstants.L3Position);
+		io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L3_POSITION);
 	}
 
 	public void L4() {
-		setPosition_MotionMagicianLow(ElevatorConstants.L4Position);
+		io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L4_POSITION);
 	}
 
 	public void lowAlgae() {
-		setPosition_MotionMagician(ElevatorConstants.lowAlgaePosition);
+		io.setPosition_MotionMagician(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION);
 	}
 
 	public void highAlgae() {
-		setPosition_MotionMagician(ElevatorConstants.highAlgaePosition);
+		io.setPosition_MotionMagician(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION);
 	}
 
-	public boolean getHallSensorActive() {
-		return !hallSensor.get();
-	}
-
-	public void report() {
-		SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
-		SmartDashboard.putNumber("elevator/leader position", leader.getPosition().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"elevator/follower position", follower.getPosition().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"elevator/position difference",
-				leader.getPosition().getValueAsDouble() - follower.getPosition().getValueAsDouble());
-		SmartDashboard.putBoolean("elevator/hallsensor", getHallSensorActive());
-		SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
-		SmartDashboard.putNumber("elevator/leader encoder offset", leaderEncoderOffset);
-		SmartDashboard.putNumber("elevator/follower encoder offset", followerEncoderOffset);
-		SmartDashboard.putNumber("elevator/leader velocity", leader.getVelocity().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"elevator/leader acceleration", leader.getAcceleration().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"elevator/leader torquecurrent", leader.getTorqueCurrent().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"elevator/follower torquecurrent", follower.getTorqueCurrent().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"elevator/motionmagic target", leader.getClosedLoopReference().getValueAsDouble());
-		SmartDashboard.putNumber("elevator/leaderVoltage", leader.getMotorVoltage().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"elevator/followerVoltage", follower.getMotorVoltage().getValueAsDouble());
-	}
-
-	// at the beginning of homing process, the phase should be phase1
-	// if the elevator is in phase1 and hall sensor is active, then switch to phase2
-	// otherwise, if the elevator is in phase2 and hall sensor is not active, the
-	// switch to phase3
-	// elevator in phase2 will move up and the move down until hall sensor is active
-	// again
-	// elevator in phase3 will directly move down until hall sensor is active
-	// by the end of homing process, the phase should be set back to phase1
-	private enum homePhase {
-		phase1,
-		phase2,
-		phase3
-	}
 }

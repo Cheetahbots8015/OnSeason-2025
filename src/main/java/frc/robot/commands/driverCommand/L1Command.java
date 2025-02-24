@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.pivot.PivotSubsystem;
+import frc.robot.subsystems.rollers.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class L1Command extends Command {

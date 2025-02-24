@@ -225,6 +225,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
 		inputs.position =
 				new double[]{leaderPosition.getValueAsDouble(), followerPosition.getValueAsDouble()};
+		inputs.positionWithoutOffset =
+				new double[]{leaderPosition.getValueAsDouble() - leaderEncoderOffset, followerPosition.getValueAsDouble() - followerEncoderOffset};
 		inputs.velocity =
 				new double[]{leaderVelocity.getValueAsDouble(), followerVelocity.getValueAsDouble()};
 		inputs.acceleration =

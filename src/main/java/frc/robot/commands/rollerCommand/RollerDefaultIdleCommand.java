@@ -5,7 +5,7 @@
 package frc.robot.commands.rollerCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.rollers.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class RollerDefaultIdleCommand extends Command {
