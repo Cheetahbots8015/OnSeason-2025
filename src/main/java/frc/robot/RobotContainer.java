@@ -4,13 +4,11 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -38,7 +36,6 @@ import frc.robot.commands.operatorCommand.RollerManualReverseCommand;
 import frc.robot.commands.pivotCommand.PivotDefaultIdleCommand;
 import frc.robot.commands.rollerCommand.RollerDefaultIdleCommand;
 import frc.robot.generated.JoystickConstants;
-import frc.robot.generated.PipelineIndex;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -174,7 +171,7 @@ public class RobotContainer {
         new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
 
     DashboardDisplay.layout(autoChooser, pipelineList, drive);
-    
+
     // Configure the trigger bindings
 
     configureBindings();

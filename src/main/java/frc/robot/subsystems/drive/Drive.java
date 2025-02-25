@@ -257,36 +257,40 @@ public class Drive extends SubsystemBase {
             0);
         LimelightHelpers.PoseEstimate mt2 =
             LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+        LimelightHelpers.PoseEstimate mt2_station = 
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
         if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
           doRejectUpdate = true;
         }
-        if (mt2.tagCount == 0) {
-          doRejectUpdate = true;
-        }
-        if (doRejectUpdate) {
-          doRejectUpdate = false;
-          LimelightHelpers.SetRobotOrientation(
-              "limelight-station",
-              poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-              0,
-              0,
-              0,
-              0,
-              0);
-          mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
-          if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
+        if(mt2.tagCount == 0){
+          if(mt2_station.tagCount == 0){
             doRejectUpdate = true;
           }
-          if (mt2.tagCount == 0) {
+          else{
             doRejectUpdate = true;
+            LimelightHelpers.SetRobotOrientation(
+            "limelight-station",
+            poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+            0,
+            0,
+            0,
+            0,
+            0);
+            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+            poseEstimator.addVisionMeasurement(
+                mt2_station.pose,
+                mt2_station.timestampSeconds);
           }
         }
-        if (!doRejectUpdate) {
-          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-          poseEstimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+        if(!doRejectUpdate){
+          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+          poseEstimator.addVisionMeasurement(
+              mt2.pose,
+              mt2.timestampSeconds);
         }
-      }
     }
+    }
+  }
   }
   /**
    * Runs the drive at the desired velocity.
