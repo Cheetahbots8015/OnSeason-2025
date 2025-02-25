@@ -57,9 +57,9 @@ public class FreezeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_rollerSubsystem.shutDown();
-    m_elevatorSubsystem.shutDown();
-    m_pivotSubsystem.shutDown();
+    m_rollerSubsystem.defaultIdelVelocity();
+    m_elevatorSubsystem.hold();
+    m_pivotSubsystem.hold();
   }
 
   // Returns true when the command should end.

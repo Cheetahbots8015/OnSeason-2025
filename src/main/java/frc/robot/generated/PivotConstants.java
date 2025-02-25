@@ -36,13 +36,18 @@ public class PivotConstants {
   public static final double manualReverseVoltage = -0.5;
 
   // home
-  public static final double coralHomePosition = 0.002;
+  public static final double coralHomePosition = 0.001;
   public static final double algaeHomePosition = 0.268;
 
   // coral reef
   public static final double L1Position = 0.0375;
   public static final double L2Position = 0.0375;
   public static final double L3Position = 0.0375;
+  // note: L1L2L3 set point should be bigger, the large deadband and the too small deadband are used
+  // to
+  // compensate for the failed holding during shooting
+  // in fact, there should be another slot of PID constants dedicated to position lock during
+  // shooting
   public static final double L4Position = 0.0938;
 
   // algae

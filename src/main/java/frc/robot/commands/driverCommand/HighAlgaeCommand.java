@@ -58,7 +58,9 @@ public class HighAlgaeCommand extends Command {
   public void end(boolean interrupted) {
     m_pivotSubsystem.setHoldAlgae(true);
     m_rollerSubsystem.setHoldAlgae(true);
-    m_elevatorSubsystem.shutDown();
+    m_rollerSubsystem.defaultIdelVelocity();
+    m_elevatorSubsystem.defaultDown();
+    m_pivotSubsystem.idle();
   }
 
   // Returns true when the command should end.
