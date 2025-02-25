@@ -52,11 +52,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 	// Subsystems
 	private final Drive drive;
-	private final RollerSystem roller;
-	private final PivotSystem pivot;
-	private final ElevatorSystem elevator;
 	private final Vision vision;
-	private final SuperStructure superStructure;
 
 	// Controller
 	private final CommandXboxController controller = new CommandXboxController(0);
@@ -78,15 +74,11 @@ public class RobotContainer {
 								new ModuleIOTalonFX(TunerConstants.FrontRight),
 								new ModuleIOTalonFX(TunerConstants.BackLeft),
 								new ModuleIOTalonFX(TunerConstants.BackRight));
-				roller = new RollerSystem("Roller", new RollerSystemIOKrakenX60());
-				pivot = new PivotSystem("Pivot", new PivotIOKrakenX60());
-				elevator = new ElevatorSystem("Elevator", new ElevatorSystemIOKrakenX60());
 				vision =
 						new Vision(
 								drive::addVisionMeasurement,
 								new VisionIOLimelight(cameraReefName, drive::getRotation),
 								new VisionIOLimelight(cameraStationName, drive::getRotation));
-				superStructure = new SuperStructure(elevator, roller, vision, pivot);
 				break;
 
 			case SIM:
@@ -99,16 +91,12 @@ public class RobotContainer {
 								new ModuleIOSim(TunerConstants.FrontRight),
 								new ModuleIOSim(TunerConstants.BackLeft),
 								new ModuleIOSim(TunerConstants.BackRight));
-				roller = new RollerSystem("Roller", new RollerSystemIOKrakenX60());
-				pivot = new PivotSystem("Pivot", new PivotIOKrakenX60());
-				elevator = new ElevatorSystem("Elevator", new ElevatorSystemIOKrakenX60());
 				vision =
 						new Vision(
 								drive::addVisionMeasurement,
 								new VisionIOPhotonVisionSim(cameraReefName, robotToCameraReef, drive::getPose),
 								new VisionIOPhotonVisionSim(
 										cameraStationName, robotToCameraStation, drive::getPose));
-				superStructure = new SuperStructure(elevator, roller, vision, pivot);
 				break;
 
 			default:
@@ -125,13 +113,9 @@ public class RobotContainer {
 								},
 								new ModuleIO() {
 								});
-				roller = new RollerSystem("Roller", new RollerSystemIOKrakenX60());
-				pivot = new PivotSystem("Pivot", new PivotIOKrakenX60());
-				elevator = new ElevatorSystem("Elevator", new ElevatorSystemIOKrakenX60());
 				vision = new Vision(drive::addVisionMeasurement, new VisionIO() {
 				}, new VisionIO() {
 				});
-				superStructure = new SuperStructure(elevator, roller, vision, pivot);
 				break;
 		}
 

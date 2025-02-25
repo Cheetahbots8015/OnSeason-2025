@@ -23,6 +23,7 @@ public interface PivotIO {
   public static class PivotIOInputs {
     public boolean connected = false;
     public double position = 0.0;
+    public double positionWithoutOffset = 0.0;
     public double velocity = 0.0;
     public double acceleration = 0.0;
     public double torqueCurrent = 0.0;
