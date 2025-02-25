@@ -43,11 +43,11 @@ public class rotate2Apriltag extends Command {
     pidyaw = new PIDController(4, 0, 0);
     if (m_direction == "right") {
       LimelightHelpers.setPipelineIndex("limelight-reef", 0);
-      LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, 0.2, 0);
+      LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, 0.5, 0);
       LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
     } else {
       LimelightHelpers.setPipelineIndex("limelight-reef", 0);
-      LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, -0.2, 0);
+      LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, -0, 0);
       LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
     }
     LimelightHelpers.setLEDMode_ForceOff("limelight-reef");
@@ -63,7 +63,7 @@ public class rotate2Apriltag extends Command {
     Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
     if (hasTarget) {
       lastPose = pose;
-      if (pose.getTranslation().getZ() <= 1.2) {
+      if (pose.getTranslation().getZ() <= 0.8) {
         if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 4) {
           m_controller.setRumble(
               RumbleType.kBothRumble,

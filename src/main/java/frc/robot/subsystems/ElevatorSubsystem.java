@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DifferentialVoltage;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
@@ -172,6 +173,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // basic function to run voltage out, should be used by multiple functions
   public void setVolts(double volts) {
+    leader.getPosition().refresh();
+    leader.getMotorVoltage().refresh();
+    follower.getPosition().refresh();
+    follower.getMotorVoltage().refresh();
+    BaseStatusSignal.waitForAll(
+        0.05,
+        leader.getPosition(),
+        leader.getMotorVoltage(),
+        follower.getPosition(),
+        follower.getMotorVoltage());
     leader.setControl(voltageOut.withOutput(volts).withLimitReverseMotion(getHallSensorActive()));
     follower.setControl(
         new DifferentialVoltage(volts, 0.0)

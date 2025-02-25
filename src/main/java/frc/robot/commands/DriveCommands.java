@@ -11,14 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.commands.driverCommand;
+package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -27,13 +25,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -77,29 +72,9 @@ public class DriveCommands {
       CommandXboxController controller,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier,
-      boolean slowMode) {
+      DoubleSupplier omegaSupplier) {
     return Commands.run(
         () -> {
-          boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
-          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
-          if (hasTarget) {
-            if (pose.getTranslation().getZ() < 1.5 && Math.abs(pose.getTranslation().getX()) < 1) {
-              if (pose.getTranslation().getX() < -0.1) {
-                controller.setRumble(
-                    RumbleType.kLeftRumble, 1 - Math.abs(pose.getTranslation().getX()));
-                controller.setRumble(RumbleType.kRightRumble, 0);
-              } else if (pose.getTranslation().getX() > 0.1) {
-                controller.setRumble(
-                    RumbleType.kRightRumble, 1 - Math.abs(pose.getTranslation().getX()));
-                controller.setRumble(RumbleType.kLeftRumble, 0);
-              } else {
-                controller.setRumble(RumbleType.kBothRumble, 1);
-              }
-            }
-          } else {
-            controller.setRumble(RumbleType.kBothRumble, 0);
-          }
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -113,18 +88,9 @@ public class DriveCommands {
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(
-                  linearVelocity.getX()
-                      * (slowMode
-                          ? drive.getSlowLinearSpeedMetersPerSec()
-                          : drive.getMaxLinearSpeedMetersPerSec()),
-                  linearVelocity.getY()
-                      * (slowMode
-                          ? drive.getSlowLinearSpeedMetersPerSec()
-                          : drive.getMaxLinearSpeedMetersPerSec()),
-                  omega
-                      * (slowMode
-                          ? drive.getSlowAngularSpeedRadPerSec()
-                          : drive.getMaxAngularSpeedRadPerSec()));
+                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                  omega * drive.getMaxAngularSpeedRadPerSec());
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
@@ -322,101 +288,6 @@ public class DriveCommands {
                               + formatter.format(Units.metersToInches(wheelRadius))
                               + " inches");
                     })));
-  }
-
-  public static Command rotate2Apriltagright(Drive drive) {
-    return Commands.run(
-        () -> {
-          LimelightHelpers.setPipelineIndex("limelight-reef", 0);
-          LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, -0.15, 0);
-          LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
-          boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
-          PIDController pidx = new PIDController(8, 0, 0);
-          PIDController pidy = new PIDController(5, 0, 0);
-          PIDController pidyaw = new PIDController(5, 0, 0);
-          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
-          pidx.setSetpoint(0.8);
-          pidy.setSetpoint(0);
-          pidyaw.setSetpoint(0);
-          LimelightHelpers.setLEDMode_ForceOff("limelight-reef");
-          if (hasTarget) {
-            if (pose.getTranslation().getZ() <= 0.8) {
-              if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 1.4) {
-                SmartDashboard.putBoolean("limelight-reef", true);
-                LimelightHelpers.setLEDMode_ForceOn("limelight-reef");
-                drive.stop();
-              } else {
-                SmartDashboard.putBoolean("limelight-reef", false);
-                pidy = new PIDController(0.07, 0, 0);
-                pidyaw = new PIDController(0.2, 0, 0);
-                ChassisSpeeds drivSpeeds =
-                    new ChassisSpeeds(
-                        0,
-                        pidy.calculate(LimelightHelpers.getTX("limelight-reef")),
-                        pidyaw.calculate(pose.getRotation().getY()));
-                drive.runVelocity(drivSpeeds);
-              }
-            } else {
-              ChassisSpeeds drivSpeeds =
-                  new ChassisSpeeds(
-                      -pidx.calculate(pose.getTranslation().getZ()),
-                      pidy.calculate(pose.getTranslation().getX()),
-                      pidyaw.calculate(pose.getRotation().getY()));
-              drive.runVelocity(drivSpeeds);
-            }
-          } else {
-            ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
-            drive.runVelocity(drivSpeeds);
-          }
-        },
-        drive);
-  }
-
-  public static Command rotate2Apriltagleft(Drive drive) {
-    return Commands.run(
-        () -> {
-          LimelightHelpers.setPipelineIndex("limelight-reef", 1);
-          LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, 0.15, 0);
-          LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
-          boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
-          PIDController pidx = new PIDController(8, 0, 0);
-          PIDController pidy = new PIDController(5, 0, 0);
-          PIDController pidyaw = new PIDController(5, 0, 0);
-          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
-          pidx.setSetpoint(0.8);
-          pidy.setSetpoint(0);
-          pidyaw.setSetpoint(0);
-          LimelightHelpers.setLEDMode_ForceOff("limelight-reef");
-          if (hasTarget) {
-            if (pose.getTranslation().getZ() <= 0.8) {
-              if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 1.4) {
-                SmartDashboard.putBoolean("limelight-reef", true);
-                LimelightHelpers.setLEDMode_ForceOn("limelight-reef");
-                drive.stop();
-              } else {
-                SmartDashboard.putBoolean("limelight-reef", false);
-                pidy = new PIDController(0.07, 0, 0);
-                pidyaw = new PIDController(0.2, 0, 0);
-                ChassisSpeeds drivSpeeds =
-                    new ChassisSpeeds(
-                        0,
-                        pidy.calculate(LimelightHelpers.getTX("limelight-reef")),
-                        pidyaw.calculate(pose.getRotation().getY()));
-                drive.runVelocity(drivSpeeds);
-              }
-            } else {
-              ChassisSpeeds drivSpeeds =
-                  new ChassisSpeeds(
-                      -pidx.calculate(pose.getTranslation().getZ()),
-                      pidy.calculate(pose.getTranslation().getX()),
-                      pidyaw.calculate(pose.getRotation().getY()));
-              drive.runVelocity(drivSpeeds);
-            }
-          } else {
-            ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
-            drive.runVelocity(drivSpeeds);
-          }
-        });
   }
 
   private static class WheelRadiusCharacterizationState {

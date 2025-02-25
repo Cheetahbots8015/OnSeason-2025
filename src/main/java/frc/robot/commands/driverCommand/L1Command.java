@@ -58,8 +58,8 @@ public class L1Command extends Command {
   @Override
   public void end(boolean interrupted) {
     m_rollerSubsystem.defaultIdelVelocity();
-    m_elevatorSubsystem.shutDown();
-    m_pivotSubsystem.shutDown();
+    m_elevatorSubsystem.defaultDown();
+    m_pivotSubsystem.idle();
   }
 
   // Returns true when the command should end.

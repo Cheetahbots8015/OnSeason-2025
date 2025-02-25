@@ -16,6 +16,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -28,6 +29,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,8 +49,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
-import frc.robot.Constants.Mode;
+import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.io.IOException;
@@ -225,12 +226,72 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      boolean useMegaTag2 = true; // set to false to use MegaTag1
+      boolean doRejectUpdate = false;
+      if (useMegaTag2 == false) {
+        LimelightHelpers.PoseEstimate mt1 =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-reef");
+        if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+          if (mt1.rawFiducials[0].ambiguity > .7) {
+            doRejectUpdate = true;
+          }
+          if (mt1.rawFiducials[0].distToCamera > 3) {
+            doRejectUpdate = true;
+          }
+        }
+        if (mt1.tagCount == 0) {
+          doRejectUpdate = true;
+        }
+        if (!doRejectUpdate) {
+          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+          poseEstimator.addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
+        }
+      } else if (useMegaTag2 == true) {
+        LimelightHelpers.SetRobotOrientation(
+            "limelight-reef",
+            poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+            0,
+            0,
+            0,
+            0,
+            0);
+        LimelightHelpers.PoseEstimate mt2 =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+        LimelightHelpers.PoseEstimate mt2_station = 
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
+        if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
+          doRejectUpdate = true;
+        }
+        if(mt2.tagCount == 0){
+          if(mt2_station.tagCount == 0){
+            doRejectUpdate = true;
+          }
+          else{
+            doRejectUpdate = true;
+            LimelightHelpers.SetRobotOrientation(
+            "limelight-station",
+            poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+            0,
+            0,
+            0,
+            0,
+            0);
+            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+            poseEstimator.addVisionMeasurement(
+                mt2_station.pose,
+                mt2_station.timestampSeconds);
+          }
+        }
+        if(!doRejectUpdate){
+          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+          poseEstimator.addVisionMeasurement(
+              mt2.pose,
+              mt2.timestampSeconds);
+        }
     }
-
-    // Update gyro alert
-    gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+    }
   }
-
+  }
   /**
    * Runs the drive at the desired velocity.
    *
