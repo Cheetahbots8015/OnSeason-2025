@@ -38,6 +38,7 @@ import frc.robot.commands.operatorCommand.RollerManualReverseCommand;
 import frc.robot.commands.pivotCommand.PivotDefaultIdleCommand;
 import frc.robot.commands.rollerCommand.RollerDefaultIdleCommand;
 import frc.robot.generated.JoystickConstants;
+import frc.robot.generated.PipelineIndex;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
@@ -189,6 +190,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putData("Choose a pipeline", new PipelineSwitch(PipelineIndex.ALIGNREEF));
     // Configure the trigger bindings
 
     configureBindings();

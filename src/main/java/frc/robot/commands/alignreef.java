@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 
-public class alignreef extends Command {
+public class AlignReef extends Command {
   private final Drive m_drive;
   private final CommandXboxController m_controller;
   private PIDController pidy;
@@ -29,6 +29,29 @@ public class alignreef extends Command {
    * @param subsystem The subsystem used by this command.
    */
   public alignreef(Drive drive, CommandXboxController controller) {
+    m_drive = drive;
+    m_controller = controller;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drive);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    LimelightHelpers.setPipelineIndex("limelight-reef", 1);
+    LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
+    LimelightHelpers.setLEDMode_ForceOff("limelight-reef");
+    pidy = new PIDController(0.07, 0, 0);
+    m_leftrangeFinder = new AnalogPotentiometer(0, 350, 2);
+    m_rightrangeFinder = new AnalogPotentiometer(1, 350, 2);
+    rangelimit = 35.0; // in centimeters
+    filter = new MedianFilter(3);
+  /**
+   * Creates a new ExampleCommand.
+   *
+   * @param subsystem The subsystem used by this command.
+   */
+  public AlignReef(Drive drive, CommandXboxController controller) {
     m_drive = drive;
     m_controller = controller;
     // Use addRequirements() here to declare subsystem dependencies.
