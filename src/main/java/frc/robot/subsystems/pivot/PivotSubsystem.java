@@ -54,66 +54,48 @@ public class PivotSubsystem extends SubsystemBase {
 
 	public void idle() {
 		if (isHoldAlgae) {
-			io.setAngle(PivotConstants.ALGAE);
+			io.setAngle(PivotConstants.PIVOT_ALGAE_HOLD_ANGLE);
 		} else {
-			io.setAngle(PivotConstants.coralHomePosition);
+			io.setAngle(PivotConstants.PIVOT_CORAL_HOLD_ANGLE);
 		}
 	}
 
 	public void L1() {
-		io.setAngle(PivotConstants.L1Position);
+		io.setAngle(PivotConstants.PIVOT_L1_ANGLE);
 	}
 
 	public void L2() {
-		io.setAngle(PivotConstants.L2Position);
+		io.setAngle(PivotConstants.PIVOT_L2_ANGLE);
 	}
 
 	public void L3() {
-		io.setAngle(PivotConstants.L3Position);
+		io.setAngle(PivotConstants.PIVOT_L3_ANGLE);
 	}
 
 	public void L4() {
-		io.setAngle(PivotConstants.L4Position);
+		io.setAngle(PivotConstants.PIVOT_L4_ANGLE);
 	}
 
 	public void lowAlgae() {
-		io.setAngle(PivotConstants.lowAlgaePosition);
+		io.setAngle(PivotConstants.PIVOT_LOWALGAE_ANGLE);
 	}
 
 	public void highAlgae() {
-		io.setAngle(PivotConstants.highAlgaePosition);
+		io.setAngle(PivotConstants.PIVOT_HIGHALGAE_ANGLE);
 	}
 
 	public void processor() {
-		io.setAngle(PivotConstants.processorPosition);
+		io.setAngle(PivotConstants.PIVOT_PROCESSOR_ANGLE);
 	}
 
 	public void hold() {
-		io.setAngle(this.getPositionwithoutOffset());
+		io.setAngle(inputs.positionWithoutOffset);
 	}
 
 	public boolean isAtPosition(double height) {
-		if (Math.abs(this.getPositionwithoutOffset() - height) < PivotConstants.positionDeadband) {
-			SmartDashboard.putBoolean("pivot/is at position", true);
-		} else {
-			SmartDashboard.putBoolean("pivot/is at position", false);
-		}
-		return Math.abs(this.getPositionwithoutOffset() - height) < PivotConstants.positionDeadband;
+		return io.isAtPosition(height);
 	}
 
-	public void report() {
-		SmartDashboard.putNumber("pivot/pivot position", pivot.getPosition().getValueAsDouble());
-		SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
-		SmartDashboard.putNumber("pivot/pivot velocity", pivot.getVelocity().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"pivot/pivot acceleration", pivot.getAcceleration().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"pivot/pivot torquecurrent", pivot.getTorqueCurrent().getValueAsDouble());
-		SmartDashboard.putNumber(
-				"pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
-		SmartDashboard.putNumber("pivot/s1 position", candi.getPWM1Position().getValueAsDouble());
-		SmartDashboard.putNumber("pivot/offset", offset);
-	}
 
 	// methods to manage isHoldAlgae boolean
 	public boolean getHoldAlgae() {

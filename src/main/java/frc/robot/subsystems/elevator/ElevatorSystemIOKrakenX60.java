@@ -275,7 +275,7 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 		return !hallSensor.get();
 	}
 
-	private void resetFilter() {
+	public void resetFilter() {
 		filter.reset();
 	}
 

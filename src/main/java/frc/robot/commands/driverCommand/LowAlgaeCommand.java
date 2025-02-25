@@ -48,7 +48,7 @@ public class LowAlgaeCommand extends Command {
     m_pivotSubsystem.lowAlgae();
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.lowAlgaePosition)
         && m_pivotSubsystem.isAtPosition(PivotConstants.lowAlgaePosition)) {
-      m_rollerSubsystem.intakeAlgaefromReef();
+      m_rollerSubsystem.intakeAlgaeFromReef();
     }
   }
 

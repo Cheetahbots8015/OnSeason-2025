@@ -54,4 +54,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 		io.setPosition_MotionMagician(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION);
 	}
 
+	public void defaultDown() {
+		io.defaultFall();
+	}
+
+	public void resetFilter() {
+		io.resetFilter();
+	}
+
+	public void homeInit(){
+		io.resetFilter();
+		io.resetHomePhase();
+	}
 }
