@@ -48,8 +48,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
-import frc.robot.Constants.Mode;
+import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.io.IOException;
@@ -58,7 +57,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import frc.robot.LimelightHelpers;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -227,57 +225,68 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-    boolean useMegaTag2 = true; //set to false to use MegaTag1
-    boolean doRejectUpdate = false;
-    if(useMegaTag2 == false){
-      LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-reef");
-      if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1){
-        if(mt1.rawFiducials[0].ambiguity > .7){
+      boolean useMegaTag2 = true; // set to false to use MegaTag1
+      boolean doRejectUpdate = false;
+      if (useMegaTag2 == false) {
+        LimelightHelpers.PoseEstimate mt1 =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-reef");
+        if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+          if (mt1.rawFiducials[0].ambiguity > .7) {
+            doRejectUpdate = true;
+          }
+          if (mt1.rawFiducials[0].distToCamera > 3) {
+            doRejectUpdate = true;
+          }
+        }
+        if (mt1.tagCount == 0) {
           doRejectUpdate = true;
         }
-        if(mt1.rawFiducials[0].distToCamera > 3){
+        if (!doRejectUpdate) {
+          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+          poseEstimator.addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
+        }
+      } else if (useMegaTag2 == true) {
+        LimelightHelpers.SetRobotOrientation(
+            "limelight-reef",
+            poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+            0,
+            0,
+            0,
+            0,
+            0);
+        LimelightHelpers.PoseEstimate mt2 =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+        if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
           doRejectUpdate = true;
         }
-      }
-      if(mt1.tagCount == 0){
-        doRejectUpdate = true;
-      }
-      if(!doRejectUpdate){
-        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
-        poseEstimator.addVisionMeasurement(
-            mt1.pose,
-            mt1.timestampSeconds);
-      }
-    }
-    else if (useMegaTag2 == true){
-      LimelightHelpers.SetRobotOrientation("limelight-reef", poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
-      if(Math.abs(gyroInputs.yawVelocityRadPerSec) > 720){
-        doRejectUpdate = true;
-      }
-      if(mt2.tagCount == 0){
-        doRejectUpdate = true;
-      }
-      if(doRejectUpdate){
-        doRejectUpdate = false;
-        LimelightHelpers.SetRobotOrientation("limelight-station", poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
-        if(Math.abs(gyroInputs.yawVelocityRadPerSec) > 720){
+        if (mt2.tagCount == 0) {
           doRejectUpdate = true;
         }
-        if(mt2.tagCount == 0){
-          doRejectUpdate = true;
+        if (doRejectUpdate) {
+          doRejectUpdate = false;
+          LimelightHelpers.SetRobotOrientation(
+              "limelight-station",
+              poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+              0,
+              0,
+              0,
+              0,
+              0);
+          mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+          if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
+            doRejectUpdate = true;
+          }
+          if (mt2.tagCount == 0) {
+            doRejectUpdate = true;
+          }
         }
-      }
-      if(!doRejectUpdate){
-        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-        poseEstimator.addVisionMeasurement(
-            mt2.pose,
-            mt2.timestampSeconds);
+        if (!doRejectUpdate) {
+          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+          poseEstimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+        }
       }
     }
   }
-}
   /**
    * Runs the drive at the desired velocity.
    *

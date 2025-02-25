@@ -67,7 +67,8 @@ public class RobotContainer {
   private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
   private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
 
-  private final SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> pipelineList;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -172,25 +173,8 @@ public class RobotContainer {
         "L4 Command",
         new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
 
-    autoChooser = AutoBuilder.buildAutoChooser("test");
-
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-    SmartDashboard.putData("Choose a pipeline", new PipelineSwitch(PipelineIndex.ALIGNREEF));
+    DashboardDisplay.layout(autoChooser, pipelineList, drive);
+    
     // Configure the trigger bindings
 
     configureBindings();

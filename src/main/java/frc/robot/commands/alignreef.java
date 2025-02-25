@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import javax.print.attribute.standard.PrintQuality;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
