@@ -56,9 +56,9 @@ public class ProcessorCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_pivotSubsystem.shutDown();
-    m_elevatorSubsystem.shutDown();
-    m_rollerSubsystem.shutDown();
+    m_rollerSubsystem.defaultIdelVelocity();
+    m_elevatorSubsystem.defaultDown();
+    m_pivotSubsystem.idle();
   }
 
   // Returns true when the command should end.
