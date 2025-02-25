@@ -16,6 +16,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -254,35 +255,32 @@ public class Drive extends SubsystemBase {
             0,
             0,
             0);
-        LimelightHelpers.PoseEstimate mt2 =
+        LimelightHelpers.PoseEstimate mt2_reef =
             LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+        LimelightHelpers.PoseEstimate mt2_station = 
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
         if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
           doRejectUpdate = true;
         }
-        if (mt2.tagCount == 0) {
-          doRejectUpdate = true;
-        }
-        if (doRejectUpdate) {
-          doRejectUpdate = false;
+        else if (mt2_reef.tagCount == 0) {
           LimelightHelpers.SetRobotOrientation(
-              "limelight-station",
-              poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-              0,
-              0,
-              0,
-              0,
-              0);
-          mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
-          if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
+            "limelight-station",
+            poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+            0,
+            0,
+            0,
+            0,
+            0);
+          if(mt2_station.tagCount == 0){
             doRejectUpdate = true;
           }
-          if (mt2.tagCount == 0) {
-            doRejectUpdate = true;
+          else{
+            poseEstimator.addVisionMeasurement(mt2_station.pose, mt2_reef.timestampSeconds);
           }
         }
         if (!doRejectUpdate) {
           poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-          poseEstimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+          poseEstimator.addVisionMeasurement(mt2_reef.pose, mt2_reef.timestampSeconds);
         }
       }
     }
