@@ -90,7 +90,7 @@ public class PivotSystem extends SubsystemBase {
 
 		switch (pivotState) {
 			case IDLE:
-				io.hold();
+				io.hold(); //TODO: differentiate different idle and hold
 				break;
 			case POSITION:
 				switch (pivotPosition) {
