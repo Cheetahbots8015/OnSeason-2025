@@ -31,6 +31,7 @@ public class ElevatorDefaultIdleCommand extends Command {
   @Override
   public void execute() {
     m_subsystem.defaultDown();
+    m_subsystem.report();
   }
 
   // Called once the command ends or is interrupted.
