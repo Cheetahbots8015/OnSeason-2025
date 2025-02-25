@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 
-public class alignreef extends Command {
+public class alignReef extends Command {
   private final Drive m_drive;
   private final String m_direction;
   private final CommandXboxController m_controller;
@@ -24,7 +24,7 @@ public class alignreef extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public alignreef(Drive drive, String direction, CommandXboxController controller) {
+  public alignReef(Drive drive, String direction, CommandXboxController controller) {
     m_drive = drive;
     m_direction = direction;
     m_controller = controller;
@@ -35,7 +35,7 @@ public class alignreef extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LimelightHelpers.setPipelineIndex("limelight-reef", 1);
+    LimelightHelpers.setPipelineIndex("limelight-reef", 0);
     LimelightHelpers.SetFidcuial3DOffset("limelight-reef", 0, 0.5, 0);
     LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
     LimelightHelpers.setLEDMode_ForceOff("limelight-reef");
