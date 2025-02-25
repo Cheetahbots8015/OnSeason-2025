@@ -5,8 +5,8 @@
 package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.ElevatorConstants;
-import frc.robot.generated.PivotConstants;
+import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.PivotConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.rollers.RollerSubsystem;
@@ -45,24 +45,24 @@ public class L4Command extends Command {
   @Override
   public void execute() {
     m_elevatorSubsystem.L4();
-    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.L4PivotFurtherOutPosition)) {
+    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.ELEVATOR_L4_FURTHER_POSITION)) {
       m_pivotSubsystem.L4();
     } else {
       m_pivotSubsystem.L2();
     }
 
-    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L4Position)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.L4Position)) {
+    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.ELEVATOR_L4_POSITION)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.PIVOT_L4_ANGLE)) {
       m_rollerSubsystem.L4();
     } else {
-      m_rollerSubsystem.defaultIdelVelocity();
+      m_rollerSubsystem.defaultIdleVelocity();
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_rollerSubsystem.defaultIdelVelocity();
+    m_rollerSubsystem.defaultIdleVelocity();
     m_elevatorSubsystem.shutDown();
     m_pivotSubsystem.shutDown();
   }

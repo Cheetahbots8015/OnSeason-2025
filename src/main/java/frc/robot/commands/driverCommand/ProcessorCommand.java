@@ -5,7 +5,7 @@
 package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.*;
+import frc.robot.constants.*;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.rollers.RollerSubsystem;
@@ -47,8 +47,8 @@ public class ProcessorCommand extends Command {
   public void execute() {
     m_elevatorSubsystem.defaultDown();
     m_pivotSubsystem.processor();
-    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.homePosition)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.processorPosition)) {
+    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.PIVOT_PROCESSOR_ANGLE)) {
       m_rollerSubsystem.processor();
     }
   }

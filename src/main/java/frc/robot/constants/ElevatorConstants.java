@@ -62,8 +62,10 @@ public class ElevatorConstants {
   public static final double ELEVATOR_L2_POSITION = 21.68;
   public static final double ELEVATOR_L3_POSITION = 63.0;
   public static final double ELEVATOR_L4_POSITION = 120.0;
+  public static final double ELEVATOR_L4_FURTHER_POSITION = 0.0;
   public static final double ELEVATOR_LOW_ALGAE_POSITION = 40.0;
   public static final double ELEVATOR_HIGH_ALGAE_POSITION = 80.0;
   public static final double ELEVATOR_PROCESSOR_POSITION = 0.0;
   public static final double ELEVATOR_STATION_POSITION = 0.0;
+  public static final double ELEVATOR_HOME_POSITION = 0.0;
 }

@@ -31,7 +31,6 @@ public interface PivotIO {
     public double torqueCurrent = 0.0;
     public double motionMagicTarget = 0.0;
     public double appliedVoltage = 0.0;
-    public double tempCelcius = 0.0;
     public double s1Position = 0.0;
   }
 }

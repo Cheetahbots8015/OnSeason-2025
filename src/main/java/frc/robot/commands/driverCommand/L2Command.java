@@ -5,8 +5,8 @@
 package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.ElevatorConstants;
-import frc.robot.generated.PivotConstants;
+import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.PivotConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.rollers.RollerSubsystem;
@@ -46,18 +46,18 @@ public class L2Command extends Command {
   public void execute() {
     m_elevatorSubsystem.L2();
     m_pivotSubsystem.L2();
-    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L2Position)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.L2Position)) {
+    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.ELEVATOR_L2_POSITION)
+        && m_pivotSubsystem.isAtPosition(PivotConstants.PIVOT_L2_ANGLE)) {
       m_rollerSubsystem.L2();
     } else {
-      m_rollerSubsystem.defaultIdelVelocity();
+      m_rollerSubsystem.defaultIdleVelocity();
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_rollerSubsystem.defaultIdelVelocity();
+    m_rollerSubsystem.defaultIdleVelocity();
     m_elevatorSubsystem.shutDown();
     m_pivotSubsystem.shutDown();
   }
