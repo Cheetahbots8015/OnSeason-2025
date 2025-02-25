@@ -1,8 +1,10 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ElevatorConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends SubsystemBase {
   protected final ElevatorSystemIOInputsAutoLogged inputs = new ElevatorSystemIOInputsAutoLogged();
@@ -14,6 +16,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.name = name;
     this.io = io;
     disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
+  }
+
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs(name, inputs);
+    disconnected.set(!inputs.connected);
+
+    if (DriverStation.isDisabled()) {
+      io.stop();
+    }
   }
 
   public boolean isAtPosition(double height) {

@@ -30,9 +30,7 @@ import frc.robot.util.MagicTimer;
  * Generic roller IO implementation for a roller or series of rollers using a Kraken.
  */
 
-/**
- * Generic roller IO implementation for a roller or series of rollers using a Kraken.
- */
+/** Generic roller IO implementation for a roller or series of rollers using a Kraken. */
 public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 	private final TalonFX leader =
 			new TalonFX(ElevatorConstants.ELEVATOR_LEADER_ID, ElevatorConstants.ELEVATOR_CANNAME);
@@ -253,7 +251,8 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 						leaderTorqueCurrent.getValueAsDouble(), followerTorqueCurrent.getValueAsDouble()
 				};
 		inputs.encoderOffset = new double[]{leaderEncoderOffset, followerEncoderOffset};
-		inputs.reference = new double[]{leaderReference.getValueAsDouble(), followerReference.getValueAsDouble()};
+		inputs.reference =
+				new double[]{leaderReference.getValueAsDouble(), followerReference.getValueAsDouble()};
 	}
 
 	private double getLeaderPositionWithoutOffset() {

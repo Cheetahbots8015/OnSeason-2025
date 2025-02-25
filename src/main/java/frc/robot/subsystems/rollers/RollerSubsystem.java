@@ -1,9 +1,11 @@
 package frc.robot.subsystems.rollers;
 
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.RollerConstants;
 import frc.robot.util.MagicTimer;
+import org.littletonrobotics.junction.Logger;
 
 public class RollerSubsystem extends SubsystemBase {
   protected final RollerSystemIOInputsAutoLogged inputs = new RollerSystemIOInputsAutoLogged();
@@ -62,6 +64,16 @@ public class RollerSubsystem extends SubsystemBase {
     } else {
       rollerTimer.resetTimer();
       io.runVelocity(RollerConstants.ROLLER_LOAD_CORAL_VELOCITY);
+    }
+  }
+
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs(name, inputs);
+    disconnected.set(!inputs.connected);
+
+    if (DriverStation.isDisabled()) {
+      io.stop();
     }
   }
 
