@@ -58,6 +58,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private homePhase systemHomePhase = homePhase.phase1;
 
+  public enum elevatorIdleState {
+    coral,
+    algae,
+    manual
+  }
+
+  private elevatorIdleState systemIdleState = elevatorIdleState.coral;
+
   public ElevatorSubsystem() {
     // config neutralmode
     leaderConfigs.MotorOutput.withNeutralMode(
@@ -197,10 +205,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   // give a negative voltage if the elevator is high and let it free fall when it
   // is low
   public void defaultDown() {
-    if (this.getLeaderPositionWithoutOffset() > ElevatorConstants.defaultDownShutDownPosition) {
-      setVolts(ElevatorConstants.defaultDownVoltage);
+    if (systemIdleState == elevatorIdleState.manual) {
+      hold();
     } else {
-      shutDown();
+      if (this.getLeaderPositionWithoutOffset() > ElevatorConstants.defaultDownShutDownPosition) {
+        setVolts(ElevatorConstants.defaultDownVoltage);
+      } else {
+        shutDown();
+      }
     }
   }
 
@@ -365,6 +377,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     return !hallSensor.get();
   }
 
+  // methods to manage system idle state
+  public elevatorIdleState getSysteIdleState() {
+    return systemIdleState;
+  }
+
+  public void setSystemIdleState(elevatorIdleState state) {
+    systemIdleState = state;
+  }
+
+  public void switchIdleState() {
+    if (systemIdleState == elevatorIdleState.algae) {
+      systemIdleState = elevatorIdleState.coral;
+    } else if (systemIdleState == elevatorIdleState.coral) {
+      systemIdleState = elevatorIdleState.algae;
+    } else {
+      systemIdleState = elevatorIdleState.coral;
+    }
+  }
+
   public void report() {
     SmartDashboard.putNumber("time", Timer.getFPGATimestamp());
     SmartDashboard.putNumber("elevator/leader position", leader.getPosition().getValueAsDouble());
@@ -399,5 +430,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         "elevator/follower reference", follower.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putNumber(
         "elevator/leader reference", leader.getClosedLoopReference().getValueAsDouble());
+    SmartDashboard.putString("elevator/idle state", systemIdleState.toString());
+    SmartDashboard.putString("elevator/home phase", systemHomePhase.toString());
   }
 }

@@ -41,7 +41,13 @@ public class PivotSubsystem extends SubsystemBase {
 
   // indicate whether holding algae, defaultly regarded as holding coral since the
   // idle velocity of holding coral is zero
-  private boolean isHoldAlgae = false;
+  public enum pivotIdleState {
+    coral,
+    algae,
+    manual
+  }
+
+  private pivotIdleState systemIdleState = pivotIdleState.coral;
 
   // sysID stuffs
   private final SysIdRoutine m_SysIdRoutinePivot =
@@ -156,10 +162,12 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void idle() {
-    if (isHoldAlgae) {
+    if (systemIdleState == pivotIdleState.coral) {
+      setPosition(PivotConstants.coralHomePosition);
+    } else if (systemIdleState == pivotIdleState.algae) {
       setPosition(PivotConstants.algaeHomePosition);
     } else {
-      setPosition(PivotConstants.coralHomePosition);
+      hold();
     }
   }
 
@@ -216,19 +224,26 @@ public class PivotSubsystem extends SubsystemBase {
         "pivot/motionmagic target", pivot.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putNumber("pivot/s1 position", candi.getPWM1Position().getValueAsDouble());
     SmartDashboard.putNumber("pivot/offset", offset);
+    SmartDashboard.putString("pivot/idle state", systemIdleState.toString());
   }
 
-  // methods to manage isHoldAlgae boolean
-  public boolean getHoldAlgae() {
-    return isHoldAlgae;
+  // methods to manage system idle state
+  public pivotIdleState getSysteIdleState() {
+    return systemIdleState;
   }
 
-  public void setHoldAlgae(boolean set) {
-    isHoldAlgae = set;
+  public void setSystemIdleState(pivotIdleState state) {
+    systemIdleState = state;
   }
 
-  public void switchHoldAlgae() {
-    isHoldAlgae = !isHoldAlgae;
+  public void switchIdleState() {
+    if (systemIdleState == pivotIdleState.algae) {
+      systemIdleState = pivotIdleState.coral;
+    } else if (systemIdleState == pivotIdleState.coral) {
+      systemIdleState = pivotIdleState.algae;
+    } else {
+      systemIdleState = pivotIdleState.coral;
+    }
   }
 
   // sysID command

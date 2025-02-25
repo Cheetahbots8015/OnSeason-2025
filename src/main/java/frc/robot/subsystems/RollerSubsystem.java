@@ -32,9 +32,16 @@ public class RollerSubsystem extends SubsystemBase {
   // magic timer initialization
   private MagicTimer rollerTimer = new MagicTimer();
 
-  // indicate whether holding algae, defaultly regarded as holding coral since the idle velocity of
+  // indicate whether holding algae, defaultly regarded as holding coral since the
+  // idle velocity of
   // holding coral is zero
-  private boolean isHoldAlgae = false;
+  public enum rollerIdleState {
+    coral,
+    algae,
+    manual
+  }
+
+  private rollerIdleState systemIdleState = rollerIdleState.coral;
 
   public RollerSubsystem() {
     // config neutralmode
@@ -78,7 +85,8 @@ public class RollerSubsystem extends SubsystemBase {
     roller.setControl(voltageOut.withOutput(volts));
   }
 
-  // basic function to run torque current velocity, should be used by multiple functions
+  // basic function to run torque current velocity, should be used by multiple
+  // functions
   public void setVelocity(double velocity) {
     report();
     roller.setControl(velocityFOC.withVelocity(velocity));
@@ -106,14 +114,17 @@ public class RollerSubsystem extends SubsystemBase {
 
   // for default command
   public void defaultIdelVelocity() {
-    if (isHoldAlgae) {
+    if (systemIdleState == rollerIdleState.algae) {
       setVelocity(RollerConstants.algaeIdelVelocity);
-    } else {
+    } else if (systemIdleState == rollerIdleState.coral) {
       setVelocity(RollerConstants.coralIdleVelocity);
+    } else {
+      shutDown();
     }
   }
 
-  // for driver, spinning the roller until a certain time has passed since the canRange detected
+  // for driver, spinning the roller until a certain time has passed since the
+  // canRange detected
   // coral;
   public void station() {
     if (isCanRangeActive()) {
@@ -168,19 +179,26 @@ public class RollerSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("roller/acceleration", roller.getAcceleration().getValueAsDouble());
     SmartDashboard.putNumber("roller/supply voltage", roller.getSupplyVoltage().getValueAsDouble());
     SmartDashboard.putBoolean("roller/canrange", isCanRangeActive());
-    SmartDashboard.putBoolean("roller/hold algae", isHoldAlgae);
+    SmartDashboard.putString("roller/idle state", systemIdleState.toString());
   }
 
   // methods to manage isHoldAlgae boolean
-  public boolean getHoldAlgae() {
-    return isHoldAlgae;
+  // methods to manage system idle state
+  public rollerIdleState getSysteIdleState() {
+    return systemIdleState;
   }
 
-  public void setHoldAlgae(boolean set) {
-    isHoldAlgae = set;
+  public void setSystemIdleState(rollerIdleState state) {
+    systemIdleState = state;
   }
 
-  public void switchHoldAlgae() {
-    isHoldAlgae = !isHoldAlgae;
+  public void switchIdleState() {
+    if (systemIdleState == rollerIdleState.algae) {
+      systemIdleState = rollerIdleState.coral;
+    } else if (systemIdleState == rollerIdleState.coral) {
+      systemIdleState = rollerIdleState.algae;
+    } else {
+      systemIdleState = rollerIdleState.coral;
+    }
   }
 }

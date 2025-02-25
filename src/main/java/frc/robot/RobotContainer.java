@@ -28,7 +28,6 @@ import frc.robot.commands.elevatorCommand.ElevatorDefaultIdleCommand;
 import frc.robot.commands.elevatorCommand.ElevatorHomeCommand;
 import frc.robot.commands.operatorCommand.ElevatorManualDownCommand;
 import frc.robot.commands.operatorCommand.ElevatorManualUpCommand;
-import frc.robot.commands.operatorCommand.FreezeCommand;
 import frc.robot.commands.operatorCommand.PivotManualForwardCommand;
 import frc.robot.commands.operatorCommand.PivotManualReverseCommand;
 import frc.robot.commands.operatorCommand.RollerManualForwardCommand;
@@ -99,7 +98,6 @@ public class RobotContainer {
   // operator triggers
   private final Trigger OperatorSwitchTrigger = operatorController.leftBumper();
   private final Trigger OperatorHomeTrigger = operatorController.rightBumper();
-  private final Trigger OperatorFreezeTrigger = operatorController.leftTrigger();
   private final Trigger OperatorElevatorUpTrigger =
       new Trigger(() -> operatorController.getLeftX() > 0.4);
   private final Trigger OperatorElevatorDownTrigger =
@@ -130,8 +128,6 @@ public class RobotContainer {
 
   // operator commands
   private final Command OperatorHomeCommand = new ElevatorHomeCommand(m_elevatorSubsystem);
-  private final Command operatorFreezeCommand =
-      new FreezeCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command OperatorElevatorUpCommand =
       new ElevatorManualUpCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command OperatorElevatorDownCommand =
@@ -205,10 +201,12 @@ public class RobotContainer {
 
     OperatorHomeTrigger.whileTrue(OperatorHomeCommand);
     OperatorSwitchTrigger.onTrue(
-        Commands.runOnce(() -> m_pivotSubsystem.switchHoldAlgae(), m_pivotSubsystem)
+        Commands.runOnce(() -> m_pivotSubsystem.switchIdleState(), m_pivotSubsystem)
             .alongWith(
-                Commands.runOnce(() -> m_rollerSubsystem.switchHoldAlgae(), m_rollerSubsystem)));
-    OperatorFreezeTrigger.whileTrue(operatorFreezeCommand);
+                Commands.runOnce(() -> m_rollerSubsystem.switchIdleState(), m_rollerSubsystem))
+            .alongWith(
+                Commands.runOnce(
+                    () -> m_elevatorSubsystem.switchIdleState(), m_elevatorSubsystem)));
     OperatorElevatorUpTrigger.whileTrue(OperatorElevatorUpCommand);
     OperatorElevatorDownTrigger.whileTrue(OperatorElevatorDownCommand);
     OperatorPivotForwardTrigger.whileTrue(OperatorPivotForwardCommand);

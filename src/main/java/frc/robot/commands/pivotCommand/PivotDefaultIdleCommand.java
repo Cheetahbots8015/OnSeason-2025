@@ -3,6 +3,7 @@ package frc.robot.commands.pivotCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.PivotSubsystem.pivotIdleState;
 
 /** An example command that uses an example subsystem. */
 public class PivotDefaultIdleCommand extends Command {
@@ -40,10 +41,12 @@ public class PivotDefaultIdleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_subsystem.getHoldAlgae()) {
+    if (m_subsystem.getSysteIdleState() == pivotIdleState.algae) {
       return m_subsystem.isAtPosition(PivotConstants.algaeHomePosition);
-    } else {
+    } else if (m_subsystem.getSysteIdleState() == pivotIdleState.coral) {
       return m_subsystem.isAtPosition(PivotConstants.coralHomePosition);
+    } else {
+      return false;
     }
   }
 }

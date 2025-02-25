@@ -9,7 +9,9 @@ import frc.robot.generated.ElevatorConstants;
 import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.PivotSubsystem.pivotIdleState;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.RollerSubsystem.rollerIdleState;
 
 /** An example command that uses an example subsystem. */
 public class LowAlgaeCommand extends Command {
@@ -55,8 +57,8 @@ public class LowAlgaeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_pivotSubsystem.setHoldAlgae(true);
-    m_rollerSubsystem.setHoldAlgae(true);
+    m_pivotSubsystem.setSystemIdleState(pivotIdleState.algae);
+    m_rollerSubsystem.setSystemIdleState(rollerIdleState.algae);
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.defaultDown();
     m_pivotSubsystem.idle();
