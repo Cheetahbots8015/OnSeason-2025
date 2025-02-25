@@ -255,32 +255,35 @@ public class Drive extends SubsystemBase {
             0,
             0,
             0);
-        LimelightHelpers.PoseEstimate mt2_reef =
+        LimelightHelpers.PoseEstimate mt2 =
             LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
-        LimelightHelpers.PoseEstimate mt2_station = 
-            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
         if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
           doRejectUpdate = true;
         }
-        else if (mt2_reef.tagCount == 0) {
+        if (mt2.tagCount == 0) {
+          doRejectUpdate = true;
+        }
+        if (doRejectUpdate) {
+          doRejectUpdate = false;
           LimelightHelpers.SetRobotOrientation(
-            "limelight-station",
-            poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-            0,
-            0,
-            0,
-            0,
-            0);
-          if(mt2_station.tagCount == 0){
+              "limelight-station",
+              poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+              0,
+              0,
+              0,
+              0,
+              0);
+          mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+          if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
             doRejectUpdate = true;
           }
-          else{
-            poseEstimator.addVisionMeasurement(mt2_station.pose, mt2_reef.timestampSeconds);
+          if (mt2.tagCount == 0) {
+            doRejectUpdate = true;
           }
         }
         if (!doRejectUpdate) {
           poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-          poseEstimator.addVisionMeasurement(mt2_reef.pose, mt2_reef.timestampSeconds);
+          poseEstimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
         }
       }
     }
