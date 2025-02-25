@@ -93,7 +93,6 @@ public class RollerSubsystem extends SubsystemBase {
     return io.isCanRangeTriggered();
   }
 
-
   // methods to manage isHoldAlgae boolean
   public boolean getHoldAlgae() {
     return isHoldAlgae;
@@ -105,5 +104,9 @@ public class RollerSubsystem extends SubsystemBase {
 
   public void switchHoldAlgae() {
     isHoldAlgae = !isHoldAlgae;
+  }
+
+  public void shutDown() {
+    io.stop();
   }
 }

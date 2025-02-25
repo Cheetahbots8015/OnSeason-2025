@@ -30,11 +30,7 @@ public class RollerDefaultIdleCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_subsystem.getHoldAlgae()) {
-      m_subsystem.HoldAlgaeVolts();
-    } else {
-      m_subsystem.defaultIdelVelocity();
-    }
+    m_subsystem.defaultIdleVelocity();
   }
 
   // Called once the command ends or is interrupted.

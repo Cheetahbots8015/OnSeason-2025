@@ -118,7 +118,7 @@ public class PivotIOKrakenX60 implements PivotIO {
     inputs.connected =
         BaseStatusSignal.refreshAll(position, velocity, appliedVoltage, tempCelsius).isOK();
     inputs.position = position.getValueAsDouble();
-    inputs.positionWithoutOffset = s1Position.getValueAsDouble()- offset;
+    inputs.positionWithoutOffset = s1Position.getValueAsDouble() - offset;
     inputs.velocity = velocity.getValueAsDouble();
     inputs.acceleration = acceleration.getValueAsDouble();
     inputs.torqueCurrent = torqueCurrent.getValueAsDouble();
@@ -159,5 +159,10 @@ public class PivotIOKrakenX60 implements PivotIO {
   public boolean isAtPosition(double position) {
     return Math.abs(this.getPositionwithoutOffset() - position)
         < PivotConstants.PIVOT_POSITION_TOLERANCE;
+  }
+
+  @Override
+  public void stop() {
+    pivot.setControl(neutralOut);
   }
 }

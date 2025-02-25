@@ -15,6 +15,8 @@ public interface PivotIO {
 
   public default void hold() {}
 
+  default void stop() {}
+
   public default boolean isAtPosition(double position) {
     return false;
   }

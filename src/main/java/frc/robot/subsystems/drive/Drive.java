@@ -47,12 +47,15 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.constants.TunerConstants;
 import frc.robot.util.LocalADStarAK;
+import java.io.IOException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -125,6 +128,15 @@ public class Drive extends SubsystemBase {
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
 
+    RobotConfig guiconfig = PP_CONFIG;
+    try {
+      guiconfig = RobotConfig.fromGUISettings();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
         this::getPose,
@@ -133,7 +145,7 @@ public class Drive extends SubsystemBase {
         this::runVelocity,
         new PPHolonomicDriveController(
             new PIDConstants(10.0, 0.0, 0.0), new PIDConstants(10.0, 0.0, 0.0)),
-        PP_CONFIG,
+        guiconfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
@@ -354,9 +366,17 @@ public class Drive extends SubsystemBase {
     return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   }
 
+  public double getSlowLinearSpeedMetersPerSec() {
+    return TunerConstants.kSlowSpeed.in(MetersPerSecond);
+  }
+
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
+  }
+
+  public double getSlowAngularSpeedRadPerSec() {
+    return getSlowLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
   }
 
   /** Returns an array of module translations. */

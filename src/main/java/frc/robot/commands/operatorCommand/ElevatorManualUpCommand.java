@@ -42,7 +42,7 @@ public class ElevatorManualUpCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.manualVoltsUp();
+    m_elevatorSubsystem.manualUpVolts();
     m_pivotSubsystem.hold();
     m_rollerSubsystem.shutDown();
   }

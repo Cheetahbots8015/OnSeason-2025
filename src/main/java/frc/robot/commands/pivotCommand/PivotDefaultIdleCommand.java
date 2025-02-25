@@ -1,7 +1,7 @@
 package frc.robot.commands.pivotCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.PivotConstants;
+import frc.robot.constants.PivotConstants;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 
 /** An example command that uses an example subsystem. */
@@ -41,9 +41,9 @@ public class PivotDefaultIdleCommand extends Command {
   @Override
   public boolean isFinished() {
     if (m_subsystem.getHoldAlgae()) {
-      return m_subsystem.isAtPosition(PivotConstants.algaeHomePosition);
+      return m_subsystem.isAtPosition(PivotConstants.PIVOT_ALGAE_HOLD_ANGLE);
     } else {
-      return m_subsystem.isAtPosition(PivotConstants.coralHomePosition);
+      return m_subsystem.isAtPosition(PivotConstants.PIVOT_CORAL_HOLD_ANGLE);
     }
   }
 }

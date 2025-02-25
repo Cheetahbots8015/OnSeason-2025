@@ -5,7 +5,6 @@
 package frc.robot.commands.elevatorCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 
 /** An example command that uses an example subsystem. */
@@ -31,15 +30,13 @@ public class ElevatorManualDownCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // m_subsystem.manualUpVolts();
-    m_subsystem.setVolts(ElevatorConstants.manualDownVoltage);
+    m_subsystem.manualUpVolts();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_subsystem.hold();
-    // m_subsystem.shutDown();
   }
 
   // Returns true when the command should end.

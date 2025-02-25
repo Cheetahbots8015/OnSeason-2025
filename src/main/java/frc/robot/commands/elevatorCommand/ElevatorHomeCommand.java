@@ -26,8 +26,7 @@ public class ElevatorHomeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_subsystem.resetFilter();
-    m_subsystem.resetHomePhase();
+    m_subsystem.homeInit();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,9 +37,7 @@ public class ElevatorHomeCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_subsystem.resetHomePhase();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
