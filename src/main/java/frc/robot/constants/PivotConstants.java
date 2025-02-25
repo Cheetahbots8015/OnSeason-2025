@@ -39,6 +39,6 @@ public class PivotConstants {
   public static final double PIVOT_HIGHALGAE_ANGLE = 0.45;
   public static final double PIVOT_LOWALGAE_ANGLE = 0.45;
   public static final double PIVOT_PROCESSOR_ANGLE = 0.0;
-  public static final double PIVOT_ALGAE_HOLD_ANGLE = 0.0; //TODO: need to chagne
-  public static final double PIVOT_CORAL_HOLD_ANGLE= 0.0;
+  public static final double PIVOT_ALGAE_HOLD_ANGLE = 0.0; // TODO: need to chagne
+  public static final double PIVOT_CORAL_HOLD_ANGLE = 0.0;
 }
