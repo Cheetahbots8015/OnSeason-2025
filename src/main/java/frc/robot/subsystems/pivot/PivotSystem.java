@@ -24,6 +24,8 @@ public class PivotSystem extends SubsystemBase {
 	private PivotPosition pivotPosition = PivotPosition.NULL;
 	private PivotState nextPivotState = PivotState.IDLE;
 
+	private boolean isAlgae = false;
+
 	public PivotSystem(String name, PivotIO pivotIO) {
 		this.name = name;
 		this.io = pivotIO;
@@ -70,15 +72,23 @@ public class PivotSystem extends SubsystemBase {
 		pivotPosition = position;
 	}
 
+	public void setHoldAlgae() {
+		isAlgae = true;
+	}
+
+	public void unsetHoldAlgae() {
+		isAlgae = false;
+	}
+
 	public boolean isAtPosition() {
 		return switch (pivotPosition) {
-			case L1 -> io.isAtPosition(PivotConstants.PIVOT_L1_HEIGHT);
-			case L2 -> io.isAtPosition(PivotConstants.PIVOT_L2_HEIGHT);
-			case L3 -> io.isAtPosition(PivotConstants.PIVOT_L3_HEIGHT);
-			case L4 -> io.isAtPosition(PivotConstants.PIVOT_L4_HEIGHT);
-			case HIGHALGAE -> io.isAtPosition(PivotConstants.PIVOT_HIGHALGAE_HEIGHT);
-			case LOWALGAE -> io.isAtPosition(PivotConstants.PIVOT_LOWALGAE_HEIGHT);
-			case PROCESSOR -> io.isAtPosition(PivotConstants.PIVOT_PROCESSOR_HEIGHT);
+			case L1 -> io.isAtPosition(PivotConstants.PIVOT_L1_ANGLE);
+			case L2 -> io.isAtPosition(PivotConstants.PIVOT_L2_ANGLE);
+			case L3 -> io.isAtPosition(PivotConstants.PIVOT_L3_ANGLE);
+			case L4 -> io.isAtPosition(PivotConstants.PIVOT_L4_ANGLE);
+			case HIGHALGAE -> io.isAtPosition(PivotConstants.PIVOT_HIGHALGAE_ANGLE);
+			case LOWALGAE -> io.isAtPosition(PivotConstants.PIVOT_LOWALGAE_ANGLE);
+			case PROCESSOR -> io.isAtPosition(PivotConstants.PIVOT_PROCESSOR_ANGLE);
 			default -> false;
 		};
 	}
@@ -90,7 +100,11 @@ public class PivotSystem extends SubsystemBase {
 
 		switch (pivotState) {
 			case IDLE:
-				io.hold(); //TODO: differentiate different idle and hold
+				if (isAlgae) {
+					io.setAngle(PivotConstants.PIVOT_ALGAE_HOLD_ANGLE);
+				} else {
+					io.setAngle(PivotConstants.PIVOT_CORAL_HOLD_ANGLE);
+				}
 				break;
 			case POSITION:
 				switch (pivotPosition) {
@@ -98,25 +112,25 @@ public class PivotSystem extends SubsystemBase {
 						io.hold();
 						break;
 					case L1:
-						io.setAngle(PivotConstants.PIVOT_L1_HEIGHT);
+						io.setAngle(PivotConstants.PIVOT_L1_ANGLE);
 						break;
 					case L2:
-						io.setAngle(PivotConstants.PIVOT_L2_HEIGHT);
+						io.setAngle(PivotConstants.PIVOT_L2_ANGLE);
 						break;
 					case L3:
-						io.setAngle(PivotConstants.PIVOT_L3_HEIGHT);
+						io.setAngle(PivotConstants.PIVOT_L3_ANGLE);
 						break;
 					case L4:
-						io.setAngle(PivotConstants.PIVOT_L4_HEIGHT);
+						io.setAngle(PivotConstants.PIVOT_L4_ANGLE);
 						break;
 					case HIGHALGAE:
-						io.setAngle(PivotConstants.PIVOT_HIGHALGAE_HEIGHT);
+						io.setAngle(PivotConstants.PIVOT_HIGHALGAE_ANGLE);
 						break;
 					case LOWALGAE:
-						io.setAngle(PivotConstants.PIVOT_LOWALGAE_HEIGHT);
+						io.setAngle(PivotConstants.PIVOT_LOWALGAE_ANGLE);
 						break;
 					case PROCESSOR:
-						io.setAngle(PivotConstants.PIVOT_PROCESSOR_HEIGHT);
+						io.setAngle(PivotConstants.PIVOT_PROCESSOR_ANGLE);
 						break;
 				}
 				break;

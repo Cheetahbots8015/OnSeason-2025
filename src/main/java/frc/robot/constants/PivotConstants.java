@@ -32,11 +32,13 @@ public class PivotConstants {
   public static final double PIVOT_MANUAL_FORWARD_VOLTAGE = 0.5;
   public static final double PIVOT_MANUAL_REVERSE_VOLTAGE = -0.5;
 
-  public static final double PIVOT_L1_HEIGHT = 0.0375;
-  public static final double PIVOT_L2_HEIGHT = 0.0375;
-  public static final double PIVOT_L3_HEIGHT = 0.0375;
-  public static final double PIVOT_L4_HEIGHT = 3.5 / PIVOT_ROTOR_2_CANDI_RATIO; // TODO: change
-  public static final double PIVOT_HIGHALGAE_HEIGHT = 0.45;
-  public static final double PIVOT_LOWALGAE_HEIGHT = 0.45;
-  public static final double PIVOT_PROCESSOR_HEIGHT = 0.0;
+  public static final double PIVOT_L1_ANGLE = 0.0375;
+  public static final double PIVOT_L2_ANGLE = 0.0375;
+  public static final double PIVOT_L3_ANGLE = 0.0375;
+  public static final double PIVOT_L4_ANGLE = 3.5 / PIVOT_ROTOR_2_CANDI_RATIO; // TODO: change
+  public static final double PIVOT_HIGHALGAE_ANGLE = 0.45;
+  public static final double PIVOT_LOWALGAE_ANGLE = 0.45;
+  public static final double PIVOT_PROCESSOR_ANGLE = 0.0;
+  public static final double PIVOT_ALGAE_HOLD_ANGLE = 0.0; //TODO: need to chagne
+  public static final double PIVOT_CORAL_HOLD_ANGLE= 0.0;
 }
