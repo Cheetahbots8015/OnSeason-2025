@@ -261,8 +261,6 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    driverController.povRight().whileTrue(rotate2Apriltagright);
-    driverController.povLeft().whileTrue(rotate2Apriltagleft);
     driverController
         .povUp()
         .whileTrue(
