@@ -12,13 +12,13 @@ public class ElevatorConstants {
   public static boolean leader_Neutalmode_Coast = true;
   public static boolean follower_Inverted_CounterClockwisePositive = false;
   public static boolean follower_Neutalmode_Coast = true;
-  public static final double leader_kP = 0.05;
+  public static final double leader_kP = 1.6;
   public static final double leader_kI = 0.0;
   public static final double leader_kD = 0.0;
   public static final double leader_kA = 0.0;
   public static final double leader_kS = 0.0;
   public static final double leader_kV = 0.0;
-  public static final double follower_kP = 0.05;
+  public static final double follower_kP = 1.6;
   public static final double follower_kI = 0.0;
   public static final double follower_kD = 0.0;
   public static final double follower_kA = 0.0;
@@ -36,10 +36,10 @@ public class ElevatorConstants {
   public static final double differentialkP = 2.0;
 
   // motion magic configs
-  public static final double leader_CruiseVelocity = 40.0;
-  public static final double leader_CruiseAcceleration = 40.0;
-  public static final double follower_CruiseVelocity = 40.0;
-  public static final double follower_CruiseAcceleration = 40.0;
+  public static final double leader_CruiseVelocity = 60.0;
+  public static final double leader_CruiseAcceleration = 60.0;
+  public static final double follower_CruiseVelocity = 60.0;
+  public static final double follower_CruiseAcceleration = 60.0;
 
   // motion magician
   public static final double motionmagicianHighUpVoltage_L3L4 = 6.0;
