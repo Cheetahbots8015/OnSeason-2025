@@ -14,6 +14,7 @@ public class DashboardDisplay {
   public static void layout(
       SendableChooser<Command> autoChooser, SendableChooser<Command> pipelineList, Drive drive) {
     autoChooser = AutoBuilder.buildAutoChooser("test");
+    pipelineList = new SendableChooser<Command>();
 
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -33,6 +34,6 @@ public class DashboardDisplay {
 
     pipelineList.addOption("ALIGNREEF", new PipelineSwitch(PipelineIndex.ALIGNREEF));
     pipelineList.addOption("ALIGNREEF_LED", new PipelineSwitch(PipelineIndex.ALIGNREEF_LED));
-    SmartDashboard.putData("ALIGNREEF_LED", pipelineList);
+    SmartDashboard.putData("Pipeline Chooser", pipelineList);
   }
 }
