@@ -60,6 +60,7 @@ public class L3Command extends Command {
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.defaultDown();
     m_pivotSubsystem.idle();
+    m_elevatorSubsystem.resetFilter();
   }
 
   // Returns true when the command should end.

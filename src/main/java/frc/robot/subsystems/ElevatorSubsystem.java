@@ -2,8 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DifferentialVoltage;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -21,8 +23,7 @@ import frc.robot.util.MagicTimer;
 public class ElevatorSubsystem extends SubsystemBase {
   // krakenX60 initialization with configs
   private final TalonFX leader = new TalonFX(ElevatorConstants.leaderID, ElevatorConstants.canName);
-  private final TalonFX follower =
-      new TalonFX(ElevatorConstants.followerID, ElevatorConstants.canName);
+  private final TalonFX follower = new TalonFX(ElevatorConstants.followerID, ElevatorConstants.canName);
   private TalonFXConfiguration leaderConfigs = new TalonFXConfiguration();
   private TalonFXConfiguration followerConfigs = new TalonFXConfiguration();
 
@@ -31,7 +32,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // control methods initialization
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-  private MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0.0);
+  private MotionMagicVoltage motionMagic = new MotionMagicVoltage(0.0).withEnableFOC(true);
   private NeutralOut neutralOut = new NeutralOut();
 
   // used to zero the krankenX60s
@@ -39,7 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double followerEncoderOffset = 0.0;
   private MagicTimer elevatorTimer = new MagicTimer();
 
-  private MedianFilter filter = new MedianFilter(30);
+  private MedianFilter filter = new MedianFilter(20);
 
   // at the beginning of homing process, the phase should be phase1
   // if the elevator is in phase1 and hall sensor is active, then switch to phase2
@@ -103,10 +104,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     // config motionmagic
     leaderConfigs.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.leader_CruiseVelocity;
     leaderConfigs.MotionMagic.MotionMagicAcceleration = ElevatorConstants.leader_CruiseAcceleration;
-    followerConfigs.MotionMagic.MotionMagicCruiseVelocity =
-        ElevatorConstants.follower_CruiseVelocity;
-    followerConfigs.MotionMagic.MotionMagicAcceleration =
-        ElevatorConstants.follower_CruiseAcceleration;
+    followerConfigs.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.follower_CruiseVelocity;
+    followerConfigs.MotionMagic.MotionMagicAcceleration = ElevatorConstants.follower_CruiseAcceleration;
 
     // config ducy cycle limit
     leaderConfigs.MotorOutput.withPeakForwardDutyCycle(ElevatorConstants.forwardDutyCycleLimit);
@@ -116,25 +115,18 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // config softlimit
     // hall sensor is used as the reverse limit
-    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable =
-        ElevatorConstants.leader_ForwardSoftLimitEnable;
-    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        ElevatorConstants.leader_forwardSoftLimitThreshold
-            + leader.getPosition().getValueAsDouble();
-    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable =
-        ElevatorConstants.follower_ForwardSoftLimitEnable;
-    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        ElevatorConstants.follower_forwardSoftLimitThreshold
-            + follower.getPosition().getValueAsDouble();
+    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = ElevatorConstants.leader_ForwardSoftLimitEnable;
+    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.leader_forwardSoftLimitThreshold
+        + leader.getPosition().getValueAsDouble();
+    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = ElevatorConstants.follower_ForwardSoftLimitEnable;
+    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.follower_forwardSoftLimitThreshold
+        + follower.getPosition().getValueAsDouble();
 
     // follower differential control
     followerConfigs.Slot1.kP = ElevatorConstants.differentialkP;
-    followerConfigs.DifferentialConstants.PeakDifferentialDutyCycle =
-        ElevatorConstants.forwardDutyCycleLimit;
-    followerConfigs.DifferentialConstants.PeakDifferentialVoltage =
-        ElevatorConstants.peakDifferentialVoltage;
-    followerConfigs.DifferentialSensors.DifferentialSensorSource =
-        DifferentialSensorSourceValue.RemoteTalonFX_Diff;
+    followerConfigs.DifferentialConstants.PeakDifferentialDutyCycle = ElevatorConstants.forwardDutyCycleLimit;
+    followerConfigs.DifferentialConstants.PeakDifferentialVoltage = ElevatorConstants.peakDifferentialVoltage;
+    followerConfigs.DifferentialSensors.DifferentialSensorSource = DifferentialSensorSourceValue.RemoteTalonFX_Diff;
     followerConfigs.DifferentialSensors.DifferentialTalonFXSensorID = ElevatorConstants.leaderID;
 
     // apply configs
@@ -147,22 +139,22 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getLeaderPositionWithoutOffset() {
+    leader.getPosition().refresh();
     return leader.getPosition().getValueAsDouble() - leaderEncoderOffset;
   }
 
   public double getFollowerPositionWithoutOffset() {
+    follower.getPosition().refresh();
     return follower.getPosition().getValueAsDouble() - followerEncoderOffset;
   }
 
   public void updateOffsets() {
     leaderEncoderOffset = leader.getPosition().getValueAsDouble();
     followerEncoderOffset = follower.getPosition().getValueAsDouble();
-    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        ElevatorConstants.leader_forwardSoftLimitThreshold
-            + leader.getPosition().getValueAsDouble();
-    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        ElevatorConstants.follower_forwardSoftLimitThreshold
-            + follower.getPosition().getValueAsDouble();
+    leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.leader_forwardSoftLimitThreshold
+        + leader.getPosition().getValueAsDouble();
+    followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.follower_forwardSoftLimitThreshold
+        + follower.getPosition().getValueAsDouble();
     leader.getConfigurator().apply(leaderConfigs);
     follower.getConfigurator().apply(followerConfigs);
   }
@@ -207,11 +199,12 @@ public class ElevatorSubsystem extends SubsystemBase {
             .withOutput(volts)
             .withLimitReverseMotion(getHallSensorActive())
             .withUseTimesync(true));
-    follower.setControl(
-        new DifferentialVoltage(volts, 0.0)
-            .withDifferentialSlot(1)
-            .withLimitReverseMotion(getHallSensorActive())
-            .withUseTimesync(true));
+    follower.setControl(new Follower(ElevatorConstants.leaderID, true));
+    // follower.setControl(
+    // new DifferentialVoltage(volts, 0.0)
+    // .withDifferentialSlot(1)
+    // .withLimitReverseMotion(getHallSensorActive())
+    // .withUseTimesync(true));
   }
 
   // used in default command to let the elevator go to its home position(lowest
@@ -243,44 +236,46 @@ public class ElevatorSubsystem extends SubsystemBase {
     setVolts(ElevatorConstants.holdVoltage);
   }
 
+  public void setPosition(double position) {
+    if (Math.abs(this.getLeaderPositionWithoutOffset() - position) < ElevatorConstants.positionDeadband) {
+      setVolts(ElevatorConstants.holdVoltage);
+    } else if (this.getLeaderPositionWithoutOffset() > position + ElevatorConstants.positionDeadband) {
+      setVolts(filter.calculate(ElevatorConstants.setPositionDownvoltage));
+    } else if (this.getLeaderPositionWithoutOffset() < position - ElevatorConstants.positionDeadband) {
+      setVolts(filter.calculate(ElevatorConstants.setPositionUpVoltage));
+    }
+  }
+
   public void setPosition_MotionMagic(double position) {
     report();
     leader.getPosition().refresh();
-    leader.getTorqueCurrent().refresh();
+    leader.getMotorVoltage().refresh();
     follower.getPosition().refresh();
-    follower.getTorqueCurrent().refresh();
+    follower.getMotorVoltage().refresh();
     BaseStatusSignal.waitForAll(
         0.05,
         leader.getPosition(),
-        leader.getTorqueCurrent(),
+        leader.getMotorVoltage(),
         follower.getPosition(),
-        follower.getTorqueCurrent());
+        follower.getMotorVoltage());
     leader.setControl(
         motionMagic
             .withPosition(position + leaderEncoderOffset)
             .withLimitReverseMotion(getHallSensorActive())
             .withLimitForwardMotion(
-                this.getLeaderPositionWithoutOffset()
-                    > ElevatorConstants.leader_forwardSoftLimitThreshold));
-    follower.setControl(
-        motionMagic
-            .withPosition(position + followerEncoderOffset)
-            .withLimitReverseMotion(getHallSensorActive())
-            .withLimitForwardMotion(
-                this.getFollowerPositionWithoutOffset()
-                    > ElevatorConstants.follower_forwardSoftLimitThreshold));
+                this.getLeaderPositionWithoutOffset() > ElevatorConstants.leader_forwardSoftLimitThreshold));
+    follower.setControl(new Follower(ElevatorConstants.leaderID, true));
   }
 
   // use median filter to get smooth velocity curves for long distance movement
   public void setPosition_MotionMagician(double position) {
-    if (Math.abs(this.getLeaderPositionWithoutOffset() - position)
-        < ElevatorConstants.positionDeadband) {
+    if (Math.abs(this.getLeaderPositionWithoutOffset() - position) < ElevatorConstants.positionDeadband) {
       setVolts(ElevatorConstants.holdVoltage);
-    } else if (this.getLeaderPositionWithoutOffset()
-        > position + ElevatorConstants.motionmagicianClosePositionDeadband_L3L4) {
+    } else if (this.getLeaderPositionWithoutOffset() > position
+        + ElevatorConstants.motionmagicianClosePositionDeadband_L3L4) {
       setVolts(filter.calculate(ElevatorConstants.motionmagicianHighDownVoltage_L3L4));
-    } else if (this.getLeaderPositionWithoutOffset()
-        < position - ElevatorConstants.motionmagicianClosePositionDeadband_L3L4) {
+    } else if (this.getLeaderPositionWithoutOffset() < position
+        - ElevatorConstants.motionmagicianClosePositionDeadband_L3L4) {
       setVolts(filter.calculate(ElevatorConstants.motionmagicianHighUpVoltage_L3L4));
     } else if (this.getLeaderPositionWithoutOffset() > position) {
       setVolts(filter.calculate(ElevatorConstants.motionmagicianLowDownVoltage_L3L4));
@@ -291,15 +286,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // no need to use median filter for short distance movement
   public void setPosition_MotionMagicianLow(double position) {
-    if (Math.abs(this.getLeaderPositionWithoutOffset() - position)
-        < ElevatorConstants.positionDeadband) {
+    if (Math.abs(this.getLeaderPositionWithoutOffset() - position) < ElevatorConstants.positionDeadband) {
       setVolts(ElevatorConstants.holdVoltage);
-    } else if (Math.abs(this.getLeaderPositionWithoutOffset() - position)
-            < ElevatorConstants.motionmagicianClosePositionDeadband_L1L2
+    } else if (Math.abs(
+        this.getLeaderPositionWithoutOffset() - position) < ElevatorConstants.motionmagicianClosePositionDeadband_L1L2
         && this.getLeaderPositionWithoutOffset() > position) {
       setVolts(ElevatorConstants.motionmagicianLowDownVoltage_L1L2);
-    } else if (Math.abs(this.getLeaderPositionWithoutOffset() - position)
-            < ElevatorConstants.motionmagicianClosePositionDeadband_L1L2
+    } else if (Math.abs(
+        this.getLeaderPositionWithoutOffset() - position) < ElevatorConstants.motionmagicianClosePositionDeadband_L1L2
         && this.getLeaderPositionWithoutOffset() <= position) {
       setVolts(ElevatorConstants.motionmagicianLowUpVoltage_L1L2);
     } else if (this.getLeaderPositionWithoutOffset() > position) {
@@ -314,14 +308,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition(double height) {
-    if (Math.abs(this.getFollowerPositionWithoutOffset() - height)
-        < ElevatorConstants.positionDeadband) {
+    if (Math.abs(this.getFollowerPositionWithoutOffset() - height) < ElevatorConstants.positionDeadband) {
       SmartDashboard.putBoolean("elevator/is at position", true);
     } else {
       SmartDashboard.putBoolean("elevator/is at position", false);
     }
-    return Math.abs(this.getFollowerPositionWithoutOffset() - height)
-        < ElevatorConstants.positionDeadband;
+    return Math.abs(this.getFollowerPositionWithoutOffset() - height) < ElevatorConstants.positionDeadband;
   }
 
   public boolean isAbovePosition(double height) {
@@ -361,31 +353,31 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void L1() {
-    setPosition_MotionMagicianLow(ElevatorConstants.L1Position);
+    setPosition_MotionMagic(ElevatorConstants.L1Position);
     // setPosition_MotionMagic(ElevatorConstants.L1Position);
   }
 
   public void L2() {
-    setPosition_MotionMagicianLow(ElevatorConstants.L2Position);
+    setPosition_MotionMagic(ElevatorConstants.L2Position);
     // setPosition_MotionMagic(ElevatorConstants.L2Position);
   }
 
   public void L3() {
-    setPosition_MotionMagician(ElevatorConstants.L3Position);
+    setPosition_MotionMagic(ElevatorConstants.L3Position);
     // setPosition_MotionMagic(ElevatorConstants.L3Position);
   }
 
   public void L4() {
-    setPosition_MotionMagician(ElevatorConstants.L4Position);
+    setPosition_MotionMagic(ElevatorConstants.L4Position);
     // setPosition_MotionMagic(ElevatorConstants.L4Position);
   }
 
   public void lowAlgae() {
-    setPosition_MotionMagician(ElevatorConstants.lowAlgaePosition);
+    setPosition_MotionMagic(ElevatorConstants.lowAlgaePosition);
   }
 
   public void highAlgae() {
-    setPosition_MotionMagician(ElevatorConstants.highAlgaePosition);
+    setPosition_MotionMagic(ElevatorConstants.highAlgaePosition);
   }
 
   public boolean getHallSensorActive() {
