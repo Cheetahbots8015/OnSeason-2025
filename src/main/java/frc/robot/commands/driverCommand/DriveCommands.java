@@ -80,8 +80,6 @@ public class DriveCommands {
       boolean slowMode) {
     return Commands.run(
         () -> {
-          LimelightHelpers.setPipelineIndex("limelight-reef", 1);
-          LimelightHelpers.setLEDMode_ForceOn("limelight-reef");
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
