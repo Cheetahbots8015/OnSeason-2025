@@ -227,7 +227,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       hold();
     } else {
       if (this.getLeaderPositionWithoutOffset() > ElevatorConstants.defaultDownShutDownPosition) {
-        setVolts(ElevatorConstants.defaultDownVoltage);
+        //setVolts(ElevatorConstants.defaultDownVoltage);
+        shutDown();
       } else {
         shutDown();
       }
@@ -324,13 +325,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition(double height) {
-    if (Math.abs(this.getFollowerPositionWithoutOffset() - height)
+    if (Math.abs(this.getLeaderPositionWithoutOffset() - height)
         < ElevatorConstants.positionDeadband) {
       SmartDashboard.putBoolean("elevator/is at position", true);
     } else {
       SmartDashboard.putBoolean("elevator/is at position", false);
     }
-    return Math.abs(this.getFollowerPositionWithoutOffset() - height)
+    return Math.abs(this.getLeaderPositionWithoutOffset() - height)
         < ElevatorConstants.positionDeadband;
   }
 
