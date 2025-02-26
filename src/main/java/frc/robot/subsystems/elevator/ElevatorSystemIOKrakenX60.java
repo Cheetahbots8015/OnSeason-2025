@@ -30,7 +30,9 @@ import frc.robot.util.MagicTimer;
  * Generic roller IO implementation for a roller or series of rollers using a Kraken.
  */
 
-/** Generic roller IO implementation for a roller or series of rollers using a Kraken. */
+/**
+ * Generic roller IO implementation for a roller or series of rollers using a Kraken.
+ */
 public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 	private final TalonFX leader =
 			new TalonFX(ElevatorConstants.ELEVATOR_LEADER_ID, ElevatorConstants.ELEVATOR_CANNAME);
@@ -290,36 +292,42 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 
 	@Override
 	public void stop() {
+		leader.getMotorVoltage().refresh();
+		leader.getControlMode().refresh();
+		follower.getMotorVoltage().refresh();
+		follower.getControlMode().refresh();
+		BaseStatusSignal.waitForAll(
+				0.05,
+				leader.getMotorVoltage(),
+				leader.getControlMode(),
+				follower.getMotorVoltage(),
+				follower.getControlMode());
 		leader.setControl(neutralOut);
 		follower.setControl(neutralOut);
 	}
 
 	@Override
 	public void setVoltage(double voltage) {
-		leader.setControl(voltageOut.withOutput(voltage).withLimitReverseMotion(getHallSensorActive()));
+		leader.getPosition().refresh();
+		leader.getMotorVoltage().refresh();
+		follower.getPosition().refresh();
+		follower.getMotorVoltage().refresh();
+		BaseStatusSignal.waitForAll(
+				0.05,
+				leader.getPosition(),
+				leader.getMotorVoltage(),
+				follower.getPosition(),
+				follower.getMotorVoltage());
+		leader.setControl(
+				voltageOut
+						.withOutput(voltage)
+						.withLimitReverseMotion(getHallSensorActive())
+						.withUseTimesync(true));
 		follower.setControl(
 				new DifferentialVoltage(voltage, 0.0)
 						.withDifferentialSlot(1)
-						.withUpdateFreqHz(50.0)
-						.withLimitReverseMotion(getHallSensorActive()));
-	}
-
-	@Override
-	public void setPosition_MotionMagic(double position) {
-		leader.setControl(
-				motionMagic
-						.withPosition(position + leaderEncoderOffset)
 						.withLimitReverseMotion(getHallSensorActive())
-						.withLimitForwardMotion(
-								this.getLeaderPositionWithoutOffset()
-										> ElevatorConstants.ELEVATOR_LEADER_FORWARD_SOFT_LIMIT_THRESHOLD));
-		follower.setControl(
-				motionMagic
-						.withPosition(position + followerEncoderOffset)
-						.withLimitReverseMotion(getHallSensorActive())
-						.withLimitForwardMotion(
-								this.getFollowerPositionWithoutOffset()
-										> ElevatorConstants.ELEVATOR_FOLLOWER_FORWARD_SOFT_LIMIT_THRESHOLD));
+						.withUseTimesync(true));
 	}
 
 	@Override
@@ -367,10 +375,6 @@ public class ElevatorSystemIOKrakenX60 implements ElevatorSystemIO {
 	public boolean isAtPosition(double height) {
 		return Math.abs(this.getFollowerPositionWithoutOffset() - height)
 				< ElevatorConstants.ELEVATOR_POSITION_DEADBAND;
-	}
-
-	public boolean isAbovePosition(double height) {
-		return this.getLeaderPositionWithoutOffset() > height;
 	}
 
 	@Override

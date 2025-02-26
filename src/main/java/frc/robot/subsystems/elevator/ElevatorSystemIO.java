@@ -22,17 +22,11 @@ public interface ElevatorSystemIO {
 
   default void defaultFall() {}
 
-  default void setPosition_MotionMagic(double position) {}
-
   default void setPosition_MotionMagician(double position) {}
 
   default void setPosition_MotionMagicianLow(double position) {}
 
   default boolean isAtPosition(double pos) {
-    return false;
-  }
-
-  default boolean getHomed() {
     return false;
   }
 

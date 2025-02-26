@@ -7,89 +7,89 @@ import frc.robot.constants.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  protected final ElevatorSystemIOInputsAutoLogged inputs = new ElevatorSystemIOInputsAutoLogged();
-  private final String name;
-  private final ElevatorSystemIO io;
-  private final Alert disconnected;
+	protected final ElevatorSystemIOInputsAutoLogged inputs = new ElevatorSystemIOInputsAutoLogged();
+	private final String name;
+	private final ElevatorSystemIO io;
+	private final Alert disconnected;
 
-  public ElevatorSubsystem(String name, ElevatorSystemIO io) {
-    this.name = name;
-    this.io = io;
-    disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
-  }
+	public ElevatorSubsystem(String name, ElevatorSystemIO io) {
+		this.name = name;
+		this.io = io;
+		disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
+	}
 
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs(name, inputs);
-    disconnected.set(!inputs.connected);
+	public void periodic() {
+		io.updateInputs(inputs);
+		Logger.processInputs(name, inputs);
+		disconnected.set(!inputs.connected);
 
-    if (DriverStation.isDisabled()) {
-      io.stop();
-    }
-  }
+		if (DriverStation.isDisabled()) {
+			io.stop();
+		}
+	}
 
-  public boolean isAtPosition(double height) {
-    return io.isAtPosition(height);
-  }
+	public boolean isAtPosition(double height) {
+		return io.isAtPosition(height);
+	}
 
-  public boolean isAbovePosition(double height) {
-    return inputs.positionWithoutOffset[0] > height;
-  }
+	public boolean isAbovePosition(double height) {
+		return inputs.positionWithoutOffset[0] > height;
+	}
 
-  public void home() {
-    io.setHome();
-  }
+	public void home() {
+		io.setHome();
+	}
 
-  public void L1() {
-    io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L1_POSITION);
-  }
+	public void L1() {
+		io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L1_POSITION);
+	}
 
-  public void L2() {
-    io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L2_POSITION);
-  }
+	public void L2() {
+		io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L2_POSITION);
+	}
 
-  public void L3() {
-    io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L3_POSITION);
-  }
+	public void L3() {
+		io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L3_POSITION);
+	}
 
-  public void L4() {
-    io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L4_POSITION);
-  }
+	public void L4() {
+		io.setPosition_MotionMagicianLow(ElevatorConstants.ELEVATOR_L4_POSITION);
+	}
 
-  public void lowAlgae() {
-    io.setPosition_MotionMagician(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION);
-  }
+	public void lowAlgae() {
+		io.setPosition_MotionMagician(ElevatorConstants.ELEVATOR_LOW_ALGAE_POSITION);
+	}
 
-  public void highAlgae() {
-    io.setPosition_MotionMagician(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION);
-  }
+	public void highAlgae() {
+		io.setPosition_MotionMagician(ElevatorConstants.ELEVATOR_HIGH_ALGAE_POSITION);
+	}
 
-  public void defaultDown() {
-    io.defaultFall();
-  }
+	public void defaultDown() {
+		io.defaultFall();
+	}
 
-  public void resetFilter() {
-    io.resetFilter();
-  }
+	public void resetFilter() {
+		io.resetFilter();
+	}
 
-  public void homeInit() {
-    io.resetFilter();
-    io.resetHomePhase();
-  }
+	public void homeInit() {
+		io.resetFilter();
+		io.resetHomePhase();
+	}
 
-  public void manualUpVolts() {
-    io.setVoltage(ElevatorConstants.ELEVATOR_UP_VOLTAGE);
-  }
+	public void manualUpVolts() {
+		io.setVoltage(ElevatorConstants.ELEVATOR_UP_VOLTAGE);
+	}
 
-  public void manualDownVolts() {
-    io.setVoltage(ElevatorConstants.ELEVATOR_DOWN_VOLTAGE);
-  }
+	public void manualDownVolts() {
+		io.setVoltage(ElevatorConstants.ELEVATOR_DOWN_VOLTAGE);
+	}
 
-  public void hold() {
-    io.hold();
-  }
+	public void hold() {
+		io.hold();
+	}
 
-  public void shutDown() {
-    io.stop();
-  }
+	public void shutDown() {
+		io.stop();
+	}
 }
