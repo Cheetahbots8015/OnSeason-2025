@@ -222,8 +222,8 @@ public class Drive extends SubsystemBase {
       }
 
       // Apply update
-      /*
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      /* 
       boolean useMegaTag2 = true; // set to false to use MegaTag1
       boolean doRejectUpdate = false;
       if (useMegaTag2 == false) {
