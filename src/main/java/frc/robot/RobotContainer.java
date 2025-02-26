@@ -166,7 +166,7 @@ public class RobotContainer {
         "L4 Command",
         new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
 
-    DashboardDisplay.layout(autoChooser, pipelineList, drive);
+    // DashboardDisplay.layout(autoChooser, pipelineList, drive);
 
     // Configure the trigger bindings
 

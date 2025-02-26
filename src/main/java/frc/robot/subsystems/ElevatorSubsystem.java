@@ -30,9 +30,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final DigitalInput hallSensor = new DigitalInput(ElevatorConstants.hallSensorID);
 
   // control methods initialization
-  private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(50);
-  private MotionMagicTorqueCurrentFOC motionMagic =
-      new MotionMagicTorqueCurrentFOC(0.0).withUpdateFreqHz(200);
+  private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
+  private MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0.0);
   private NeutralOut neutralOut = new NeutralOut();
 
   // used to zero the krankenX60s
@@ -175,8 +174,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // shutdown krakenX60s
   public void shutDown() {
+    leader.getMotorVoltage().refresh();
+    leader.getControlMode().refresh();
+    follower.getMotorVoltage().refresh();
+    follower.getControlMode().refresh();
+    BaseStatusSignal.waitForAll(
+        0.05,
+        leader.getMotorVoltage(),
+        leader.getControlMode(),
+        follower.getMotorVoltage(),
+        follower.getControlMode());
     leader.setControl(neutralOut);
     follower.setControl(neutralOut);
+    // setVolts(0.0);
   }
 
   // basic function to run voltage out, should be used by multiple functions
@@ -192,12 +202,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         leader.getMotorVoltage(),
         follower.getPosition(),
         follower.getMotorVoltage());
-    leader.setControl(voltageOut.withOutput(volts).withLimitReverseMotion(getHallSensorActive()));
+    leader.setControl(
+        voltageOut
+            .withOutput(volts)
+            .withLimitReverseMotion(getHallSensorActive())
+            .withUseTimesync(true));
     follower.setControl(
         new DifferentialVoltage(volts, 0.0)
             .withDifferentialSlot(1)
-            .withUpdateFreqHz(50.0)
-            .withLimitReverseMotion(getHallSensorActive()));
+            .withLimitReverseMotion(getHallSensorActive())
+            .withUseTimesync(true));
   }
 
   // used in default command to let the elevator go to its home position(lowest
@@ -205,6 +219,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // give a negative voltage if the elevator is high and let it free fall when it
   // is low
   public void defaultDown() {
+    report();
     if (systemIdleState == elevatorIdleState.manual) {
       hold();
     } else {
