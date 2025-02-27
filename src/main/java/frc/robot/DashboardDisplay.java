@@ -37,5 +37,7 @@ public class DashboardDisplay {
     SmartDashboard.putData(elevator);
     SmartDashboard.putData(pivot);
     SmartDashboard.putData(roller);
+
+    
   }
 }
