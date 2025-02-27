@@ -4,10 +4,10 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -146,14 +146,8 @@ public class RobotContainer {
       new ElevatorDefaultIdleCommand(m_elevatorSubsystem);
   private final Command RollerDefaultIdleCommand = new RollerDefaultIdleCommand(m_rollerSubsystem);
   private final Command PivotDefaultIdleCommand = new PivotDefaultIdleCommand(m_pivotSubsystem);
-  private final Command rotate2Apriltagleft = new rotate2Apriltag(drive, "left", driverController);
-  private final Command rotate2Apriltagright =
-      new rotate2Apriltag(drive, "right", driverController);
+  private final Command AlignReef = new alignreef(drive, driverController);
 
-  // private final Command rotate2Apriltagleft=
-  // new rotate2Apriltag(drive,"left");
-  // private final Command rotate2Apriltagright=
-  // new rotate2Apriltag(drive, "right");
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Real robot, instantiate hardware IO implementations
@@ -165,6 +159,9 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L4 Command",
         new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
+
+    autoChooser = AutoBuilder.buildAutoChooser("test");
+    pipelineList = new SendableChooser<Command>();
 
     DashboardDisplay.layout(
         autoChooser, pipelineList, drive, m_pivotSubsystem, m_elevatorSubsystem, m_rollerSubsystem);
@@ -261,15 +258,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    driverController.povRight().whileTrue(rotate2Apriltagright);
-    driverController.povLeft().whileTrue(rotate2Apriltagleft);
-    driverController
-        .povUp()
-        .whileTrue(
-            Commands.runEnd(
-                () -> drive.runVelocity(new ChassisSpeeds(1.0, 0.0, 0.0)),
-                () -> drive.stop(),
-                drive));
+    driverController.povUp().whileTrue(AlignReef);
   }
 
   /**

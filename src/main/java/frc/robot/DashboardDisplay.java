@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,8 +20,6 @@ public class DashboardDisplay {
       PivotSubsystem pivot,
       ElevatorSubsystem elevator,
       RollerSubsystem roller) {
-    autoChooser = AutoBuilder.buildAutoChooser("test");
-    pipelineList = new SendableChooser<Command>();
 
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));

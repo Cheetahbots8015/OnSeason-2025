@@ -2,8 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DifferentialVoltage;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -31,7 +31,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // control methods initialization
   private VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
-  private MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0.0);
+  private MotionMagicVoltage motionMagic = new MotionMagicVoltage(0.0).withEnableFOC(true);
   private NeutralOut neutralOut = new NeutralOut();
 
   // used to zero the krankenX60s
@@ -39,7 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double followerEncoderOffset = 0.0;
   private MagicTimer elevatorTimer = new MagicTimer();
 
-  private MedianFilter filter = new MedianFilter(30);
+  private MedianFilter filter = new MedianFilter(20);
 
   // at the beginning of homing process, the phase should be phase1
   // if the elevator is in phase1 and hall sensor is active, then switch to phase2
@@ -147,10 +147,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getLeaderPositionWithoutOffset() {
+    leader.getPosition().refresh();
     return leader.getPosition().getValueAsDouble() - leaderEncoderOffset;
   }
 
   public double getFollowerPositionWithoutOffset() {
+    follower.getPosition().refresh();
     return follower.getPosition().getValueAsDouble() - followerEncoderOffset;
   }
 
@@ -207,11 +209,12 @@ public class ElevatorSubsystem extends SubsystemBase {
             .withOutput(volts)
             .withLimitReverseMotion(getHallSensorActive())
             .withUseTimesync(true));
-    follower.setControl(
-        new DifferentialVoltage(volts, 0.0)
-            .withDifferentialSlot(1)
-            .withLimitReverseMotion(getHallSensorActive())
-            .withUseTimesync(true));
+    follower.setControl(new Follower(ElevatorConstants.leaderID, true));
+    // follower.setControl(
+    // new DifferentialVoltage(volts, 0.0)
+    // .withDifferentialSlot(1)
+    // .withLimitReverseMotion(getHallSensorActive())
+    // .withUseTimesync(true));
   }
 
   // used in default command to let the elevator go to its home position(lowest
@@ -224,7 +227,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       hold();
     } else {
       if (this.getLeaderPositionWithoutOffset() > ElevatorConstants.defaultDownShutDownPosition) {
-        setVolts(ElevatorConstants.defaultDownVoltage);
+        // setVolts(ElevatorConstants.defaultDownVoltage);
+        shutDown();
       } else {
         shutDown();
       }
@@ -243,18 +247,31 @@ public class ElevatorSubsystem extends SubsystemBase {
     setVolts(ElevatorConstants.holdVoltage);
   }
 
+  public void setPosition(double position) {
+    if (Math.abs(this.getLeaderPositionWithoutOffset() - position)
+        < ElevatorConstants.positionDeadband) {
+      setVolts(ElevatorConstants.holdVoltage);
+    } else if (this.getLeaderPositionWithoutOffset()
+        > position + ElevatorConstants.positionDeadband) {
+      setVolts(filter.calculate(ElevatorConstants.setPositionDownvoltage));
+    } else if (this.getLeaderPositionWithoutOffset()
+        < position - ElevatorConstants.positionDeadband) {
+      setVolts(filter.calculate(ElevatorConstants.setPositionUpVoltage));
+    }
+  }
+
   public void setPosition_MotionMagic(double position) {
     report();
     leader.getPosition().refresh();
-    leader.getTorqueCurrent().refresh();
+    leader.getMotorVoltage().refresh();
     follower.getPosition().refresh();
-    follower.getTorqueCurrent().refresh();
+    follower.getMotorVoltage().refresh();
     BaseStatusSignal.waitForAll(
         0.05,
         leader.getPosition(),
-        leader.getTorqueCurrent(),
+        leader.getMotorVoltage(),
         follower.getPosition(),
-        follower.getTorqueCurrent());
+        follower.getMotorVoltage());
     leader.setControl(
         motionMagic
             .withPosition(position + leaderEncoderOffset)
@@ -262,13 +279,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             .withLimitForwardMotion(
                 this.getLeaderPositionWithoutOffset()
                     > ElevatorConstants.leader_forwardSoftLimitThreshold));
-    follower.setControl(
-        motionMagic
-            .withPosition(position + followerEncoderOffset)
-            .withLimitReverseMotion(getHallSensorActive())
-            .withLimitForwardMotion(
-                this.getFollowerPositionWithoutOffset()
-                    > ElevatorConstants.follower_forwardSoftLimitThreshold));
+    follower.setControl(new Follower(ElevatorConstants.leaderID, true));
   }
 
   // use median filter to get smooth velocity curves for long distance movement
@@ -314,13 +325,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPosition(double height) {
-    if (Math.abs(this.getFollowerPositionWithoutOffset() - height)
+    if (Math.abs(this.getLeaderPositionWithoutOffset() - height)
         < ElevatorConstants.positionDeadband) {
       SmartDashboard.putBoolean("elevator/is at position", true);
     } else {
       SmartDashboard.putBoolean("elevator/is at position", false);
     }
-    return Math.abs(this.getFollowerPositionWithoutOffset() - height)
+    return Math.abs(this.getLeaderPositionWithoutOffset() - height)
         < ElevatorConstants.positionDeadband;
   }
 
@@ -361,33 +372,33 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void L1() {
-    setPosition_MotionMagicianLow(ElevatorConstants.L1Position);
+    setPosition_MotionMagic(ElevatorConstants.L1Position);
     // setPosition_MotionMagic(ElevatorConstants.L1Position);
   }
 
   public void L2() {
-    setPosition_MotionMagicianLow(ElevatorConstants.L2Position);
+    setPosition_MotionMagic(ElevatorConstants.L2Position);
     // setPosition_MotionMagic(ElevatorConstants.L2Position);
   }
 
   public void L3() {
-    setPosition_MotionMagician(ElevatorConstants.L3Position);
+    setPosition_MotionMagic(ElevatorConstants.L3Position);
     // setPosition_MotionMagic(ElevatorConstants.L3Position);
   }
 
   public void followerL3() {}
 
   public void L4() {
-    setPosition_MotionMagician(ElevatorConstants.L4Position);
+    setPosition_MotionMagic(ElevatorConstants.L4Position);
     // setPosition_MotionMagic(ElevatorConstants.L4Position);
   }
 
   public void lowAlgae() {
-    setPosition_MotionMagician(ElevatorConstants.lowAlgaePosition);
+    setPosition_MotionMagic(ElevatorConstants.lowAlgaePosition);
   }
 
   public void highAlgae() {
-    setPosition_MotionMagician(ElevatorConstants.highAlgaePosition);
+    setPosition_MotionMagic(ElevatorConstants.highAlgaePosition);
   }
 
   public boolean getHallSensorActive() {
