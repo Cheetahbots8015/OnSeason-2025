@@ -43,6 +43,6 @@ public class RollerConstants {
   public static final double L4Velocity = 35.0;
 
   // algae
-  public static final double intakeAlgaefromReefVelocity = -8.0;
-  public static final double processorVelocity = 8.0;
+  public static final double intakeAlgaefromReefVelocity = -18.0;
+  public static final double processorVelocity = 18.0;
 }

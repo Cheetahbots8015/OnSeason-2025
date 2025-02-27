@@ -32,6 +32,8 @@ import frc.robot.commands.operatorCommand.PivotManualForwardCommand;
 import frc.robot.commands.operatorCommand.PivotManualReverseCommand;
 import frc.robot.commands.operatorCommand.RollerManualForwardCommand;
 import frc.robot.commands.operatorCommand.RollerManualReverseCommand;
+import frc.robot.commands.operatorCommand.RollerNormalForwardCommand;
+import frc.robot.commands.operatorCommand.RollerNormalReverseCommand;
 import frc.robot.commands.pivotCommand.PivotDefaultIdleCommand;
 import frc.robot.commands.rollerCommand.RollerDefaultIdleCommand;
 import frc.robot.generated.JoystickConstants;
@@ -86,28 +88,27 @@ public class RobotContainer {
       driverController.b().and(driverController.rightBumper().negate());
   private final Trigger DriverL3Trigger =
       driverController.x().and(driverController.rightBumper().negate());
-  private final Trigger DriverL4Trigger = driverController.y();
+  private final Trigger DriverL4Trigger =
+      driverController.y().and(driverController.rightBumper().negate());
   private final Trigger DriverStationTrigger = driverController.leftTrigger();
   private final Trigger DriverLowAlgaeTrigger =
       driverController.a().and(driverController.rightBumper());
   private final Trigger DriverHighAlgaeTrigger =
-      driverController.b().and(driverController.rightBumper());
+      driverController.y().and(driverController.rightBumper());
   private final Trigger DriverProcessorTrigger =
-      driverController.x().and(driverController.rightBumper());
+      driverController.b().and(driverController.rightBumper());
 
   // operator triggers
   private final Trigger OperatorSwitchTrigger = operatorController.leftBumper();
   private final Trigger OperatorHomeTrigger = operatorController.rightBumper();
-  private final Trigger OperatorElevatorUpTrigger =
-      new Trigger(() -> operatorController.getLeftX() > 0.4);
-  private final Trigger OperatorElevatorDownTrigger =
-      new Trigger(() -> operatorController.getLeftX() < -0.4);
-  private final Trigger OperatorPivotForwardTrigger =
-      new Trigger(() -> operatorController.getRightX() > 0.4);
-  private final Trigger OperatorPivotReverseTrigger =
-      new Trigger(() -> operatorController.getRightX() < -0.4);
-  private final Trigger OperatorRollerForwardTrigger = operatorController.x();
-  private final Trigger OperatorRollerReverseTrigger = operatorController.y();
+  private final Trigger OperatorElevatorUpTrigger = operatorController.povUp();
+  private final Trigger OperatorElevatorDownTrigger = operatorController.povDown();
+  private final Trigger OperatorPivotForwardTrigger = operatorController.povRight();
+  private final Trigger OperatorPivotReverseTrigger = operatorController.povLeft();
+  private final Trigger OperatorManualRollerForwardTrigger = operatorController.x();
+  private final Trigger OperatorManualRollerReverseTrigger = operatorController.y();
+  private final Trigger OperatorNormalRollerForwardTrigger = operatorController.leftTrigger();
+  private final Trigger OperatorNormalRollerReverseTrigger = operatorController.rightTrigger();
 
   // driver commands
   private final Command DriverL1Command =
@@ -136,10 +137,14 @@ public class RobotContainer {
       new PivotManualForwardCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command OperatorPivotReverseCommand =
       new PivotManualReverseCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command OperatorRollerForwardCommand =
+  private final Command OperatorManualRollerForwardCommand =
       new RollerManualForwardCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command OperatorRollerReverseCommand =
+  private final Command OperatorManualRollerReverseCommand =
       new RollerManualReverseCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorNormalRollerForwardCommand =
+      new RollerNormalForwardCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorNormalRollerReverseCommand =
+      new RollerNormalReverseCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
 
   // default commandfs
   private final Command ElevatorDefaultIdleCommand =
@@ -209,8 +214,10 @@ public class RobotContainer {
     OperatorElevatorDownTrigger.whileTrue(OperatorElevatorDownCommand);
     OperatorPivotForwardTrigger.whileTrue(OperatorPivotForwardCommand);
     OperatorPivotReverseTrigger.whileTrue(OperatorPivotReverseCommand);
-    OperatorRollerForwardTrigger.whileTrue(OperatorRollerForwardCommand);
-    OperatorRollerReverseTrigger.whileTrue(OperatorRollerReverseCommand);
+    OperatorManualRollerForwardTrigger.whileTrue(OperatorManualRollerForwardCommand);
+    OperatorManualRollerReverseTrigger.whileTrue(OperatorManualRollerReverseCommand);
+    OperatorNormalRollerForwardTrigger.whileTrue(OperatorNormalRollerForwardCommand);
+    OperatorNormalRollerReverseTrigger.whileTrue(OperatorNormalRollerReverseCommand);
 
     SysIDController.a()
         .whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kForward));

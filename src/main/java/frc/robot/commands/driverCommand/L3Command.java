@@ -8,8 +8,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.ElevatorConstants;
 import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.elevatorIdleState;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.PivotSubsystem.pivotIdleState;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.RollerSubsystem.rollerIdleState;
 
 /** An example command that uses an example subsystem. */
 public class L3Command extends Command {
@@ -38,6 +41,9 @@ public class L3Command extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.coral);
+    m_pivotSubsystem.setSystemIdleState(pivotIdleState.coral);
+    m_rollerSubsystem.setSystemIdleState(rollerIdleState.coral);
     m_elevatorSubsystem.resetFilter();
   }
 
@@ -57,6 +63,9 @@ public class L3Command extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.coral);
+    m_pivotSubsystem.setSystemIdleState(pivotIdleState.coral);
+    m_rollerSubsystem.setSystemIdleState(rollerIdleState.coral);
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.defaultDown();
     m_pivotSubsystem.idle();
