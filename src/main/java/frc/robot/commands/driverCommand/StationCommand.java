@@ -6,6 +6,7 @@ package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.RollerSubsystem;
+import frc.robot.subsystems.RollerSubsystem.rollerIdleState;
 
 /** An example command that uses an example subsystem. */
 public class StationCommand extends Command {
@@ -25,7 +26,9 @@ public class StationCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_subsystem.setSystemIdleState(rollerIdleState.coral);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

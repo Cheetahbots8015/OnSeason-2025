@@ -60,7 +60,6 @@ public class HighAlgaeCommand extends Command {
   public void end(boolean interrupted) {
     m_pivotSubsystem.setSystemIdleState(pivotIdleState.algae);
     m_rollerSubsystem.setSystemIdleState(rollerIdleState.algae);
-    ;
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.defaultDown();
     m_pivotSubsystem.idle();

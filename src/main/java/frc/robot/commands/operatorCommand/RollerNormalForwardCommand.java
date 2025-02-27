@@ -6,14 +6,11 @@ package frc.robot.commands.operatorCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.elevatorIdleState;
 import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.PivotSubsystem.pivotIdleState;
 import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.RollerSubsystem.rollerIdleState;
 
 /** An example command that uses an example subsystem. */
-public class RollerManualForwardCommand extends Command {
+public class RollerNormalForwardCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem m_elevatorSubsystem;
 
@@ -25,7 +22,7 @@ public class RollerManualForwardCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public RollerManualForwardCommand(
+  public RollerNormalForwardCommand(
       ElevatorSubsystem elevatorSubsystem,
       PivotSubsystem pivotSubsystem,
       RollerSubsystem rollerSubsystem) {
@@ -40,11 +37,7 @@ public class RollerManualForwardCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.manual);
-    m_pivotSubsystem.setSystemIdleState(pivotIdleState.manual);
-    m_rollerSubsystem.setSystemIdleState(rollerIdleState.manual);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -57,9 +50,6 @@ public class RollerManualForwardCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.manual);
-    m_pivotSubsystem.setSystemIdleState(pivotIdleState.manual);
-    m_rollerSubsystem.setSystemIdleState(rollerIdleState.manual);
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.hold();
     m_pivotSubsystem.hold();

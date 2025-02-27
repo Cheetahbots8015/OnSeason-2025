@@ -170,6 +170,7 @@ public class RollerSubsystem extends SubsystemBase {
   }
 
   public boolean isCanRangeActive() {
+    canRange.getIsDetected().refresh();
     return canRange.getIsDetected().getValue();
   }
 
