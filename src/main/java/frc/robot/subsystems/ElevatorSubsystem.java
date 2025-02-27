@@ -375,6 +375,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     // setPosition_MotionMagic(ElevatorConstants.L3Position);
   }
 
+  public void followerL3() {}
+
   public void L4() {
     setPosition_MotionMagician(ElevatorConstants.L4Position);
     // setPosition_MotionMagic(ElevatorConstants.L4Position);

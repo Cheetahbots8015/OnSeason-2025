@@ -5,10 +5,11 @@
 package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.RollerSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class StationCommand extends Command {
+public class AutoStation extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final RollerSubsystem m_subsystem;
 
@@ -17,7 +18,7 @@ public class StationCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public StationCommand(RollerSubsystem subsystem) {
+  public AutoStation(RollerSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -31,12 +32,14 @@ public class StationCommand extends Command {
   @Override
   public void execute() {
     m_subsystem.station();
+    LimelightHelpers.setLEDMode_PipelineControl("limelight-station");
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_subsystem.defaultIdelVelocity();
+    LimelightHelpers.setLEDMode_ForceOff("limelight-station");
   }
 
   // Returns true when the command should end.
