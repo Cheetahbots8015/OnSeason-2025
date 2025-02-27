@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo First Coral"
+            "pathName": "Choreo Ordinary Starting O2"
           }
         },
         {
@@ -19,19 +19,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo Go Station"
+            "pathName": "Choreo O2 to Station"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeCommand"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "LED on"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo Second Coral"
+            "pathName": "Choreo O3"
           }
         },
         {
@@ -43,19 +56,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo Take From Station"
+            "pathName": "Choreo O3 to Station"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeCommand"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "LED on"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo Third Coral"
+            "pathName": "Choreo O4"
           }
         },
         {

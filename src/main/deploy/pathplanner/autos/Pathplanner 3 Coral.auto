@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "First Coral"
+            "pathName": "Ordinary Start From O2"
           }
         },
         {
@@ -19,19 +19,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go Station"
+            "pathName": "O2 to Station"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeCommand"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "LED on"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Second Coral"
+            "pathName": "O3"
           }
         },
         {
@@ -43,19 +56,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Take From Station"
+            "pathName": "O3 to Station"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeCommand"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "LED on"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Third Coral"
+            "pathName": "O4"
           }
         },
         {

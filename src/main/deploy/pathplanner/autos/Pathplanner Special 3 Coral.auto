@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo Ordinary Starting O7"
+            "pathName": "Special Start From O2"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo O7 to Station"
+            "pathName": "O2 to Station"
           }
         },
         {
@@ -29,13 +29,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "LED on"
+                  "name": "IntakeCommand"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeCommand"
+                  "name": "LED on"
                 }
               }
             ]
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo O6"
+            "pathName": "O3"
           }
         },
         {
@@ -56,7 +56,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo O6 to Station"
+            "pathName": "O3 to Station"
           }
         },
         {
@@ -66,13 +66,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "LED on"
+                  "name": "IntakeCommand"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeCommand"
+                  "name": "LED on"
                 }
               }
             ]
@@ -81,7 +81,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo O5"
+            "pathName": "O4"
           }
         },
         {
@@ -95,5 +95,5 @@
   },
   "resetOdom": true,
   "folder": null,
-  "choreoAuto": true
+  "choreoAuto": false
 }

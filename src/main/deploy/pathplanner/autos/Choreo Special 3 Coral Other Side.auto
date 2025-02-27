@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Choreo Ordinary Starting O7"
+            "pathName": "Choreo Special Starting O7"
           }
         },
         {
@@ -29,13 +29,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "LED on"
+                  "name": "IntakeCommand"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeCommand"
+                  "name": "LED on"
                 }
               }
             ]
@@ -66,13 +66,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "LED on"
+                  "name": "IntakeCommand"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeCommand"
+                  "name": "LED on"
                 }
               }
             ]

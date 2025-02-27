@@ -161,13 +161,12 @@ public class RobotContainer {
         new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
     NamedCommands.registerCommand(
         "LED on",
-        Commands.runEnd(
-                () -> LimelightHelpers.setLEDMode_PipelineControl("limelight-station"),
-                () -> LimelightHelpers.setLEDMode_ForceOff("limelight-station"),
-                drive)
+        Commands.run(() -> LimelightHelpers.setLEDMode_PipelineControl("limelight-station"))
+            .withTimeout(1.0)
+            .andThen(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-station"), drive)
             .withTimeout(1.0));
 
-    autoChooser = AutoBuilder.buildAutoChooser("test");
+    autoChooser = AutoBuilder.buildAutoChooser("Pathplanner 3 Coral");
 
     DashboardDisplay.layout(
         autoChooser, drive, m_pivotSubsystem, m_elevatorSubsystem, m_rollerSubsystem);
@@ -226,6 +225,13 @@ public class RobotContainer {
         .whileTrue(m_pivotSubsystem.PivotTestQuasistatic(SysIdRoutine.Direction.kForward));
     SysIDController.y()
         .whileTrue(m_pivotSubsystem.PivotTestQuasistatic(SysIdRoutine.Direction.kReverse));
+
+    SysIDController.povUp()
+        .whileTrue(
+            Commands.run(() -> LimelightHelpers.setLEDMode_PipelineControl("limelight-station"))
+                .withTimeout(1.0)
+                .andThen(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-station"), drive)
+                .withTimeout(1.0));
 
     m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultIdleCommand);
     m_pivotSubsystem.setDefaultCommand(PivotDefaultIdleCommand);

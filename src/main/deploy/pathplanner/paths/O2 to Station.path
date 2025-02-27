@@ -3,42 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.455852272727273,
-        "y": 7.240838068181818
+        "x": 4.96533,
+        "y": 5.215749
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.9196322174447178,
-        "y": 6.885409244471744
+        "x": 4.377006136363643,
+        "y": 5.534839909090894
       },
       "isLocked": false,
-      "linkedName": "station"
+      "linkedName": "O2"
     },
     {
       "anchor": {
-        "x": 3.4003124999999996,
-        "y": 4.977286931818182
+        "x": 1.6,
+        "y": 7.471
       },
       "prevControl": {
-        "x": 2.4003124999999996,
-        "y": 4.977286931818182
+        "x": 2.0310242628992627,
+        "y": 7.863440494471744
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ThirdCoral"
+      "linkedName": "station 1"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "IntakeCommand",
-      "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 0.20247469066366605,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -49,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -54.117999999999995
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -54.117999999999995
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }
