@@ -64,7 +64,6 @@ public class RobotContainer {
   private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
 
   private SendableChooser<Command> autoChooser;
-  private SendableChooser<Command> pipelineList;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -150,6 +149,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     // Real robot, instantiate hardware IO implementations
     NamedCommands.registerCommand(
         "L2 Command",
@@ -159,12 +159,18 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L4 Command",
         new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
+    NamedCommands.registerCommand(
+        "LED on",
+        Commands.runEnd(
+                () -> LimelightHelpers.setLEDMode_PipelineControl("limelight-station"),
+                () -> LimelightHelpers.setLEDMode_ForceOff("limelight-station"),
+                drive)
+            .withTimeout(1.0));
 
     autoChooser = AutoBuilder.buildAutoChooser("test");
-    pipelineList = new SendableChooser<Command>();
 
     DashboardDisplay.layout(
-        autoChooser, pipelineList, drive, m_pivotSubsystem, m_elevatorSubsystem, m_rollerSubsystem);
+        autoChooser, drive, m_pivotSubsystem, m_elevatorSubsystem, m_rollerSubsystem);
 
     // Configure the trigger bindings
 
