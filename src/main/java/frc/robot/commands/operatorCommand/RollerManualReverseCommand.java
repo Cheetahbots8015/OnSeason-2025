@@ -57,6 +57,9 @@ public class RollerManualReverseCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.manual);
+    m_pivotSubsystem.setSystemIdleState(pivotIdleState.manual);
+    m_rollerSubsystem.setSystemIdleState(rollerIdleState.manual);
     m_rollerSubsystem.defaultIdelVelocity();
     m_elevatorSubsystem.hold();
     m_pivotSubsystem.hold();
