@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -158,6 +159,9 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L4 Command",
         new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
+
+    autoChooser = AutoBuilder.buildAutoChooser("test");
+    pipelineList = new SendableChooser<Command>();
 
     DashboardDisplay.layout(
         autoChooser, pipelineList, drive, m_pivotSubsystem, m_elevatorSubsystem, m_rollerSubsystem);
