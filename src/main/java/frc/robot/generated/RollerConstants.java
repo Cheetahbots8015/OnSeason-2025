@@ -33,8 +33,8 @@ public class RollerConstants {
   public static final double coralIdleVelocity = 0.0;
 
   // station
-  public static final double stationVelocity = 15.0;
-  public static final double stationTime = 0.15;
+  public static final double stationVelocity = 25.0;
+  public static final double stationTime = 0.05;
 
   // coral reef
   public static final double L1Velocity = 6.0;
