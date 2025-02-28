@@ -179,8 +179,8 @@ public class RobotContainer {
     DashboardDisplay.layout(
         autoChooser, drive, m_pivotSubsystem, m_elevatorSubsystem, m_rollerSubsystem);
 
-    CameraServer.startAutomaticCapture("Reef", "limelight-reef.local:5800");
-    CameraServer.startAutomaticCapture("Station", "limelight-station.local:5800");
+    CameraServer.startAutomaticCapture("Reef", "http://limelight-reef.local:5800/");
+    CameraServer.startAutomaticCapture("Station", "http://limelight-station.local:5800/");
 
     // Configure the trigger bindings
     configureBindings();
