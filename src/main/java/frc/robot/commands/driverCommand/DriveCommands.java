@@ -17,6 +17,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -26,9 +27,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -74,8 +77,19 @@ public class DriveCommands {
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
       boolean slowMode) {
+    LimelightHelpers.setPipelineIndex("limelight-reef", 0);
+    LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.8, 0, -30, 0);
     return Commands.run(
         () -> {
+          if (!LimelightHelpers.getTV("limelight-reef")) {
+            SmartDashboard.putBoolean("Aiming left", false);
+            SmartDashboard.putBoolean("Aiming right", false);
+          }
+          Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
+          SmartDashboard.putBoolean(
+              "Aiming left", Math.abs(pose.getTranslation().getY() + 0.165) < 0.05);
+          SmartDashboard.putBoolean(
+              "Aiming right", Math.abs(pose.getTranslation().getY() - 0.165) < 0.05);
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
