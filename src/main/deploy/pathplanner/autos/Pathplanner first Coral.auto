@@ -1,0 +1,50 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Ordinary Start From O2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "O2 to Station"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeCommand"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "LED on"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
