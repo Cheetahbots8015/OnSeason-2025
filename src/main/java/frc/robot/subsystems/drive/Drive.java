@@ -28,6 +28,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,6 +48,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.io.IOException;
@@ -223,38 +225,45 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-      /*
-      boolean useMegaTag2 = true; // set to false to use MegaTag1
-      boolean doRejectUpdate = false;
-      if (useMegaTag2 == false) {
-        LimelightHelpers.PoseEstimate mt1 =
-            LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-reef");
-        if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
-          if (mt1.rawFiducials[0].ambiguity > .7) {
-            doRejectUpdate = true;
-          }
-          if (mt1.rawFiducials[0].distToCamera > 3) {
-            doRejectUpdate = true;
-          }
-        }
-        if (mt1.tagCount == 0) {
-          doRejectUpdate = true;
-        }
+
+      // MegaTag1 and Megatag2 are two different versions of pose estimators.
+      // Usually Megatag 2 performs better, so just keep it true.
+      boolean useMegaTag2 = true;
+      boolean doRejectUpdate = false; // Decide whether the estimated pose should be updated.
+      
+      if (useMegaTag2 == false) { // You may just ignore lines 234-251 since it won't be used usually. 
+
+        LimelightHelpers.PoseEstimate megaTag1 = // Instantialize a pose estimator based on limelight-reef.
+          LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-reef");
+
+        if (megaTag1.tagCount == 0) // Check whether observes a Apriltag.
+          doRejectUpdate = true;    // If not, the update will be rejected.
+
+        if ((megaTag1.tagCount == 1 && megaTag1.rawFiducials.length == 1) &&
+            (megaTag1.rawFiducials[0].ambiguity > 0.7 ||
+             megaTag1.rawFiducials[0].distToCamera > 3)) // Add tag counts, ambiguity and distance boundries.
+          doRejectUpdate = true;  // All data that are out of bound will make the update be rejected.
+
         if (!doRejectUpdate) {
+          // Add a Kalman filter and update the estimated poses.
           poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-          poseEstimator.addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
+          poseEstimator.addVisionMeasurement(megaTag1.pose, megaTag1.timestampSeconds);
         }
-      } else if (useMegaTag2 == true) {
+
+      } else if (useMegaTag2 == true) { // Choose Megatag2 as the pose estimator.
+        // Instantialize a pose estimator based on limelight-reef.
         LimelightHelpers.SetRobotOrientation(
-            "limelight-reef",
-            poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-            0,
-            0,
-            0,
-            0,
-            0);
-        LimelightHelpers.PoseEstimate mt2 =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+          "limelight-reef", 
+          poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 
+          0, 
+          0, 
+          0, 
+          0, 
+          0);
+        LimelightHelpers.PoseEstimate megaTag2_reef =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+
+        // Instantialize a pose estimator based on limelight-station.
         LimelightHelpers.SetRobotOrientation(
           "limelight-station",
           poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
@@ -263,26 +272,30 @@ public class Drive extends SubsystemBase {
           0,
           0,
           0);
-          LimelightHelpers.PoseEstimate mt2_station =
-              LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
-        if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
-          doRejectUpdate = true;
-        }
-        else if (mt2.tagCount == 0) {
-          doRejectUpdate = true;
-          if (mt2_station.tagCount != 0) {
-            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-            poseEstimator.addVisionMeasurement(mt2_station.pose, mt2_station.timestampSeconds);
-          }
-        }
-        if (!doRejectUpdate) {
+        LimelightHelpers.PoseEstimate megaTag2_station =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
+        
+        if (Math.abs((gyroInputs.yawVelocityRadPerSec) > 720)) // Add a yaw velocity boundary.
+          doRejectUpdate = true;  // All data that are out of the boundry will make the update be rejected.
+
+        if (megaTag2_station.tagCount == 0 && megaTag2_reef.tagCount != 0) {
+          // If limelight-reef detects a tag while limelight-station doesn't, 
+          // the pose estimator will choose limelight-reef as the vision data source.
           poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-          poseEstimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+          poseEstimator.addVisionMeasurement(megaTag2_reef.pose, megaTag2_reef.timestampSeconds);
+        } else if (megaTag2_reef.tagCount == 0 && megaTag2_station.tagCount != 0) {
+          // Same as above, if limelight-station detects a tag while limelight-reef doesn't, 
+          // the pose estimator will choose limelight-station as the vision data source.
+          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+          poseEstimator.addVisionMeasurement(megaTag2_station.pose, megaTag2_station.timestampSeconds);
+        } else {
+          // If neither vision data sources detects tags, the update will be rejected.
+          doRejectUpdate =true;
         }
       }
-      */
     }
   }
+
   /**
    * Runs the drive at the desired velocity.
    *
