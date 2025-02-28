@@ -228,9 +228,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else {
       if (this.getLeaderPositionWithoutOffset() > ElevatorConstants.defaultDownShutDownPosition) {
         // setVolts(ElevatorConstants.defaultDownVoltage);
-        setVolts(-10.0);
+        setVolts(-5.0);
       } else {
-        setVolts(-10.0);
+        setVolts(-5.0);
       }
     }
   }
