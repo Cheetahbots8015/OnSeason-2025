@@ -87,9 +87,9 @@ public class DriveCommands {
           }
           Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
           SmartDashboard.putBoolean(
-              "Aiming left", Math.abs(pose.getTranslation().getY() + 0.165) < 0.05);
+              "Aiming left", Math.abs(pose.getTranslation().getX() - 0.165) < 0.05);
           SmartDashboard.putBoolean(
-              "Aiming right", Math.abs(pose.getTranslation().getY() - 0.165) < 0.05);
+              "Aiming right", Math.abs(pose.getTranslation().getX() + 0.165) < 0.05);
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
