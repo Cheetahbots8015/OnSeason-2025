@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -238,13 +237,6 @@ public class RobotContainer {
         .whileTrue(m_pivotSubsystem.PivotTestQuasistatic(SysIdRoutine.Direction.kForward));
     SysIDController.y()
         .whileTrue(m_pivotSubsystem.PivotTestQuasistatic(SysIdRoutine.Direction.kReverse));
-
-    SysIDController.povUp()
-        .whileTrue(
-            Commands.run(() -> LimelightHelpers.setLEDMode_PipelineControl("limelight-station"))
-                .withTimeout(1.0)
-                .andThen(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-station"), drive)
-                .withTimeout(1.0));
 
     m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultIdleCommand);
     m_pivotSubsystem.setDefaultCommand(PivotDefaultIdleCommand);
