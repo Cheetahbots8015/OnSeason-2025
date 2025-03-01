@@ -158,7 +158,7 @@ public class Drive extends SubsystemBase {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
-    //PathfindingCommand.warmupCommand().schedule();
+    PathfindingCommand.warmupCommand().schedule();
 
     // Configure SysId
     sysId =
