@@ -72,9 +72,9 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
-  private static final double ROBOT_MASS_KG = 32.2;
-  private static final double ROBOT_MOI = 4.32;
-  private static final double WHEEL_COF = 1;
+  private static final double ROBOT_MASS_KG = 52.4;
+  private static final double ROBOT_MOI = 7.315;
+  private static final double WHEEL_COF = 1.450;
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
           ROBOT_MASS_KG,
@@ -158,7 +158,7 @@ public class Drive extends SubsystemBase {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
 
-    PathfindingCommand.warmupCommand().schedule();
+    //PathfindingCommand.warmupCommand().schedule();
 
     // Configure SysId
     sysId =
@@ -225,7 +225,7 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-
+/* 
       // MegaTag1 and Megatag2 are two different versions of pose estimators.
       // Usually Megatag 2 performs better, so just keep it true.
       boolean useMegaTag2 = true;
@@ -288,6 +288,7 @@ public class Drive extends SubsystemBase {
               megaTag2_station.pose, megaTag2_station.timestampSeconds);
         }
       }
+*/
     }
   }
 
