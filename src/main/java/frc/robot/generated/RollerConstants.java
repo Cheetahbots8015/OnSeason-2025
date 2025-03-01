@@ -38,9 +38,9 @@ public class RollerConstants {
 
   // coral reef
   public static final double L1Velocity = 6.0;
-  public static final double L2Velocity = 35.0;
-  public static final double L3Velocity = 35.0;
-  public static final double L4Velocity = 35.0;
+  public static final double L2Velocity = 45.0;
+  public static final double L3Velocity = 45.0;
+  public static final double L4Velocity = 45.0;
 
   // algae
   public static final double intakeAlgaefromReefVelocity = -18.0;

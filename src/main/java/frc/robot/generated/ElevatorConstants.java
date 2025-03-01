@@ -27,9 +27,9 @@ public class ElevatorConstants {
   public static final double forwardDutyCycleLimit = 0.7;
   public static final double reverseDutyCycleLimit = -0.7;
   public static final boolean leader_ForwardSoftLimitEnable = true;
-  public static final double leader_forwardSoftLimitThreshold = 124;
+  public static final double leader_forwardSoftLimitThreshold = 125;
   public static final boolean follower_ForwardSoftLimitEnable = true;
-  public static final double follower_forwardSoftLimitThreshold = 124;
+  public static final double follower_forwardSoftLimitThreshold = 125;
 
   // differential configs
   public static final double peakDifferentialVoltage = 4.0;
