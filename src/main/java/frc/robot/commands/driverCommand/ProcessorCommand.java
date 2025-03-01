@@ -49,7 +49,7 @@ public class ProcessorCommand extends Command {
   public void execute() {
     m_elevatorSubsystem.defaultDown();
     m_pivotSubsystem.processor();
-    if (m_elevatorSubsystem.isAbovePosition(ElevatorConstants.homePosition)
+    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.homePosition)
         && m_pivotSubsystem.isAtPosition(PivotConstants.processorPosition)) {
       m_rollerSubsystem.processor();
     }

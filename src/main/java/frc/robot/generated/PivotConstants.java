@@ -36,7 +36,7 @@ public class PivotConstants {
   public static final double manualReverseVoltage = -0.5;
 
   // home
-  public static final double coralHomePosition = 0.001;
+  public static final double coralHomePosition = -0.1;
   public static final double algaeHomePosition = 0.268;
 
   // coral reef

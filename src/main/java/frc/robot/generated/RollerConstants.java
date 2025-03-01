@@ -29,20 +29,20 @@ public class RollerConstants {
   public static final double manualReverseVelocity = -14.0;
 
   // for idle
-  public static final double algaeIdelVelocity = -15.0;
+  public static final double algaeIdelVelocity = -25.0;
   public static final double coralIdleVelocity = 0.0;
 
   // station
   public static final double stationVelocity = 25.0;
   public static final double stationTime = 0.05;
 
-  // coral reef
+  // coral reef-------------
   public static final double L1Velocity = 6.0;
   public static final double L2Velocity = 45.0;
   public static final double L3Velocity = 45.0;
   public static final double L4Velocity = 45.0;
 
   // algae
-  public static final double intakeAlgaefromReefVelocity = -18.0;
-  public static final double processorVelocity = 18.0;
+  public static final double intakeAlgaefromReefVelocity = -38.0;
+  public static final double processorVelocity = 48.0;
 }
