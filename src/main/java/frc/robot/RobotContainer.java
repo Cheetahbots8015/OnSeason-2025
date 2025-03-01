@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -286,5 +287,21 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return autoChooser.getSelected();
+  }
+
+  public Command getTestCommand() {
+    // check all the motors are working
+    return Commands.runEnd(
+            () -> {
+              drive.runVelocity(new ChassisSpeeds(0.2, 0.2, 0));
+            },
+            () -> {
+              drive.stopWithX();
+            },
+            drive)
+        .withTimeout(2.0)
+        .andThen(
+            new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
+                .withTimeout(2.0));
   }
 }
