@@ -226,11 +226,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (systemIdleState == elevatorIdleState.manual) {
       hold();
     } else {
-      if (this.getLeaderPositionWithoutOffset() > ElevatorConstants.defaultDownShutDownPosition) {
+      if (this.getLeaderPositionWithoutOffset() < 30.0) {
         // setVolts(ElevatorConstants.defaultDownVoltage);
-        setVolts(-5.0);
+        setVolts(-6.5);
       } else {
-        setVolts(-5.0);
+        setVolts(-8.5);
       }
     }
   }
