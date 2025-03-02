@@ -20,8 +20,10 @@ import frc.robot.commands.*;
 import frc.robot.commands.driverCommand.DriveCommands;
 import frc.robot.commands.driverCommand.HighAlgaeCommand;
 import frc.robot.commands.driverCommand.L1Command;
+import frc.robot.commands.driverCommand.L2AutoCommand;
 import frc.robot.commands.driverCommand.L2Command;
 import frc.robot.commands.driverCommand.L3Command;
+import frc.robot.commands.driverCommand.L4AutoCommand;
 import frc.robot.commands.driverCommand.L4Command;
 import frc.robot.commands.driverCommand.LowAlgaeCommand;
 import frc.robot.commands.driverCommand.ProcessorCommand;
@@ -36,6 +38,7 @@ import frc.robot.commands.operatorCommand.RollerManualForwardCommand;
 import frc.robot.commands.operatorCommand.RollerManualReverseCommand;
 import frc.robot.commands.operatorCommand.RollerNormalForwardCommand;
 import frc.robot.commands.operatorCommand.RollerNormalReverseCommand;
+import frc.robot.commands.operatorCommand.RollerReleaseCoralCommnd;
 import frc.robot.commands.pivotCommand.PivotDefaultIdleCommand;
 import frc.robot.commands.rollerCommand.RollerDefaultIdleCommand;
 import frc.robot.generated.JoystickConstants;
@@ -112,16 +115,13 @@ public class RobotContainer {
   private final Trigger OperatorManualRollerReverseTrigger = operatorController.y();
   private final Trigger OperatorNormalRollerForwardTrigger = operatorController.leftTrigger();
   private final Trigger OperatorNormalRollerReverseTrigger = operatorController.rightTrigger();
+  private final Trigger OperatorReleaseCoralTrigger = operatorController.a();
 
   // driver commands
-  private final Command DriverL1Command =
-      new L1Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command DriverL2Command =
-      new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command DriverL3Command =
-      new L3Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
-  private final Command DriverL4Command =
-      new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command DriverL1Command = new L1Command(m_elevatorSubsystem, m_pivotSubsystem);
+  private final Command DriverL2Command = new L2Command(m_elevatorSubsystem, m_pivotSubsystem);
+  private final Command DriverL3Command = new L3Command(m_elevatorSubsystem, m_pivotSubsystem);
+  private final Command DriverL4Command = new L4Command(m_elevatorSubsystem, m_pivotSubsystem);
   private final Command DriverLowAlgaeCommand =
       new LowAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
   private final Command DriverHighAlgaeCommand =
@@ -148,6 +148,8 @@ public class RobotContainer {
       new RollerNormalForwardCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command OperatorNormalRollerReverseCommand =
       new RollerNormalReverseCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+  private final Command OperatorReleaseCoralCommand =
+      new RollerReleaseCoralCommnd(m_rollerSubsystem);
 
   // default commandfs
   private final Command ElevatorDefaultIdleCommand =
@@ -162,12 +164,14 @@ public class RobotContainer {
     // Real robot, instantiate hardware IO implementations
     NamedCommands.registerCommand(
         "L2 Command",
-        new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(2.0));
+        new L2AutoCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
+            .withTimeout(2.0));
     NamedCommands.registerCommand(
         "IntakeCommand", new StationCommand(m_rollerSubsystem).withTimeout(4.0));
     NamedCommands.registerCommand(
         "L4 Command",
-        new L4Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem).withTimeout(5.0));
+        new L4AutoCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
+            .withTimeout(5.0));
     NamedCommands.registerCommand(
         "LED on",
         Commands.run(() -> LimelightHelpers.setLEDMode_PipelineControl("limelight-station"))
@@ -229,6 +233,7 @@ public class RobotContainer {
     OperatorManualRollerReverseTrigger.whileTrue(OperatorManualRollerReverseCommand);
     OperatorNormalRollerForwardTrigger.whileTrue(OperatorNormalRollerForwardCommand);
     OperatorNormalRollerReverseTrigger.whileTrue(OperatorNormalRollerReverseCommand);
+    OperatorReleaseCoralTrigger.whileTrue(OperatorReleaseCoralCommand);
 
     SysIDController.a()
         .whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kForward));
@@ -249,7 +254,7 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX(),
-            operatorController.a().getAsBoolean()));
+            false));
 
     // Lock to 0° when A button is held
     /*
@@ -300,8 +305,6 @@ public class RobotContainer {
             },
             drive)
         .withTimeout(2.0)
-        .andThen(
-            new L2Command(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
-                .withTimeout(2.0));
+        .andThen(new L2Command(m_elevatorSubsystem, m_pivotSubsystem).withTimeout(2.0));
   }
 }

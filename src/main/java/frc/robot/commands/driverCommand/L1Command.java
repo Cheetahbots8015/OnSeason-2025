@@ -4,15 +4,14 @@
 
 package frc.robot.commands.driverCommand;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.ElevatorConstants;
+import frc.robot.generated.JoystickConstants;
 import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.elevatorIdleState;
 import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.PivotSubsystem.pivotIdleState;
-import frc.robot.subsystems.RollerSubsystem;
-import frc.robot.subsystems.RollerSubsystem.rollerIdleState;
 
 /** An example command that uses an example subsystem. */
 public class L1Command extends Command {
@@ -20,31 +19,28 @@ public class L1Command extends Command {
   private final ElevatorSubsystem m_elevatorSubsystem;
 
   private final PivotSubsystem m_pivotSubsystem;
-  private final RollerSubsystem m_rollerSubsystem;
+  private final XboxController m_controller =
+      new XboxController(JoystickConstants.operatorControllerPort);
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public L1Command(
-      ElevatorSubsystem elevatorSubsystem,
-      PivotSubsystem pivotSubsystem,
-      RollerSubsystem rollerSubsystem) {
+  public L1Command(ElevatorSubsystem elevatorSubsystem, PivotSubsystem pivotSubsystem) {
     m_elevatorSubsystem = elevatorSubsystem;
     m_pivotSubsystem = pivotSubsystem;
-    m_rollerSubsystem = rollerSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
+    addRequirements(m_elevatorSubsystem, m_pivotSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     m_elevatorSubsystem.resetFilter();
-    m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.coral);
-    m_pivotSubsystem.setSystemIdleState(pivotIdleState.coral);
-    m_rollerSubsystem.setSystemIdleState(rollerIdleState.coral);
+    // m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.coral);
+    // m_pivotSubsystem.setSystemIdleState(pivotIdleState.coral);
+    // m_rollerSubsystem.setSystemIdleState(rollerIdleState.coral);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -54,21 +50,21 @@ public class L1Command extends Command {
     m_pivotSubsystem.L1();
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.L1Position)
         && m_pivotSubsystem.isAtPosition(PivotConstants.L1Position)) {
-      m_rollerSubsystem.L1();
+      m_controller.setRumble(RumbleType.kBothRumble, 0.3);
     } else {
-      m_rollerSubsystem.defaultIdelVelocity();
+      m_controller.setRumble(RumbleType.kBothRumble, 0.0);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.coral);
-    m_pivotSubsystem.setSystemIdleState(pivotIdleState.coral);
-    m_rollerSubsystem.setSystemIdleState(rollerIdleState.coral);
-    m_rollerSubsystem.defaultIdelVelocity();
+    // m_elevatorSubsystem.setSystemIdleState(elevatorIdleState.coral);
+    // m_pivotSubsystem.setSystemIdleState(pivotIdleState.coral);
+    // m_rollerSubsystem.setSystemIdleState(rollerIdleState.coral);
     m_elevatorSubsystem.defaultDown();
     m_pivotSubsystem.idle();
+    m_controller.setRumble(RumbleType.kBothRumble, 0.0);
   }
 
   // Returns true when the command should end.
