@@ -6,7 +6,6 @@ package frc.robot.commands.driverCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.ElevatorConstants;
-import frc.robot.generated.PivotConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.PivotSubsystem.pivotIdleState;
@@ -49,7 +48,7 @@ public class LowAlgaeCommand extends Command {
     m_elevatorSubsystem.lowAlgae();
     m_pivotSubsystem.lowAlgae();
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.lowAlgaePosition)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.lowAlgaePosition)) {
+        && m_pivotSubsystem.getPositionwithoutOffset() > 0.4) {
       m_rollerSubsystem.intakeAlgaefromReef();
     }
   }

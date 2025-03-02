@@ -23,22 +23,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeCommand"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "LED on"
-                }
-              }
-            ]
+            "name": "IntakeCommand"
           }
         },
         {
@@ -57,37 +44,6 @@
           "type": "path",
           "data": {
             "pathName": "O6 to Station"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeCommand"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "LED on"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "O5"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L2 Command"
           }
         }
       ]

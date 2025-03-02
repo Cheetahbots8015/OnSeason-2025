@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 coral"
+            "pathName": "1 coral 2"
           }
         },
         {
@@ -19,25 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 coral station"
+            "pathName": "1 coral 2 to station"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "IntakeCommand"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "O3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4 Command"
           }
         }
       ]

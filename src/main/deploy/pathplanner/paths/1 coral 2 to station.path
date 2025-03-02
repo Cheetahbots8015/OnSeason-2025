@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.965338,
-        "y": 2.848751
+        "x": 5.728,
+        "y": 3.8672
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.174277314913823,
-        "y": 2.4709525859579617
+        "x": 5.775366411248931,
+        "y": 2.9417210133172462
       },
       "isLocked": false,
-      "linkedName": "O7"
+      "linkedName": "1 coral 2"
     },
     {
       "anchor": {
-        "x": 4.328999999994826,
-        "y": 2.55274999999996
+        "x": 5.728,
+        "y": 2.724334016393442
       },
       "prevControl": {
-        "x": 5.324951868847862,
-        "y": 3.062164969047638
+        "x": 5.728,
+        "y": 3.035256041452901
       },
       "nextControl": {
-        "x": 3.5745815212930014,
-        "y": 2.1668758649180404
+        "x": 5.728,
+        "y": 2.364426149173243
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 0.515
       },
       "prevControl": {
-        "x": 1.9851134932615246,
-        "y": 1.0031914937160953
+        "x": 1.390630105571844,
+        "y": 0.7267613693363726
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -64,7 +64,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

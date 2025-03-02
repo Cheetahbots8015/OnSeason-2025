@@ -50,7 +50,7 @@ public class ProcessorCommand extends Command {
     m_elevatorSubsystem.defaultDown();
     m_pivotSubsystem.processor();
     if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.homePosition)
-        && m_pivotSubsystem.isAtPosition(PivotConstants.processorPosition)) {
+        && m_pivotSubsystem.getPositionwithoutOffset() > 0.4) {
       m_rollerSubsystem.processor();
     }
   }

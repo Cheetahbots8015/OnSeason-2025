@@ -23,22 +23,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeCommand"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "LED on"
-                }
-              }
-            ]
+            "name": "IntakeCommand"
           }
         },
         {
@@ -50,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L2 Command"
+            "name": "L4 Command"
           }
         },
         {
@@ -60,22 +47,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeCommand"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "LED on"
-                }
-              }
-            ]
+            "name": "IntakeCommand"
           }
         },
         {
@@ -87,7 +61,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L2 Command"
+            "name": "L4 Command"
           }
         }
       ]
