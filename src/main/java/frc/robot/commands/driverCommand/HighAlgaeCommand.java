@@ -49,8 +49,8 @@ public class HighAlgaeCommand extends Command {
   public void execute() {
     m_elevatorSubsystem.highAlgae();
     m_pivotSubsystem.highAlgae();
-    if (m_pivotSubsystem.isAtPosition(PivotConstants.highAlgaePosition)
-        && m_elevatorSubsystem.isAtPosition(ElevatorConstants.highAlgaePosition)) {
+    if (m_elevatorSubsystem.isAtPosition(ElevatorConstants.highAlgaePosition)
+        && m_pivotSubsystem.getPositionwithoutOffset() > 0.4) {
       m_rollerSubsystem.intakeAlgaefromReef();
     }
   }
