@@ -235,15 +235,10 @@ public class RobotContainer {
     OperatorNormalRollerReverseTrigger.whileTrue(OperatorNormalRollerReverseCommand);
     OperatorReleaseCoralTrigger.whileTrue(OperatorReleaseCoralCommand);
 
-    SysIDController.a()
-        .whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kForward));
-    SysIDController.b()
-        .whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kReverse));
-    SysIDController.x()
-        .whileTrue(m_pivotSubsystem.PivotTestQuasistatic(SysIdRoutine.Direction.kForward));
-    SysIDController.y()
-        .whileTrue(m_pivotSubsystem.PivotTestQuasistatic(SysIdRoutine.Direction.kReverse));
-
+    SysIDController.a().whileTrue(drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    SysIDController.b().whileTrue(drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    SysIDController.x().whileTrue(drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    SysIDController.y().whileTrue(drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     m_elevatorSubsystem.setDefaultCommand(ElevatorDefaultIdleCommand);
     m_pivotSubsystem.setDefaultCommand(PivotDefaultIdleCommand);
     m_rollerSubsystem.setDefaultCommand(RollerDefaultIdleCommand);
@@ -281,7 +276,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    // driverController.povUp().whileTrue(AlignReef);
+    driverController.povUp().whileTrue(AlignReef);
   }
 
   /**

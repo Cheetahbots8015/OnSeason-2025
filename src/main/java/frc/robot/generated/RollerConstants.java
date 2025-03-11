@@ -3,7 +3,7 @@ package frc.robot.generated;
 public class RollerConstants {
   // can names and can IDs
   public static final int rollerID = 62;
-  public static final String canName = "canivore";
+  public static final String canName = "";
   public static final int canRangeID = 60;
   // canRange configs
   public static final double canRangeThreshold = 0.06;

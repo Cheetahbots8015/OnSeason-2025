@@ -5,7 +5,7 @@ public class ElevatorConstants {
   public static final int leaderID = 51;
   public static final int followerID = 52;
   public static final int hallSensorID = 0;
-  public static final String canName = "canivore";
+  public static final String canName = "";
 
   // krankenX60 configs
   public static boolean leader_Inverted_CounterClockwisePositive = true;

@@ -4,7 +4,7 @@ public class PivotConstants {
   // can names and can IDs
   public static final int pivotID = 61;
   public static final int candiID = 6;
-  public static final String canName = "canivore";
+  public static final String canName = "";
 
   // krakenX60 configs
   public static boolean inverted_CounterClockwisePositive = true;
