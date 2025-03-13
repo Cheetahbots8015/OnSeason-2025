@@ -117,14 +117,24 @@ public class ElevatorSubsystem extends SubsystemBase {
     // config softlimit
     // hall sensor is used as the reverse limit
     leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable =
-        ElevatorConstants.leader_ForwardSoftLimitEnable;
+        ElevatorConstants.leader_forwardSoftLimitEnable;
     leaderConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
         ElevatorConstants.leader_forwardSoftLimitThreshold
             + leader.getPosition().getValueAsDouble();
     followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable =
-        ElevatorConstants.follower_ForwardSoftLimitEnable;
+        ElevatorConstants.follower_forwardSoftLimitEnable;
     followerConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
         ElevatorConstants.follower_forwardSoftLimitThreshold
+            + follower.getPosition().getValueAsDouble();
+    leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable =
+        ElevatorConstants.leader_reverseSoftLimitEnable;
+    leaderConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        ElevatorConstants.leader_reverseSoftLimitThreshold
+            + leader.getPosition().getValueAsDouble();
+    followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable =
+        ElevatorConstants.follower_reverseSoftLimitEnable;
+    followerConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        ElevatorConstants.follower_reverseSoftLimitThreshold
             + follower.getPosition().getValueAsDouble();
 
     // follower differential control
@@ -228,9 +238,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else {
       if (this.getLeaderPositionWithoutOffset() < 30.0) {
         // setVolts(ElevatorConstants.defaultDownVoltage);
-        setVolts(-6.5);
+        setVolts(-5.5);
+        // setVolts(0.0);
       } else {
-        setVolts(-8.5);
+        // setVolts(0.0);
+        setVolts(-7.5);
       }
     }
   }

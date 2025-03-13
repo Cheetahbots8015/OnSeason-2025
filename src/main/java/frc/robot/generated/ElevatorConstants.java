@@ -26,10 +26,14 @@ public class ElevatorConstants {
   public static final double follower_kV = 0.0;
   public static final double forwardDutyCycleLimit = 0.7;
   public static final double reverseDutyCycleLimit = -0.7;
-  public static final boolean leader_ForwardSoftLimitEnable = true;
+  public static final boolean leader_forwardSoftLimitEnable = true;
   public static final double leader_forwardSoftLimitThreshold = 125;
-  public static final boolean follower_ForwardSoftLimitEnable = true;
+  public static final boolean follower_forwardSoftLimitEnable = true;
   public static final double follower_forwardSoftLimitThreshold = 125;
+  public static final boolean leader_reverseSoftLimitEnable = true;
+  public static final double leader_reverseSoftLimitThreshold = 0.0;
+  public static final boolean follower_reverseSoftLimitEnable = true;
+  public static final double follower_reverseSoftLimitThreshold = 0.0;
 
   // differential configs
   public static final double peakDifferentialVoltage = 4.0;
