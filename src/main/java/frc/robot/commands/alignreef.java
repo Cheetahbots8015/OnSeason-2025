@@ -1,6 +1,7 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+// 记得改limelight名字
 
 package frc.robot.commands;
 
@@ -39,12 +40,7 @@ public class alignreef extends Command {
   @Override
   public void initialize() {
     LimelightHelpers.setPipelineIndex("limelight-reef", 1);
-    LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.82, 0, -30, 0);
-    LimelightHelpers.setLEDMode_ForceOn("limelight-reef");
     pidy = new PIDController(0.07, 0, 0);
-    m_leftrangeFinder = new AnalogPotentiometer(0, 350, 2);
-    m_rightrangeFinder = new AnalogPotentiometer(1, 350, 2);
-    rangelimit = 35.0; // in centimeters
     filter = new MedianFilter(3);
   }
 
@@ -77,11 +73,12 @@ public class alignreef extends Command {
   public void end(boolean interrupted) {
     m_drive.stop();
     m_controller.setRumble(RumbleType.kBothRumble, 0);
+    LimelightHelpers.setPipelineIndex("limelight-reef", 0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(LimelightHelpers.getTX("limelight-reef")) < 0.8;
+    return false;
   }
 }
