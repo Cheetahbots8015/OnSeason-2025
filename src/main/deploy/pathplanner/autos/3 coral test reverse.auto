@@ -5,89 +5,102 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Special Start From O7"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L2 Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "O7 to Station"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "IntakeCommand"
+                  "pathName": "Middle To O8"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "LED on"
+                  "name": "L4 RunTime Command"
                 }
               }
             ]
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "O6"
+            "pathName": "O8 To Station"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L2 Command"
+            "name": "IntakeCommand"
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "O6 to Station"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "IntakeCommand"
+                  "pathName": "Station To O6"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "LED on"
+                  "name": "L4 RunTime Command"
                 }
               }
             ]
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "O5"
+            "pathName": "O6 To Station"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L2 Command"
+            "name": "IntakeCommand"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Station To O5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4 RunTime Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
           }
         }
       ]

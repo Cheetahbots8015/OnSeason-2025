@@ -57,6 +57,8 @@ public class Robot extends LoggedRobot {
 
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
     // be added.
+    int[] validIDs = {20, 19};
+    LimelightHelpers.SetFiducialIDFiltersOverride("limelight-reef", validIDs);
   }
 
   /**

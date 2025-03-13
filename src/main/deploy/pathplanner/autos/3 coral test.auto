@@ -5,89 +5,102 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Choreo Special Starting O7"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L2 Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Choreo O7 to Station"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "IntakeCommand"
+                  "pathName": "Middle To O1"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "LED on"
+                  "name": "L4 RunTime Command"
                 }
               }
             ]
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Choreo O6"
+            "pathName": "O1 To Station"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L2 Command"
+            "name": "IntakeCommand"
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Choreo O6 to Station"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "IntakeCommand"
+                  "pathName": "Station to O3"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "LED on"
+                  "name": "L4 RunTime Command"
                 }
               }
             ]
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Choreo O5"
+            "pathName": "O3 To Station"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L2 Command"
+            "name": "IntakeCommand"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Station To O4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4 RunTime Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Command"
           }
         }
       ]
@@ -95,5 +108,5 @@
   },
   "resetOdom": true,
   "folder": null,
-  "choreoAuto": true
+  "choreoAuto": false
 }

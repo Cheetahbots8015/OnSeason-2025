@@ -51,10 +51,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.LimelightHelpers;
-import frc.robot.Robot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.json.simple.parser.ParseException;
@@ -235,37 +235,52 @@ public class Drive extends SubsystemBase {
       // MegaTag1 and Megatag2 are two different versions of pose estimators.
       // Usually Megatag 2 performs better, so just keep it true.
       boolean useMegaTag2 = true;
-      boolean doRejectUpdate = false; // Decide whether the estimated pose should be updated.
 
-      if (useMegaTag2
-          == false) { // You may just ignore lines 234-251 since it won't be used usually.
-
-        LimelightHelpers.PoseEstimate
-            megaTag1 = // Instantialize a pose estimator based on limelight-reef.
-            LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-reef");
-
-        if (megaTag1.tagCount == 0) // Check whether observes a Apriltag.
-        doRejectUpdate = true; // If not, the update will be rejected.
-
-        if ((megaTag1.tagCount == 1 && megaTag1.rawFiducials.length == 1)
-            && (megaTag1.rawFiducials[0].ambiguity > 0.7
-                || megaTag1.rawFiducials[0].distToCamera
-                    > 3)) // Add tag counts, ambiguity and distance boundries.
-        doRejectUpdate = true; // All data that are out of bound will make the update be rejected.
-
-        if (!doRejectUpdate) {
-          // Add a Kalman filter and update the estimated poses.
-          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-          poseEstimator.addVisionMeasurement(megaTag1.pose, megaTag1.timestampSeconds);
-        }
-
-      } else if (useMegaTag2 == true) {
+      if (useMegaTag2 == true) {
         // Choose Megatag2 as the pose estimator.
         // Instantialize a pose estimator based on limelight-reef.
-        if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 720) {
+        if (Math.abs(gyroInputs.yawVelocityRadPerSec) > 12.56) {
           continue;
         } else {
-          if (Robot.m_chooser.getSelected() == "blue") {
+          Optional<Alliance> ally = DriverStation.getAlliance();
+          if (ally.isPresent()) {
+            if (ally.get() == Alliance.Red) {
+              LimelightHelpers.SetRobotOrientation(
+                  "limelight-reef",
+                  poseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0);
+              LimelightHelpers.SetRobotOrientation(
+                  "limelight-station",
+                  poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+                  0,
+                  0,
+                  0,
+                  0,
+                  0);
+            }
+            if (ally.get() == Alliance.Blue) {
+              LimelightHelpers.SetRobotOrientation(
+                  "limelight-reef",
+                  poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+                  0,
+                  0,
+                  0,
+                  0,
+                  0);
+              LimelightHelpers.SetRobotOrientation(
+                  "limelight-station",
+                  poseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0);
+            }
+          } else {
             LimelightHelpers.SetRobotOrientation(
                 "limelight-reef",
                 poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
@@ -274,9 +289,8 @@ public class Drive extends SubsystemBase {
                 0,
                 0,
                 0);
-          } else {
             LimelightHelpers.SetRobotOrientation(
-                "limelight-reef",
+                "limelight-station",
                 poseEstimator.getEstimatedPosition().getRotation().getDegrees() + 180,
                 0,
                 0,
@@ -286,12 +300,19 @@ public class Drive extends SubsystemBase {
           }
           LimelightHelpers.PoseEstimate megaTag2_reef =
               LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+          LimelightHelpers.PoseEstimate megaTag2_station =
+              LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
           publisher.set(megaTag2_reef.pose);
           publisher2.set(poseEstimator.getEstimatedPosition());
 
           if (megaTag2_reef.tagCount != 0) {
             poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
             poseEstimator.addVisionMeasurement(megaTag2_reef.pose, megaTag2_reef.timestampSeconds);
+          }
+          if (megaTag2_station.tagCount != 0) {
+            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2, 2, 9999999));
+            poseEstimator.addVisionMeasurement(
+                megaTag2_station.pose, megaTag2_station.timestampSeconds);
           }
         }
       }

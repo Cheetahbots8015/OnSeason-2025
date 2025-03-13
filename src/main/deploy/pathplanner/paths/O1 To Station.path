@@ -3,29 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.25775,
-        "y": 0.515
+        "x": 5.25,
+        "y": 5.082
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.4487330056250528,
-        "y": 1.102785252292473
+        "x": 4.140456081081081,
+        "y": 5.872888513513513
       },
       "isLocked": false,
-      "linkedName": "station 2"
+      "linkedName": "O1"
     },
     {
       "anchor": {
-        "x": 3.7287,
-        "y": 2.9827204
+<<<<<<< Updated upstream:src/main/deploy/pathplanner/paths/1 coral 2.path
+        "x": 5.728,
+        "y": 3.8672
       },
       "prevControl": {
-        "x": 3.255990211462299,
-        "y": 3.2556395236608124
+        "x": 6.522526137157959,
+        "y": 3.8672
+=======
+        "x": 1.5,
+        "y": 7.398
+      },
+      "prevControl": {
+        "x": 2.3814594280636325,
+        "y": 6.870972223997887
+>>>>>>> Stashed changes:src/main/deploy/pathplanner/paths/O1 To Station.path
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "O5"
+      "linkedName": "station_1"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +51,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": -54.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 54.0
+    "rotation": -119.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

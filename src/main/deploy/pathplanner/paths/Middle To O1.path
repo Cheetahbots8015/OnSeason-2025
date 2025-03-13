@@ -3,29 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.25775,
-        "y": 0.515
+        "x": 7.159,
+        "y": 4.197
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.03283761838783,
-        "y": 0.6241531978347026
+<<<<<<< Updated upstream:src/main/deploy/pathplanner/paths/dui 1.path
+        "x": 0.9319471295498325,
+        "y": 7.5778177731839005
+=======
+        "x": 6.391789772727273,
+        "y": 4.817741477272727
+>>>>>>> Stashed changes:src/main/deploy/pathplanner/paths/Middle To O1.path
       },
       "isLocked": false,
-      "linkedName": "station 2"
+      "linkedName": "start point 1"
     },
     {
       "anchor": {
-        "x": 4.013342,
-        "y": 2.848751
+        "x": 5.25,
+        "y": 5.082
       },
       "prevControl": {
-        "x": 3.5750320965254674,
-        "y": 2.425335348052513
+        "x": 5.743636363636364,
+        "y": 4.877571022727272
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "O6"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,7 +38,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 1.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 54.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

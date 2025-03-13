@@ -25,6 +25,7 @@ import frc.robot.commands.driverCommand.L2Command;
 import frc.robot.commands.driverCommand.L3Command;
 import frc.robot.commands.driverCommand.L4AutoCommand;
 import frc.robot.commands.driverCommand.L4Command;
+import frc.robot.commands.driverCommand.L4UpAutoCommand;
 import frc.robot.commands.driverCommand.LowAlgaeCommand;
 import frc.robot.commands.driverCommand.ProcessorCommand;
 import frc.robot.commands.driverCommand.StationCommand;
@@ -73,7 +74,6 @@ public class RobotContainer {
   private SendableChooser<Command> autoChooser;
 
   Thread m_visionThread;
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
       new CommandXboxController(JoystickConstants.driverControllerPort);
@@ -173,8 +173,10 @@ public class RobotContainer {
         new L4AutoCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
             .withTimeout(5.0));
     NamedCommands.registerCommand(
+        "L4 RunTime Command", new L4UpAutoCommand(m_elevatorSubsystem).withTimeout(2.0));
+    NamedCommands.registerCommand(
         "LED on",
-        Commands.run(() -> LimelightHelpers.setLEDMode_PipelineControl("limelight-station"))
+        Commands.run(() -> LimelightHelpers.setLEDMode_ForceOn("limelight-station"))
             .withTimeout(1.0)
             .andThen(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-station"), drive)
             .withTimeout(1.0));
