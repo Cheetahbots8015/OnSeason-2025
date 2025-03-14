@@ -14,7 +14,7 @@ public class PivotConstants {
   public static final boolean forwardSoftLimitEnable = true;
   public static final boolean reverseSoftLimitEnable = true;
   public static final double forwardSoftLimitThreshold = 0.45;
-  public static final double reverseSoftLimitThreshold = 0.0;
+  public static final double reverseSoftLimitThreshold = -0.5;
   public static final double kP = 68.3;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
@@ -36,7 +36,7 @@ public class PivotConstants {
   public static final double manualReverseVoltage = -0.5;
 
   // home
-  public static final double coralHomePosition = -0.1;
+  public static final double coralHomePosition = 0.0;
   public static final double algaeHomePosition = 0.268;
 
   // coral reef
