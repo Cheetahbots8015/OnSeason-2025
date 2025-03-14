@@ -55,7 +55,7 @@ public class gotoreef extends Command {
               pidyaw.calculate(pose.getRotation().getY()));
       m_drive.runVelocity(drivSpeeds);
     } else {
-      ChassisSpeeds drivSpeeds = new ChassisSpeeds(0.3, 0, 0);
+      ChassisSpeeds drivSpeeds = new ChassisSpeeds(0.6, 0, 0);
       m_drive.runVelocity(drivSpeeds);
     }
   }

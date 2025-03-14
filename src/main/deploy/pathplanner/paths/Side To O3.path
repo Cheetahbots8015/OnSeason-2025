@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.370172073504017,
-        "y": 6.409768988669871
+        "x": 6.36547131147541,
+        "y": 6.908043032786885
       },
       "isLocked": false,
       "linkedName": "O3 Far"
     },
     {
       "anchor": {
-        "x": 5.601635865401844,
-        "y": 5.936876975480931
+        "x": 3.5843237704918027,
+        "y": 6.872079918032787
       },
       "prevControl": {
-        "x": 5.985903969452931,
-        "y": 6.173322982075401
+        "x": 3.96859187454289,
+        "y": 7.108525924627257
       },
       "nextControl": {
-        "x": 5.217367761350758,
-        "y": 5.700430968886462
+        "x": 3.2000556664407163,
+        "y": 6.635633911438317
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 5.215749
       },
       "prevControl": {
-        "x": 4.8434095675675675,
-        "y": 5.5023199459459455
+        "x": 3.6442622950819668,
+        "y": 5.877100409836065
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.0,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {

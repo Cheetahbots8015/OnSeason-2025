@@ -169,7 +169,7 @@ public class RobotContainer {
         new L2AutoCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
             .withTimeout(2.0));
     NamedCommands.registerCommand(
-        "IntakeCommand", new StationCommand(m_rollerSubsystem).withTimeout(4.0));
+        "IntakeCommand", new StationCommand(m_rollerSubsystem).withTimeout(3));
     NamedCommands.registerCommand(
         "L4 Command",
         new L4AutoCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)

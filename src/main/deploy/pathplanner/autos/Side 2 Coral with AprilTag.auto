@@ -5,28 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "deadline",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Side To O3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4 RunTime Command"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "GoToReef"
+            "pathName": "Side To O3"
           }
         },
         {
@@ -42,59 +23,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "O3 to Station"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeCommand"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Station To O4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4 RunTime Command"
-                }
-              }
-            ]
+            "pathName": "O3 to Station"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "GoToReef"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlignReef"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4 Command"
+            "name": "IntakeCommand"
           }
         }
       ]
