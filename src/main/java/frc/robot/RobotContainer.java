@@ -116,6 +116,7 @@ public class RobotContainer {
   private final Trigger OperatorNormalRollerForwardTrigger = operatorController.leftTrigger();
   private final Trigger OperatorNormalRollerReverseTrigger = operatorController.rightTrigger();
   private final Trigger OperatorReleaseCoralTrigger = operatorController.a();
+  private final Trigger OperatorStationTrigger = operatorController.b();
 
   // driver commands
   private final Command DriverL1Command = new L1Command(m_elevatorSubsystem, m_pivotSubsystem);
@@ -128,7 +129,8 @@ public class RobotContainer {
       new HighAlgaeCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
   private final Command DriverProcessorCommand =
       new ProcessorCommand(m_rollerSubsystem, m_pivotSubsystem, m_elevatorSubsystem);
-  private final Command DriverStationCommand = new StationCommand(m_rollerSubsystem);
+  private final Command DriverStationCommand =
+      new StationCommand(m_rollerSubsystem, m_pivotSubsystem);
 
   // operator commands
   private final Command OperatorHomeCommand = new ElevatorHomeCommand(m_elevatorSubsystem);
@@ -150,6 +152,8 @@ public class RobotContainer {
       new RollerNormalReverseCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem);
   private final Command OperatorReleaseCoralCommand =
       new RollerReleaseCoralCommnd(m_rollerSubsystem);
+  private final Command OperatorStationCommand =
+      new StationCommand(m_rollerSubsystem, m_pivotSubsystem);
 
   // default commandfs
   private final Command ElevatorDefaultIdleCommand =
@@ -167,7 +171,7 @@ public class RobotContainer {
         new L2AutoCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
             .withTimeout(2.0));
     NamedCommands.registerCommand(
-        "IntakeCommand", new StationCommand(m_rollerSubsystem).withTimeout(4.0));
+        "IntakeCommand", new StationCommand(m_rollerSubsystem, m_pivotSubsystem).withTimeout(4.0));
     NamedCommands.registerCommand(
         "L4 Command",
         new L4AutoCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
@@ -234,6 +238,7 @@ public class RobotContainer {
     OperatorNormalRollerForwardTrigger.whileTrue(OperatorNormalRollerForwardCommand);
     OperatorNormalRollerReverseTrigger.whileTrue(OperatorNormalRollerReverseCommand);
     OperatorReleaseCoralTrigger.whileTrue(OperatorReleaseCoralCommand);
+    OperatorStationTrigger.whileTrue(OperatorStationCommand);
 
     SysIDController.a()
         .whileTrue(m_pivotSubsystem.PivotTestDynamic(SysIdRoutine.Direction.kForward));

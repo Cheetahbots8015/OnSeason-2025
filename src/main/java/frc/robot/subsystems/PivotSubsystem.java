@@ -15,6 +15,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,6 +51,8 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   private pivotIdleState systemIdleState = pivotIdleState.coral;
+
+  private DoubleSubscriber elevatorPositionDoubleSubscriber;
 
   // sysID stuffs
   private final SysIdRoutine m_SysIdRoutinePivot =
@@ -116,6 +121,10 @@ public class PivotSubsystem extends SubsystemBase {
         250, pivot.getPosition(), pivot.getVelocity(), pivot.getMotorVoltage());
 
     SignalLogger.start();
+
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("datatable");
+    elevatorPositionDoubleSubscriber = table.getDoubleTopic("elevator/position").subscribe(0.0);
   }
 
   // shutDown krankenX60
@@ -162,13 +171,22 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void idle() {
+    report();
     if (systemIdleState == pivotIdleState.coral) {
-      setPosition(PivotConstants.coralHomePosition);
+      if (elevatorPositionDoubleSubscriber.get() > 30.0) {
+        setPosition(0.05);
+      } else {
+        setPosition(PivotConstants.coralHomePosition);
+      }
     } else if (systemIdleState == pivotIdleState.algae) {
       setPosition(PivotConstants.algaeHomePosition);
     } else {
       hold();
     }
+  }
+
+  public void station() {
+    setPosition(-0.3);
   }
 
   public void L1() {

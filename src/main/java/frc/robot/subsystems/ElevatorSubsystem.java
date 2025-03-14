@@ -11,6 +11,9 @@ import com.ctre.phoenix6.signals.DifferentialSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,6 +67,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private elevatorIdleState systemIdleState = elevatorIdleState.coral;
+
+  private DoublePublisher positionDoublePublisher;
 
   public ElevatorSubsystem() {
     // config neutralmode
@@ -154,6 +159,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     // initialize offset
     leaderEncoderOffset = leader.getPosition().getValueAsDouble();
     followerEncoderOffset = follower.getPosition().getValueAsDouble();
+
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("datatable");
+    positionDoublePublisher = table.getDoubleTopic("elevator/position").publish();
   }
 
   public double getLeaderPositionWithoutOffset() {
@@ -233,6 +242,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // is low
   public void defaultDown() {
     report();
+    publishPosition2NetworkTables();
     if (systemIdleState == elevatorIdleState.manual) {
       hold();
     } else {
@@ -472,5 +482,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         "elevator/leader reference", leader.getClosedLoopReference().getValueAsDouble());
     SmartDashboard.putString("elevator/idle state", systemIdleState.toString());
     SmartDashboard.putString("elevator/home phase", systemHomePhase.toString());
+  }
+
+  private void publishPosition2NetworkTables() {
+    positionDoublePublisher.set(getLeaderPositionWithoutOffset());
   }
 }
