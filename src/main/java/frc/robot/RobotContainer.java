@@ -25,6 +25,7 @@ import frc.robot.commands.driverCommand.L2Command;
 import frc.robot.commands.driverCommand.L3Command;
 import frc.robot.commands.driverCommand.L4AutoCommand;
 import frc.robot.commands.driverCommand.L4Command;
+import frc.robot.commands.driverCommand.L4UpAutoCommand;
 import frc.robot.commands.driverCommand.LowAlgaeCommand;
 import frc.robot.commands.driverCommand.ProcessorCommand;
 import frc.robot.commands.driverCommand.StationCommand;
@@ -57,6 +58,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
   private final Drive drive =
       new Drive(
           new GyroIOPigeon2(),
@@ -64,7 +66,7 @@ public class RobotContainer {
           new ModuleIOTalonFX(TunerConstants.FrontRight),
           new ModuleIOTalonFX(TunerConstants.BackLeft),
           new ModuleIOTalonFX(TunerConstants.BackRight));
-  ;
+
   // The robot's subsystems and commands are defined here...
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final RollerSubsystem m_rollerSubsystem = new RollerSubsystem();
@@ -73,7 +75,6 @@ public class RobotContainer {
   private SendableChooser<Command> autoChooser;
 
   Thread m_visionThread;
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
       new CommandXboxController(JoystickConstants.driverControllerPort);
@@ -161,6 +162,7 @@ public class RobotContainer {
   private final Command RollerDefaultIdleCommand = new RollerDefaultIdleCommand(m_rollerSubsystem);
   private final Command PivotDefaultIdleCommand = new PivotDefaultIdleCommand(m_pivotSubsystem);
   private final Command AlignReef = new alignreef(drive, driverController);
+  private final Command GoToReef = new gotoreef(drive);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -177,13 +179,17 @@ public class RobotContainer {
         new L4AutoCommand(m_elevatorSubsystem, m_pivotSubsystem, m_rollerSubsystem)
             .withTimeout(5.0));
     NamedCommands.registerCommand(
+        "L4 RunTime Command", new L4UpAutoCommand(m_elevatorSubsystem).withTimeout(2.0));
+    NamedCommands.registerCommand(
         "LED on",
-        Commands.run(() -> LimelightHelpers.setLEDMode_PipelineControl("limelight-station"))
+        Commands.run(() -> LimelightHelpers.setLEDMode_ForceOn("limelight-station"))
             .withTimeout(1.0)
             .andThen(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-station"), drive)
             .withTimeout(1.0));
-
-    autoChooser = AutoBuilder.buildAutoChooser("Pathplanner 3 Coral");
+    NamedCommands.registerCommand(
+        "AlignReef", new alignreef(drive, driverController).withTimeout(1));
+    NamedCommands.registerCommand("GoToReef", new gotoreef(drive).withTimeout(1));
+    autoChooser = AutoBuilder.buildAutoChooser("Middle 1 Coral");
 
     DashboardDisplay.layout(
         autoChooser, drive, m_pivotSubsystem, m_elevatorSubsystem, m_rollerSubsystem);
@@ -286,7 +292,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    // driverController.povUp().whileTrue(AlignReef);
+    driverController.povUp().whileTrue(AlignReef);
   }
 
   /**

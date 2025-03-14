@@ -78,7 +78,6 @@ public class DriveCommands {
       DoubleSupplier omegaSupplier,
       boolean slowMode) {
     LimelightHelpers.setPipelineIndex("limelight-reef", 0);
-    LimelightHelpers.setCameraPose_RobotSpace("limelight-reef", 0, -0.25, 0.8, 0, -30, 0);
     return Commands.run(
         () -> {
           if (!LimelightHelpers.getTV("limelight-reef")) {
