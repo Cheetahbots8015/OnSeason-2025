@@ -8,33 +8,40 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1028716216216212,
-        "y": 2.009121621621621
+        "x": 3.446607128892051,
+        "y": 2.309891102152226
       },
       "isLocked": false,
       "linkedName": "O6"
     },
     {
       "anchor": {
-<<<<<<< Updated upstream
+        "x": 2.747828571428571,
+        "y": 1.6331857142857131
+      },
+      "prevControl": {
+        "x": 3.2078705892665553,
+        "y": 2.0171104327981912
+      },
+      "nextControl": {
+        "x": 2.150932002420122,
+        "y": 1.1350500259096603
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
         "x": 1.25775,
         "y": 0.515
       },
       "prevControl": {
-        "x": 1.7824224640415098,
-        "y": 1.0792247592530702
-=======
-        "x": 1.5,
-        "y": 0.66615725
-      },
-      "prevControl": {
-        "x": 2.5593749999999997,
-        "y": 1.6336148648648634
->>>>>>> Stashed changes
+        "x": 2.0116745077182685,
+        "y": 1.1038091723116379
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "station_2"
+      "linkedName": "station 2"
     }
   ],
   "rotationTargets": [],
@@ -42,9 +49,9 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
+    "maxVelocity": 2.5,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
+    "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false

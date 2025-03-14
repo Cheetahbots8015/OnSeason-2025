@@ -16,21 +16,12 @@
     },
     {
       "anchor": {
-<<<<<<< Updated upstream:src/main/deploy/pathplanner/paths/1 coral 2.path
-        "x": 5.728,
-        "y": 3.8672
-      },
-      "prevControl": {
-        "x": 6.522526137157959,
-        "y": 3.8672
-=======
         "x": 1.5,
         "y": 7.398
       },
       "prevControl": {
         "x": 2.3814594280636325,
         "y": 6.870972223997887
->>>>>>> Stashed changes:src/main/deploy/pathplanner/paths/O1 To Station.path
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,9 +33,9 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.5,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
+    "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
@@ -59,5 +50,5 @@
     "velocity": 0,
     "rotation": -119.99999999999999
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

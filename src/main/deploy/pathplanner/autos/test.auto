@@ -9,12 +9,6 @@
           "data": {
             "pathName": "test"
           }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": []
-          }
         }
       ]
     }

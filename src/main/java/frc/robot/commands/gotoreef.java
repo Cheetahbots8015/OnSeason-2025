@@ -6,31 +6,25 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.drive.Drive;
 
-public class alignreef extends Command {
+public class gotoreef extends Command {
   private final Drive m_drive;
-  private final CommandXboxController m_controller;
+  private PIDController pidx;
   private PIDController pidy;
-  private AnalogPotentiometer m_leftrangeFinder;
-  private AnalogPotentiometer m_rightrangeFinder;
-  private double rangelimit;
+  private PIDController pidyaw;
   private MedianFilter filter;
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public alignreef(Drive drive, CommandXboxController controller) {
+  public gotoreef(Drive drive) {
     m_drive = drive;
-    m_controller = controller;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
   }
@@ -38,8 +32,13 @@ public class alignreef extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LimelightHelpers.setPipelineIndex("limelight-reef", 1);
-    pidy = new PIDController(0.07, 0, 0);
+    LimelightHelpers.setPipelineIndex("limelight-reef", 0);
+    PIDController pidx = new PIDController(4, 0, 0);
+    PIDController pidy = new PIDController(2, 0, 0);
+    PIDController pidyaw = new PIDController(2, 0, 0);
+    pidx.setSetpoint(0.8);
+    pidy.setSetpoint(0);
+    pidyaw.setSetpoint(0);
     filter = new MedianFilter(3);
   }
 
@@ -47,22 +46,16 @@ public class alignreef extends Command {
   @Override
   public void execute() {
     boolean hasTarget = LimelightHelpers.getTV("limelight-reef");
-    if (hasTarget
-    // && m_leftrangeFinder.get() < rangelimit
-    // && m_rightrangeFinder.get() < rangelimit
-    ) {
-      if (Math.abs(LimelightHelpers.getTX("limelight-reef")) < 1) {
-        m_controller.setRumble(RumbleType.kBothRumble, 0.5);
-      } else {
-        m_controller.setRumble(RumbleType.kBothRumble, 0);
-      }
-      SmartDashboard.putBoolean("limelight-reef", false);
+    Pose3d pose = LimelightHelpers.getTargetPose3d_RobotSpace("limelight-reef");
+    if (hasTarget) {
       ChassisSpeeds drivSpeeds =
           new ChassisSpeeds(
-              0, pidy.calculate(filter.calculate(LimelightHelpers.getTX("limelight-reef"))), 0);
+              -pidx.calculate(pose.getTranslation().getZ()),
+              pidy.calculate(pose.getTranslation().getX()),
+              pidyaw.calculate(pose.getRotation().getY()));
       m_drive.runVelocity(drivSpeeds);
     } else {
-      ChassisSpeeds drivSpeeds = new ChassisSpeeds(0, 0, 0);
+      ChassisSpeeds drivSpeeds = new ChassisSpeeds(0.3, 0, 0);
       m_drive.runVelocity(drivSpeeds);
     }
   }
@@ -71,8 +64,6 @@ public class alignreef extends Command {
   @Override
   public void end(boolean interrupted) {
     m_drive.stop();
-    m_controller.setRumble(RumbleType.kBothRumble, 0);
-    LimelightHelpers.setPipelineIndex("limelight-reef", 0);
   }
 
   // Returns true when the command should end.

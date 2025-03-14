@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle To O8"
+                  "pathName": "Side To O3"
                 }
               },
               {
@@ -21,6 +21,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToReef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignReef"
           }
         },
         {
@@ -30,15 +42,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "O8 To Station"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeCommand"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "O3 to Station"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeCommand"
+                }
+              }
+            ]
           }
         },
         {
@@ -48,7 +67,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Station To O6"
+                  "pathName": "Station To O4"
                 }
               },
               {
@@ -63,38 +82,13 @@
         {
           "type": "named",
           "data": {
-            "name": "L4 Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "O6 To Station"
+            "name": "GoToReef"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "IntakeCommand"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Station To O5"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4 RunTime Command"
-                }
-              }
-            ]
+            "name": "AlignReef"
           }
         },
         {

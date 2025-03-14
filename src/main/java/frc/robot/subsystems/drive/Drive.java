@@ -298,22 +298,27 @@ public class Drive extends SubsystemBase {
                 0,
                 0);
           }
-          LimelightHelpers.PoseEstimate megaTag2_reef =
-              LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
-          LimelightHelpers.PoseEstimate megaTag2_station =
-              LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
-          publisher.set(megaTag2_reef.pose);
-          publisher2.set(poseEstimator.getEstimatedPosition());
+          if (LimelightHelpers.getTV("limelight-reef")) {
+            LimelightHelpers.PoseEstimate megaTag2_reef =
+                LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-reef");
+            publisher.set(megaTag2_reef.pose);
+            if (megaTag2_reef.tagCount != 0) {
+              poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+              poseEstimator.addVisionMeasurement(
+                  megaTag2_reef.pose, megaTag2_reef.timestampSeconds);
+            }
+          }
+          if (LimelightHelpers.getTV("limelight-station")) {
+            LimelightHelpers.PoseEstimate megaTag2_station =
+                LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-station");
+            if (megaTag2_station.tagCount != 0) {
+              poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2, 2, 9999999));
+              poseEstimator.addVisionMeasurement(
+                  megaTag2_station.pose, megaTag2_station.timestampSeconds);
+            }
+          }
 
-          if (megaTag2_reef.tagCount != 0) {
-            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-            poseEstimator.addVisionMeasurement(megaTag2_reef.pose, megaTag2_reef.timestampSeconds);
-          }
-          if (megaTag2_station.tagCount != 0) {
-            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(2, 2, 9999999));
-            poseEstimator.addVisionMeasurement(
-                megaTag2_station.pose, megaTag2_station.timestampSeconds);
-          }
+          publisher2.set(poseEstimator.getEstimatedPosition());
         }
       }
     }
