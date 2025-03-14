@@ -186,7 +186,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void station() {
-    setPosition(-0.3);
+    setPosition(-0.05);
   }
 
   public void L1() {
