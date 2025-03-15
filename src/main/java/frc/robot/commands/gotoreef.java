@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,7 +16,6 @@ public class gotoreef extends Command {
   private PIDController pidx;
   private PIDController pidy;
   private PIDController pidyaw;
-  private MedianFilter filter;
   /**
    * Creates a new ExampleCommand.
    *
@@ -33,13 +31,12 @@ public class gotoreef extends Command {
   @Override
   public void initialize() {
     LimelightHelpers.setPipelineIndex("limelight-reef", 0);
-    PIDController pidx = new PIDController(4, 0, 0);
-    PIDController pidy = new PIDController(2, 0, 0);
-    PIDController pidyaw = new PIDController(2, 0, 0);
+    pidx = new PIDController(4, 0, 0);
+    pidy = new PIDController(2, 0, 0);
+    pidyaw = new PIDController(2, 0, 0);
     pidx.setSetpoint(0.8);
     pidy.setSetpoint(0);
     pidyaw.setSetpoint(0);
-    filter = new MedianFilter(3);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
