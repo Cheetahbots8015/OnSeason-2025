@@ -161,7 +161,8 @@ public class RobotContainer {
       new ElevatorDefaultIdleCommand(m_elevatorSubsystem);
   private final Command RollerDefaultIdleCommand = new RollerDefaultIdleCommand(m_rollerSubsystem);
   private final Command PivotDefaultIdleCommand = new PivotDefaultIdleCommand(m_pivotSubsystem);
-  private final Command AlignReef = new alignreef(drive, driverController);
+  private final Command AlignLeftReef = new alignreef(false, drive);
+  private final Command AlignRightReef = new alignreef(true, drive);
   private final Command GoToReef = new gotoreef(drive);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -186,8 +187,6 @@ public class RobotContainer {
             .withTimeout(1.0)
             .andThen(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-station"), drive)
             .withTimeout(1.0));
-    NamedCommands.registerCommand(
-        "AlignReef", new alignreef(drive, driverController).withTimeout(1));
     NamedCommands.registerCommand("GoToReef", new gotoreef(drive).withTimeout(1));
     autoChooser = AutoBuilder.buildAutoChooser("Middle 1 Coral");
 
@@ -292,7 +291,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    driverController.povUp().whileTrue(AlignReef);
+    driverController.povLeft().whileTrue(AlignLeftReef);
+    driverController.povRight().whileTrue(AlignRightReef);
   }
 
   /**
